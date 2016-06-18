@@ -1,0 +1,228 @@
+# Notes:
+#   - Minimal appveyor.yml file is an empty file. All sections are optional.
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: 1.11.{build}-{branch}
+
+# branches to build
+branches:
+  # whitelist
+  only:
+    - temp
+
+  # blacklist
+  #except:
+    #- gh-pages
+
+# Do not build on tags (GitHub only)
+skip_tags: true
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Operating system (build VM template)
+os: Visual Studio 2015 RC
+
+# scripts that are called at very beginning, before repo cloning
+init:
+  - git config --global core.autocrlf input
+
+# clone directory
+clone_folder: c:\projects\Bridge
+
+# fetch repository as zip archive
+shallow_clone: true                 # default is "false"
+
+# set clone depth
+clone_depth: 30                      # clone entire repository history if not defined
+
+# environment variables
+environment:
+  VisualStudioVersion: 12
+  # this is how to set encrypted variable. Go to "Encrypt data" page in account menu to encrypt data.
+  #my_secure_var1:
+    #secure: FW3tJ3fMncxvs58/ifSP7w==
+
+# build cache to preserve files/folders between builds
+cache:
+  - packages -> **\packages.config
+
+# scripts that run after cloning repository
+install:
+  - cmd: git.exe clone -q --progress -v  --depth 20 --branch=master "https://github.com/bridgedotnet/Frameworks" "c:\projects\Frameworks"
+#  - cmd: git.exe clone -q --progress -v  --depth 20 --branch=master "https://github.com/bridgedotnet/Testing" "c:\projects\Testing"
+
+#---------------------------------#
+#       build configuration       #
+#---------------------------------#
+
+# build platform, i.e. x86, x64, Any CPU. This setting is optional.
+platform: Any CPU
+
+# build Configuration, i.e. Debug, Release, etc.
+configuration: Release
+
+build:
+  # parallel: true                  # enable MSBuild parallel builds
+  project: c:\projects\Bridge\Bridge.sln      # path to Visual Studio solution or project
+
+  # MSBuild verbosity level
+  verbosity: minimal
+
+
+# scripts to run before build
+before_build:
+
+# scripts to run after build
+after_build:
+
+# to run your custom scripts instead of automatic MSBuild
+build_script:
+
+# to disable automatic builds
+#build: off
+
+# scripts to run before tests
+before_test:
+  # - echo script1
+- ps: >-
+    try
+    {
+      #$ChutzpahDir = get-childitem chutzpah.console.exe -recurse | select-object -first 1 | select -expand Directory
+      
+      #$ChutzpahPath = "${ChutzpahDir}" + "\chutzpah.console.exe"
+      $ChutzpahPath = "c:\projects\Bridge\packages\Chutzpah.4.0.1\tools\chutzpah.console.exe"
+      
+      $ChutzpahHtml = "c:\projects\" + "Bridge\Testing\www\index.html"
+      
+      $Exe = "${ChutzpahPath}"
+      
+      $Arguments = "${ChutzpahHtml}","/silent","/junit","chutzpah-results.xml"
+      
+      Write-Host "Running Chutzpah:"
+      
+      Write-Host $Exe $Arguments
+      
+      &$Exe $Arguments
+      
+      $testsuites = [xml](get-content chutzpah-results.xml)
+      
+      $anyFailures = $FALSE
+      
+      $hasAtLeastOneTestRun = $FALSE
+      
+      foreach ($testsuite in $testsuites.testsuites.testsuite) {
+        write-host " $($testsuite.name)"
+        foreach ($testcase in $testsuite.testcase) {
+          $failed = $testcase.failure
+          $time = $testsuite.time
+          if ($testcase.time) { $time = $testcase.time }
+          if ($failed) {
+            write-host "Failed   $($testcase.name) $($testcase.failure.message)"
+            Add-AppveyorTest $testcase.name -Outcome Failed -FileName $testsuite.name -ErrorMessage $testcase.failure.message -Duration $time
+            $anyFailures = $TRUE
+            $hasAtLeastOneTestRun = $TRUE
+          }else {
+            $hasAtLeastOneTestRun = $TRUE
+            write-host "Passed   $($testcase.name)"
+            Add-AppveyorTest $testcase.name -Outcome Passed -FileName $testsuite.name -Duration $time
+          }
+        }
+      }
+      
+      if ($hasAtLeastOneTestRun -eq $FALSE) {
+        write-host "There should be at least one test executed"
+        $host.SetShouldExit(1)
+      }
+      
+      if ($anyFailures -eq $TRUE) {
+        write-host "Failing build as there are broken tests"
+        $host.SetShouldExit(1)
+      }
+    }
+    catch
+    {
+        write-host "Error occurred"
+        $ErrorMessage = $_.Exception.Message
+        $FailedItem = $_.Exception.ItemName
+        write-host $ErrorMessage
+        write-host $FailedItem
+        $host.SetShouldExit(1)
+    }
+    
+# scripts to run after tests
+after_test:
+
+# to run your custom scripts instead of automatic tests
+test_script:
+  #- echo This is my custom test script
+  - nunit-console "c:\projects\Bridge\Compiler\TranslatorTests\bin\Release\Bridge.Translator.Tests.dll"
+
+# to disable automatic tests 
+# test:
+   # assemblies:
+    # - builder\translatortests\bin\$(configuration)\bridge.translator.tests.dll
+
+
+# scripts to run before deployment
+before_deploy:
+
+# scripts to run after deployment
+after_deploy:
+
+# to run your custom scripts instead of provider deployments
+deploy_script:
+
+# to disable deployment
+#deploy: off
+
+
+#---------------------------------#
+#        global handlers          #
+#---------------------------------#
+
+# on successful build
+on_success:
+  # - do something
+
+# on build failure
+on_failure:
+  # - do something
+
+# after build failure or success
+on_finish:
+- ps: $root = Resolve-Path Compiler\TranslatorTests; [IO.Directory]::GetFiles($root.Path, '*.log', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName TranslatorTestsLog }  
+
+
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+  
+notifications:
+
+  - provider: Email
+    to:
+      - vladimir@object.net
+      - daniil@object.net
+      - fabricio@object.net
+      - leonid@object.net
+    on_build_status_changed: true
+    on_build_success: false
+    on_build_failure: true
+
+  - provider: Slack
+    auth_token:
+      secure: zSdvelf8KpJg8tlCgYGPNygKefpXDGYETPAy5LX/xNTKcvcyt0V0hU4ISNUIEEKE
+    channel: github
+    on_build_status_changed: true
+    on_build_success: true
+    on_build_failure: true
+

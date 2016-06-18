@@ -1,0 +1,6 @@
+{
+  "output": "Bridge\\output",
+  "cleanOutputFolderBeforeBuild": true,
+  "outputBy": "Class",
+  "ignoreCast": true
+}

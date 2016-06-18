@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>E439935D-B2A2-46AE-856D-2AA408428F33</ProjectGuid>
+    <!--$guid1$-->
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Resources.Lua\" />
+    <Folder Include="Resources.Lua\CoreSystem\Collections\" />
+    <Folder Include="Resources.Lua\CoreSystem\" />
+    <Folder Include="Resources.Lua\CoreSystem\Text\" />
+    <Folder Include="Resources.Lua\Sample\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Resources.Lua\All.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Array.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Boolean.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Char.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collection.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\Dictionary.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\EqualityComparer.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\HashSet.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\Interfaces.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\LinkedList.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\Linq.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\List.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\Queue.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Collections\Stack.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Core.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\DateTime.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Delegate.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Double.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Enum.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Exception.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Int.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Math.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Interfaces.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Object.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\String.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Text\StringBuilder.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\Type.lua" />
+    <Compile Include="Resources.Lua\Sample\test.lua" />
+    <Compile Include="Resources.Lua\CoreSystem\TimeSpan.lua" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

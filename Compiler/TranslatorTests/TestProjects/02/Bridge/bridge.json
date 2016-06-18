@@ -1,0 +1,8 @@
+{
+  "output": "Bridge\\output",
+  "cleanOutputFolderBeforeBuild": true,
+  "outputFormatting": "Formatted",
+
+  "autoPropertyToField": true,
+  "combineScripts":  true
+}

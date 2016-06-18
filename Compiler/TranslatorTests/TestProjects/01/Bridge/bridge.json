@@ -1,0 +1,4 @@
+{
+    "output": "Bridge\\output",
+    "cleanOutputFolderBeforeBuild": true
+}

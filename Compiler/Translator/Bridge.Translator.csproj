@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{44124331-C60A-4071-B387-4B8E71324B10}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Bridge.Translator</RootNamespace>
+    <AssemblyName>re</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(OS) != Unix">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AjaxMin, Version=5.14.5506.26196, Culture=neutral, PublicKeyToken=21ef50ce11b5d80f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\AjaxMin.5.14.5506.26202\lib\net40\AjaxMin.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Bridge.NRefactory.5.5.2\lib\ICSharpCode.NRefactory.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory.Cecil, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Bridge.NRefactory.5.5.2\lib\ICSharpCode.NRefactory.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.NRefactory.CSharp, Version=5.0.0.0, Culture=neutral, PublicKeyToken=d4bfe873e7598c49, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Bridge.NRefactory.5.5.2\lib\ICSharpCode.NRefactory.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Object.Net.Utilities, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Object.NET.Utilities.2.5.0\lib\Object.Net.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="TopologicalSorting">
+      <HintPath>..\..\packages\TopologicalSorting.1.0.1.0\lib\net40\TopologicalSorting.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Emitter.Lua\ArgumentsInfo.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AbstractCommentBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AbstractEmitterBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AbstractEmitterBlock.Locals.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AbstractEmitterBlock.Write.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AbstractMethodBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AbstractObjectCreateBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AnonymousTypeCreateBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ArrayCreateBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ArrayInitializerBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AssignmentBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\AsyncBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\BaseReferenceBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\BinaryOperatorBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\Block.cs" />
+    <Compile Include="Emitter.Lua\Blocks\BreakBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\CastBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ClassBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\CommentBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ConditionalBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ConstructorBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ConstructorBlock.Events.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ContinueBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ConversionBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\DefaultValueBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\DoWhileBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\EmitBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\EmptyBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\EventBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\EventDeclarationBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ExpressionBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ExpressionListBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\FieldBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ForBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ForeachBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\GotoBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\IdentifierBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\IfElseBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\IndexerBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\InlineArgumentsBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\InvocationBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\LambdaBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\MemberReferenceBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\MethodBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\NameBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\NullReferenceBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ObjectCreateBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\OperatorBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ParenthesizedBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\PrimitiveExpressionBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ReturnBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\SwitchBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ThisReferenceBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\ThrowBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\TryCatchBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\TypeBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\TypeExpressionListBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\TypeofBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\UnaryOperatorBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\UsingBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\VariableBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\VisitorCustomEventBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\VisitorIndexerBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\VisitorMethodBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\VisitorPropertyBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\WhileBlock.cs" />
+    <Compile Include="Emitter.Lua\Blocks\YieldBlock.cs" />
+    <Compile Include="Emitter.Lua\Emitter.cs" />
+    <Compile Include="Emitter.Lua\Emitter.Helpers.cs" />
+    <Compile Include="Emitter.Lua\Emitter.Log.cs" />
+    <Compile Include="Emitter.Lua\Emitter.Output.cs" />
+    <Compile Include="Emitter.Lua\Emitter.Properties.cs" />
+    <Compile Include="Emitter.Lua\Emitter.TypeHelpers.cs" />
+    <Compile Include="Emitter.Lua\Emitter.Visitor.cs" />
+    <Compile Include="Emitter.Lua\EmitterOutput.cs" />
+    <Compile Include="Emitter\ArgumentsInfo.cs" />
+    <Compile Include="Emitter\Blocks\AbstractEmitterBlock.Locals.cs" />
+    <Compile Include="Emitter\Blocks\AbstractCommentBlock.cs" />
+    <Compile Include="Emitter\Blocks\AbstractMethodBlock.cs" />
+    <Compile Include="Emitter\Blocks\AbstractObjectCreateBlock.cs" />
+    <Compile Include="Emitter\Blocks\ArrayCreateBlock.cs" />
+    <Compile Include="Emitter\Blocks\AssignmentBlock.cs" />
+    <Compile Include="Emitter\Blocks\ArrayInitializerBlock.cs" />
+    <Compile Include="Emitter\Blocks\AnonymousTypeCreateBlock.cs" />
+    <Compile Include="Emitter\Blocks\AsyncBlock.cs" />
+    <Compile Include="Emitter\Blocks\ConversionBlock.cs" />
+    <Compile Include="Emitter\Blocks\ConstructorBlock.Events.cs" />
+    <Compile Include="Emitter\Blocks\EmitBlock.cs" />
+    <Compile Include="Emitter\Blocks\UsingBlock.cs" />
+    <Compile Include="Emitter\Blocks\YieldBlock.cs" />
+    <Compile Include="Emitter\Blocks\TypeExpressionListBlock.cs" />
+    <Compile Include="Emitter\Blocks\NullReferenceBlock.cs" />
+    <Compile Include="Emitter\Blocks\DefaultValueBlock.cs" />
+    <Compile Include="Emitter\Blocks\EventDeclarationBlock.cs" />
+    <Compile Include="Emitter\Blocks\CommentBlock.cs" />
+    <Compile Include="Emitter\Blocks\ParenthesizedBlock.cs" />
+    <Compile Include="Emitter\Blocks\ContinueBlock.cs" />
+    <Compile Include="Emitter\Blocks\BreakBlock.cs" />
+    <Compile Include="Emitter\Blocks\SwitchBlock.cs" />
+    <Compile Include="Emitter\Blocks\DoWhileBlock.cs" />
+    <Compile Include="Emitter\Blocks\VisitorCustomEventBlock.cs" />
+    <Compile Include="Emitter\Blocks\OperatorBlock.cs" />
+    <Compile Include="Emitter\Blocks\VisitorIndexerBlock.cs" />
+    <Compile Include="Emitter\Blocks\WhileBlock.cs" />
+    <Compile Include="Emitter\Blocks\TryCatchBlock.cs" />
+    <Compile Include="Emitter\Blocks\ConditionalBlock.cs" />
+    <Compile Include="Emitter\Blocks\ForeachBlock.cs" />
+    <Compile Include="Emitter\Blocks\ThrowBlock.cs" />
+    <Compile Include="Emitter\Blocks\ReturnBlock.cs" />
+    <Compile Include="Emitter\Blocks\IndexerBlock.cs" />
+    <Compile Include="Emitter\Blocks\ForBlock.cs" />
+    <Compile Include="Emitter\Blocks\IfElseBlock.cs" />
+    <Compile Include="Emitter\Blocks\ObjectCreateBlock.cs" />
+    <Compile Include="Emitter\Blocks\NameBlock.cs" />
+    <Compile Include="Emitter\Blocks\TypeBlock.cs" />
+    <Compile Include="Emitter\Blocks\InvocationBlock.cs" />
+    <Compile Include="Emitter\Blocks\BinaryOperatorBlock.cs" />
+    <Compile Include="Emitter\Blocks\BaseReferenceBlock.cs" />
+    <Compile Include="Emitter\Blocks\ThisReferenceBlock.cs" />
+    <Compile Include="Emitter\Blocks\IdentifierBlock.cs" />
+    <Compile Include="Emitter\Blocks\UnaryOperatorBlock.cs" />
+    <Compile Include="Emitter\Blocks\EmptyBlock.cs" />
+    <Compile Include="Emitter\Blocks\Block.cs" />
+    <Compile Include="Emitter\Blocks\ExpressionBlock.cs" />
+    <Compile Include="Emitter\Blocks\PrimitiveExpressionBlock.cs" />
+    <Compile Include="Emitter\Blocks\MemberReferenceBlock.cs" />
+    <Compile Include="Emitter\Blocks\VariableBlock.cs" />
+    <Compile Include="Emitter\Blocks\VisitorPropertyBlock.cs" />
+    <Compile Include="Emitter\Blocks\VisitorMethodBlock.cs" />
+    <Compile Include="Emitter\Blocks\FieldBlock.cs" />
+    <Compile Include="Emitter\Blocks\EventBlock.cs" />
+    <Compile Include="Emitter\Blocks\LambdaBlock.cs" />
+    <Compile Include="Emitter\Blocks\MethodBlock.cs" />
+    <Compile Include="Emitter\Blocks\ConstructorBlock.cs" />
+    <Compile Include="Emitter\Blocks\ClassBlock.cs" />
+    <Compile Include="Emitter\Blocks\CastBlock.cs" />
+    <Compile Include="Emitter\Blocks\ExpressionListBlock.cs" />
+    <Compile Include="Emitter\Blocks\InlineArgumentsBlock.cs" />
+    <Compile Include="Emitter\Blocks\AbstractEmitterBlock.cs" />
+    <Compile Include="Emitter\Emitter.TypeHelpers.cs" />
+    <Compile Include="Emitter\Emitter.Helpers.cs" />
+    <Compile Include="Emitter\Emitter.Output.cs" />
+    <Compile Include="Emitter\Blocks\AbstractEmitterBlock.Write.cs" />
+    <Compile Include="Emitter\Emitter.Log.cs" />
+    <Compile Include="Emitter\EmitterOutput.cs" />
+    <Compile Include="Emitter\TypeScript\ClassBlock.cs" />
+    <Compile Include="Emitter\TypeScript\ConstructorBlock.cs" />
+    <Compile Include="Emitter\TypeScript\EmitBlock.cs" />
+    <Compile Include="Emitter\TypeScript\EnumBlock.cs" />
+    <Compile Include="Emitter\TypeScript\MemberBlock.cs" />
+    <Compile Include="Emitter\TypeScript\MethodsBlock.cs" />
+    <Compile Include="Emitter\TypeScript\OperatorBlock.cs" />
+    <Compile Include="Emitter\TypeScript\PropertyBlock.cs" />
+    <Compile Include="Emitter\TypeScript\MethodBlock.cs" />
+    <Compile Include="Emitter\TypeScript\CustomEventBlock.cs" />
+    <Compile Include="Emitter\TypeScript\IndexerBlock.cs" />
+    <Compile Include="Logging\ConsoleLoggerWriter.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\SimpleFileLoggerWriter.cs" />
+    <Compile Include="Translator\Plugins.cs" />
+    <Compile Include="Translator\Translator.Config.cs" />
+    <Compile Include="Utils\DependencyFinderVisitor.cs" />
+    <Compile Include="Utils\AssemblyConfigHelper.cs" />
+    <Compile Include="Utils\EmptyLambdaFixer.cs" />
+    <Compile Include="Utils\JsDoc.cs" />
+    <Compile Include="Utils\YieldSearchVisitor.cs" />
+    <Compile Include="Utils\LambdaVisitor.cs" />
+    <Compile Include="Utils\ParsedSourceFile.cs" />
+    <Compile Include="Utils\ReferenceArgumentVisitor.cs" />
+    <Compile Include="Utils\AwaitSearchVisitor.cs" />
+    <Compile Include="Utils\AssemblyInfo.cs" />
+    <Compile Include="Utils\MemberResolver.cs" />
+    <Compile Include="Emitter\Emitter.Visitor.cs" />
+    <Compile Include="Emitter\Emitter.Properties.cs" />
+    <Compile Include="Utils\Exception.cs" />
+    <Compile Include="Emitter\Emitter.cs" />
+    <Compile Include="Inspector\Inspector.Visitor.cs" />
+    <Compile Include="Inspector\Inspector.Properties.cs" />
+    <Compile Include="Inspector\Validator.cs" />
+    <Compile Include="Inspector\Inspector.cs" />
+    <Compile Include="Inspector\Visitor.Empty.cs" />
+    <Compile Include="Utils\ArrayInitializerVisitor.cs" />
+    <Compile Include="Translator\Translator.InspectAssembly.cs" />
+    <Compile Include="Translator\Translator.Build.cs" />
+    <Compile Include="Translator\Translator.ProjectReader.cs" />
+    <Compile Include="Translator\Translator.Properties.cs" />
+    <Compile Include="Utils\JumpInfo.cs" />
+    <Compile Include="Utils\TypeInfo.cs" />
+    <Compile Include="Inspector\Visitor.Exception.cs" />
+    <Compile Include="Translator\Translator.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\.build\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Contract\Bridge.Contract.csproj">
+      <Project>{52ae9e3e-6929-4720-ab7a-f9f22b9a8972}</Project>
+      <Name>Bridge.Contract</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Readme\Object.NET.Utilities\BREAKING_CHANGES.txt" />
+    <Content Include="App_Readme\Object.NET.Utilities\LICENSE.txt" />
+    <Content Include="App_Readme\Object.NET.Utilities\README.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- NuGet packaging starts -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <NuGetBuildPackage>true</NuGetBuildPackage>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <NuGetPackageSourcePath Include="$(SolutionDir).build\specs\Bridge.Compiler.nuspec">
+      <Path>$(SolutionDir).build\specs\Bridge.Compiler.nuspec</Path>
+    </NuGetPackageSourcePath>
+  </ItemGroup>
+  <Import Project="$(SolutionDir)\.build\NuGet.Build.Package.targets" />
+  <Target Name="CleanProjectNuGetOutput" BeforeTargets="Clean">
+    <ItemGroup>
+      <FilesToDelete Include="$(ProjectDir)$(OutDir)Bridge.*.nupkg" />
+    </ItemGroup>
+    <Message Text="Cleaning NuGet packages in $(ProjectDir)$(OutDir)" Importance="high" />
+    <Delete Files="@(FilesToDelete)" ContinueOnError="true" />
+  </Target>
+  <!-- NuGet packaging finishes -->
+</Project>

@@ -1,0 +1,6 @@
+{
+  "output": "Bridge\\output",
+  "cleanOutputFolderBeforeBuild": true,
+  "outputFormatting": "Formatted",
+  "outputBy": "Namespace"
+}

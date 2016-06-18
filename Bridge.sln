@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bridge", "Bridge", "{32B4E540-81E6-4E3F-8383-5813786DC899}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compiler", "Compiler", "{47D6D365-36CE-43C2-91D0-5A071928C62A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge.Builder", "Compiler\Builder\Bridge.Builder.csproj", "{243BB709-3912-4C65-82D4-787A5E2201D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge", "Bridge\Bridge.csproj", "{DE78B8B7-C0F5-415B-A70B-02194433F450}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge.Contract", "Compiler\Contract\Bridge.Contract.csproj", "{52AE9E3E-6929-4720-AB7A-F9F22B9A8972}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DE78B8B7-C0F5-415B-A70B-02194433F450} = {DE78B8B7-C0F5-415B-A70B-02194433F450}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge.Translator", "Compiler\Translator\Bridge.Translator.csproj", "{44124331-C60A-4071-B387-4B8E71324B10}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{42D82A7C-EC6C-4C9F-A169-3F22275ED2BB}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{00CA952C-4292-47FC-8D03-B525B294B846}"
+	ProjectSection(SolutionItems) = preProject
+		.common\CommonAssemblyInfo.cs = .common\CommonAssemblyInfo.cs
+		.build\NuGet.Build.Package.targets = .build\NuGet.Build.Package.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "specs", "specs", "{E12E9F2A-984B-4340-A62E-E356C716358E}"
+	ProjectSection(SolutionItems) = preProject
+		.build\specs\Bridge.Compiler.nuspec = .build\specs\Bridge.Compiler.nuspec
+		.build\specs\Bridge.Contract.nuspec = .build\specs\Bridge.Contract.nuspec
+		.build\specs\Bridge.Dev.nuspec = .build\specs\Bridge.Dev.nuspec
+		.build\specs\Bridge.Html5.Dev.nuspec = .build\specs\Bridge.Html5.Dev.nuspec
+		.build\specs\Bridge.nuspec = .build\specs\Bridge.nuspec
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge.Lua", "Compiler\Lua\Bridge.Lua.csproj", "{03F9C8C7-5BE7-40D9-AFA4-5CBE672187FC}"
+EndProject
+Project("{5697748A-77EF-44CA-8824-4F5637E5945B}") = "Bridge.lua", "Bridge\Bridge.lua.luaproj", "{E439935D-B2A2-46AE-856D-2AA408428F33}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{243BB709-3912-4C65-82D4-787A5E2201D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{243BB709-3912-4C65-82D4-787A5E2201D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{243BB709-3912-4C65-82D4-787A5E2201D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{243BB709-3912-4C65-82D4-787A5E2201D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE78B8B7-C0F5-415B-A70B-02194433F450}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE78B8B7-C0F5-415B-A70B-02194433F450}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE78B8B7-C0F5-415B-A70B-02194433F450}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE78B8B7-C0F5-415B-A70B-02194433F450}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52AE9E3E-6929-4720-AB7A-F9F22B9A8972}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52AE9E3E-6929-4720-AB7A-F9F22B9A8972}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52AE9E3E-6929-4720-AB7A-F9F22B9A8972}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52AE9E3E-6929-4720-AB7A-F9F22B9A8972}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44124331-C60A-4071-B387-4B8E71324B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44124331-C60A-4071-B387-4B8E71324B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44124331-C60A-4071-B387-4B8E71324B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44124331-C60A-4071-B387-4B8E71324B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03F9C8C7-5BE7-40D9-AFA4-5CBE672187FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03F9C8C7-5BE7-40D9-AFA4-5CBE672187FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03F9C8C7-5BE7-40D9-AFA4-5CBE672187FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03F9C8C7-5BE7-40D9-AFA4-5CBE672187FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E439935D-B2A2-46AE-856D-2AA408428F33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E439935D-B2A2-46AE-856D-2AA408428F33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E439935D-B2A2-46AE-856D-2AA408428F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E439935D-B2A2-46AE-856D-2AA408428F33}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{243BB709-3912-4C65-82D4-787A5E2201D7} = {47D6D365-36CE-43C2-91D0-5A071928C62A}
+		{DE78B8B7-C0F5-415B-A70B-02194433F450} = {32B4E540-81E6-4E3F-8383-5813786DC899}
+		{52AE9E3E-6929-4720-AB7A-F9F22B9A8972} = {47D6D365-36CE-43C2-91D0-5A071928C62A}
+		{44124331-C60A-4071-B387-4B8E71324B10} = {47D6D365-36CE-43C2-91D0-5A071928C62A}
+		{E12E9F2A-984B-4340-A62E-E356C716358E} = {00CA952C-4292-47FC-8D03-B525B294B846}
+		{03F9C8C7-5BE7-40D9-AFA4-5CBE672187FC} = {47D6D365-36CE-43C2-91D0-5A071928C62A}
+		{E439935D-B2A2-46AE-856D-2AA408428F33} = {32B4E540-81E6-4E3F-8383-5813786DC899}
+	EndGlobalSection
+EndGlobal
