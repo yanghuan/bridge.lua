@@ -233,6 +233,7 @@ namespace Bridge.Lua {
                     foreach(TypeInfo type in group) {
                         sb_.Append(type.Content);
                     }
+                    sb_.AppendLine();
                     sb_.Append("end)");
                 }
             }
