@@ -1,6 +1,5 @@
 # Bridge.lua
-Bridge.lua is a C#-to-Lua Compiler,which generates equivalent and consistent lua code, it will do some optimizations, such as local optimization, constant conversion, etc.  
-Based on modified from [bridge.net](https://github.com/bridgedotnet/Bridge)
+Bridge.lua is a C#-to-Lua Compiler,which generates equivalent and consistent lua code, it will do some optimizations, such as local optimization, constant conversion, etc. Based on modified from [bridge.net](https://github.com/bridgedotnet/Bridge)
 
 
 ## Sample
