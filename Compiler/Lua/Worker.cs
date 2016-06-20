@@ -15,6 +15,9 @@ using Bridge.Translator;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace Bridge.Lua {
+    public sealed class BridgeLuaException : System.Exception {
+        public BridgeLuaException(string message) : base(message) { } 
+    }
 
     public sealed class Worker {
         const string kTempDirName = "__temp__";
@@ -30,6 +33,9 @@ namespace Bridge.Lua {
         public Worker(string folder, string output, string bridgeDllPath, string lib) {
             folder_ = folder;
             output_ = output;
+            if(string.IsNullOrWhiteSpace(bridgeDllPath)) {
+                bridgeDllPath = "~/bridge.dll";
+            }
             bridgeDllPath_ = Utility.GetCurrentDirectory(bridgeDllPath);
             if(!string.IsNullOrEmpty(lib)) {
                 List<string> list = new List<string>();
@@ -64,8 +70,10 @@ namespace Bridge.Lua {
 
         private string Compiler() {
             string[] files = Directory.GetFiles(folder_, "*.cs", SearchOption.AllDirectories);
-            CSharpCodeProvider provider = new CSharpCodeProvider();
-
+            if(files.Length == 0) {
+                throw new BridgeLuaException(string.Format("{0} is empty", folder_));
+            }
+        
             CompilerParameters cp = new CompilerParameters();
             cp.CoreAssemblyFileName = bridgeDllPath_;
             cp.GenerateExecutable = false;
@@ -79,6 +87,7 @@ namespace Bridge.Lua {
                 }
             }
 
+            CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerResults cr = provider.CompileAssemblyFromFile(cp, files);
             if(cr.Errors.Count > 0) {
                 StringBuilder sb = new StringBuilder();

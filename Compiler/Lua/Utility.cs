@@ -6,6 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Bridge.Lua {
+    public sealed class CmdArgumentException : Exception {
+        public CmdArgumentException(string message) : base(message) {
+        }
+    }
+
     public static class Utility {
         public static Dictionary<string, string[]> GetCommondLines(string[] args) {
             Dictionary<string, string[]> cmds = new Dictionary<string, string[]>();
@@ -42,10 +47,13 @@ namespace Bridge.Lua {
             return t;
         }
 
-        public static string GetArgument(this Dictionary<string, string[]> args, string name) {
+        public static string GetArgument(this Dictionary<string, string[]> args, string name, bool isOption = false) {
             string[] values = args.GetOrDefault(name);
-            if(values == null) {
-                throw new ArgumentException(name +  " is not found");
+            if(values == null || values.Length == 0) {
+                if(isOption) {
+                    return null;
+                }
+                throw new CmdArgumentException(name +  " is not found");
             }
             return values[0];
         }
