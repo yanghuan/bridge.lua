@@ -71,8 +71,8 @@ namespace Ice.Utils {
         }
 
         public bool Erase(int id) {
-            Event e = ids_.GetOrDefault(id);
-            if(e != null) {
+            Event e;
+            if(ids_.TryGetValue(id, out e)) {
                 ids_.Remove(id);
                 events_.Remove(e.LinkNode);
                 return true;
@@ -86,16 +86,6 @@ namespace Ice.Utils {
 
         public Int64 RunLoop(Int64 now) {
             return RunInternal(now, false);
-        }
-
-        public bool Empty {
-            get {
-                return ids_.Count == 0;
-            }
-        }
-
-        public bool Contains(int id) {
-            return ids_.ContainsKey(id);
         }
 
         private Int64 RunInternal(Int64 now, bool onceOnly) {
@@ -129,18 +119,16 @@ namespace Ice.Utils {
 You will get the equivalent, the possibility of a good lua code.
 ```lua
 local System = System
-local IceUtils
 local IceUtilsTimeoutQueue
 
 System.usingDeclare(function()
-    IceUtils = Ice.Utils
     IceUtilsTimeoutQueue = Ice.Utils.TimeoutQueue
 end)
 
 System.namespace("Ice.Utils", function(namespace)
     namespace.class("TimeoutQueue", function ()
-        local getNextId, getNextExpiration, getEmpty, insert, getUpperBound, add, addRepeating, addRepeating_1
-        local erase, runOnce, runLoop, contains, runInternal
+        local getNextId, getNextExpiration, insert, getUpperBound, add, addRepeating, addRepeating_1, erase
+        local runOnce, runLoop, runInternal
         local __init__, __ctor1__
         __init__ = function (this) 
             this.ids_ = System.Dictionary(System.Int, IceUtilsTimeoutQueue.Event)()
@@ -157,9 +145,6 @@ System.namespace("Ice.Utils", function(namespace)
         end
         getNextExpiration = function (this) 
             return System.ternary(#this.events_ > 0, this.events_:getFirst().value.expiration, 9007199254740991)
-        end
-        getEmpty = function (this) 
-            return this.ids_:getCount() == 0
         end
         insert = function (this, e) 
             this.ids_:add(e.id, e)
@@ -193,8 +178,10 @@ System.namespace("Ice.Utils", function(namespace)
             return id
         end
         erase = function (this, id) 
-            local e = IceUtils.CollectionUtils.getOrDefault_1(this.ids_, id, System.Int, IceUtilsTimeoutQueue.Event)
-            if e ~= nil then
+            local __t__
+            local e
+            __t__, e = this.ids_:tryGetValue(id, e)
+            if __t__ then
                 this.ids_:remove(id)
                 this.events_:remove(e.linkNode)
                 return true
@@ -206,9 +193,6 @@ System.namespace("Ice.Utils", function(namespace)
         end
         runLoop = function (this, now) 
             return runInternal(this, now, false)
-        end
-        contains = function (this, id) 
-            return this.ids_:containsKey(id)
         end
         runInternal = function (this, now, onceOnly) 
             local nextExp
@@ -242,14 +226,12 @@ System.namespace("Ice.Utils", function(namespace)
             nextId_ = 1,
             __ctor__ = __ctor1__,
             getNextExpiration = getNextExpiration,
-            getEmpty = getEmpty,
             add = add,
             addRepeating = addRepeating,
             addRepeating_1 = addRepeating_1,
             erase = erase,
             runOnce = runOnce,
-            runLoop = runLoop,
-            contains = contains
+            runLoop = runLoop
         }
     end)
     namespace.class("TimeoutQueue.Event", function ()
@@ -276,10 +258,10 @@ end)
 - How To Use ? [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
 - [FAQ](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ)
 
-### [CoreSystem.lua](https://github.com/sy-yanghuan/bridge.lua/tree/master/Compiler/Lua/CoreSystem.Lua/CoreSystem)
-CoreSystem.lua library that implements most of the [.net framework core classes](http://referencesource.microsoft.com/), including support for basic type, delegate, generic collection classes & linq. The Converted lua code, need to reference it
+### CoreSystem.lua
+[CoreSystem.lua library](https://github.com/sy-yanghuan/bridge.lua/tree/master/Compiler/Lua/CoreSystem.Lua/CoreSystem) that implements most of the [.net framework core classes](http://referencesource.microsoft.com/), including support for basic type, delegate, generic collection classes & linq. The Converted lua code, need to reference it
 
 
-###*License*
+##*License*
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
 
