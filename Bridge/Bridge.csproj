@@ -652,9 +652,6 @@
     <EmbeddedResource Include="Resources\bridge.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\bridge.d.ts" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Bridge.jsb" />
     <None Include="Resources\build.bat" />
     <None Include="Resources\build.sh" />
@@ -680,9 +677,7 @@
       <Path>$(SolutionDir).build\specs\Bridge.Dev.nuspec</Path>
     </NuGetPackageSourcePath>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources.Lua\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.build\NuGet.Build.Package.targets" />
   <Target Name="CleanProjectNuGetOutput" BeforeTargets="Clean">
     <ItemGroup>
