@@ -1,5 +1,6 @@
 # Bridge.lua
-Bridge.lua is a C#-to-Lua Compiler, Based on modified from [bridge.net](https://github.com/bridgedotnet/Bridge)
+Bridge.lua is a C#-to-Lua Compiler,which generates equivalent and consistent lua code, it will do some optimizations, such as local optimization, constant conversion, etc.  
+Based on modified from [bridge.net](https://github.com/bridgedotnet/Bridge)
 
 
 ## Sample
@@ -125,9 +126,7 @@ namespace Ice.Utils {
 }
 
 ```
-
 You will get the equivalent, the possibility of a good lua code.
-
 ```lua
 local System = System
 local IceUtils
@@ -271,6 +270,15 @@ System.namespace("Ice.Utils", function(namespace)
     end)
 end)
 ```
+
+## Documentation
+
+- How To Use ? [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
+- [FAQ](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ)
+
+### [CoreSystem.lua](https://github.com/sy-yanghuan/bridge.lua/tree/master/Compiler/Lua/CoreSystem.Lua/CoreSystem)
+CoreSystem.lua library that implements most of the [.net framework core classes](http://referencesource.microsoft.com/), including support for basic type, delegate, generic collection classes & linq. The Converted lua code, need to reference it
+
 
 ###*License*
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
