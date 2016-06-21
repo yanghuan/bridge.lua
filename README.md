@@ -280,9 +280,9 @@ Compiled successfully, and then will have a manifest file to the output director
 - Download [CoreSysrem.lua.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/CoreSystem.lua.zip)
 
 
-##*License*
+##License
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
 
-##Thanks
+##*Thanks*
 [Bridge.net](http://bridge.net )
 
