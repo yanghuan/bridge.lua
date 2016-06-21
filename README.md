@@ -1,5 +1,6 @@
 # Bridge.lua
-Bridge.lua is a C#-to-Lua Compiler,which generates equivalent and consistent lua code, it will do some optimizations, such as local optimization, constant conversion, etc. Based on modified from [bridge.net](https://github.com/bridgedotnet/Bridge)
+Bridge.lua is a C#-to-Lua Compiler,which generates equivalent and consistent lua code, it will do some optimizations, such as local optimization, constant conversion, etc.  
+Based on modified from [bridge.net](https://github.com/bridgedotnet/Bridge)
 
 
 ## Sample
@@ -252,11 +253,27 @@ System.namespace("Ice.Utils", function(namespace)
 end)
 ```
 
+## How to Use
+###Command Line Parameters
+```cmd
+D:\bridge>Bridge.Lua.exe -h
+Usage: Bridge.Lua [-f srcfolder] [-p outfolder] [-l thridlibs]
+Options and arguments
+-f              : intput directory, all *.cs files whill be compiled
+-p              : out directory, will put the out lua files
+-l [option]     : third-party libraries referenced, use ';' to separate
+-b [option]     : the path of bridge.all, defalut will use bridge.all under the same directory of Bridge.Lua.exe
+
+
+Compiled successfully, and then will have a manifest file to the output directory named manifest.lua, use require("manifest.lua")(you_put_dir) to load all
+```
+###Download
+[bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/brige.lua.1.0.1.zip)
+
 ## Documentation
 
-- How To Use ? [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
+- Documentation Home [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
 - [FAQ](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ)
-- Download Release [brige.lua.1.0.1](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)
 
 ## CoreSystem.lua
 [CoreSystem.lua library](https://github.com/sy-yanghuan/bridge.lua/tree/master/Compiler/Lua/CoreSystem.Lua/CoreSystem) that implements most of the [.net framework core classes](http://referencesource.microsoft.com/), including support for basic type, delegate, generic collection classes & linq. The Converted lua code, need to reference it
