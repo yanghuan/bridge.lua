@@ -591,7 +591,7 @@ namespace Bridge.Translator.Lua
                     
                     new ExpressionListBlock(this.Emitter, argsExpressions, paramsArg, invocationExpression).Emit();
                     if(!isIgnore && argsInfo.HasTypeArguments) {
-                        if(argsExpressions.Length > 0 || !method.IsStatic) {
+                        if(argsExpressions.Length > 0 || (!method.IsStatic && method.DeclaringType == TransformCtx.CurClass)) {
                             this.WriteComma();
                         }
                         new TypeExpressionListBlock(this.Emitter, argsInfo.TypeArguments).Emit();

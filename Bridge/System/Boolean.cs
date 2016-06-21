@@ -47,8 +47,8 @@ namespace System {
         }
 
         [Template("Bridge.Boolean.Parse({s})")]
-        public static int Parse(string s) {
-            return 0;
+        public static bool Parse(string s) {
+            return false;
         }
 
         [Template("Bridge.Boolean.TryParse({s}, {result})")]
