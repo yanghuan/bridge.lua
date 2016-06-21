@@ -256,7 +256,7 @@ end)
 
 - How To Use ? [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
 - [FAQ](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ)
-- Download Release [brige.lua.1.0.1](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/brige.lua.1.0.1.zip)
+- Download Release [brige.lua.1.0.1](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)
 
 ## CoreSystem.lua
 [CoreSystem.lua library](https://github.com/sy-yanghuan/bridge.lua/tree/master/Compiler/Lua/CoreSystem.Lua/CoreSystem) that implements most of the [.net framework core classes](http://referencesource.microsoft.com/), including support for basic type, delegate, generic collection classes & linq. The Converted lua code, need to reference it
