@@ -281,5 +281,5 @@ Compiled successfully, and then will have a manifest file to the output director
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
 
 ##*Thanks*
-[Bridge.net](http://bridge.net )
+[http://bridge.net](http://bridge.net )
 
