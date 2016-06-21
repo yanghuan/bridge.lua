@@ -268,7 +268,7 @@ Options and arguments
 Compiled successfully, and then will have a manifest file to the output directory named manifest.lua, use require("manifest.lua")(you_put_dir) to load all
 ```
 ###Download
-[bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/brige.lua.1.0.1.zip)
+[bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)
 
 ## Documentation
 
