@@ -285,7 +285,7 @@ namespace Bridge.Translator.Lua
                 UsingNamespaces[typeInfo] = usings;
             }
 
-            this.RemovePenultimateEmptyLines(true);
+            //this.RemovePenultimateEmptyLines(true);
             this.Emitter.Translator.Plugins.AfterTypesEmit(this.Emitter, this.Emitter.Types);
         }
 
