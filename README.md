@@ -275,7 +275,7 @@ Compiled successfully, and then will have a manifest file to the output director
 
 ## Documentation
 - Documentation Home [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
-- [FAQ] [English](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ_Chinese)
+- FAQ [English](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ_Chinese)
 
 ##License
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
