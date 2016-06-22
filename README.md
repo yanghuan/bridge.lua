@@ -269,20 +269,17 @@ Compiled successfully, and then will have a manifest file to the output director
 ###Download
 [bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)
 
-## Documentation
-
-- Documentation Home [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
-- [FAQ](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ)
-
 ## CoreSystem.lua
 [CoreSystem.lua library](https://github.com/sy-yanghuan/bridge.lua/tree/master/Compiler/Lua/CoreSystem.Lua/CoreSystem) that implements most of the [.net framework core classes](http://referencesource.microsoft.com/), including support for basic type, delegate, generic collection classes & linq. The Converted lua code, need to reference it  
-
 - Download [CoreSysrem.lua.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/CoreSystem.lua.zip)
 
+## Documentation
+- Documentation Home [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
+- [FAQ](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ)
 
 ##License
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
 
 ##*Thanks*
-[Bridge.net](http://bridge.net )
+[http://bridge.net](http://bridge.net )
 
