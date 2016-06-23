@@ -1,6 +1,7 @@
 local System = System
 local throw = System.throw
 local ArgumentException = System.ArgumentException
+local FormatException = System.FormatException
 
 local String = {}
 
@@ -159,8 +160,12 @@ end
 function String.format(format, ...)
     local arg = { ... }
     return string.gsub(format, "{(%d)}", function(n)
-        return arg[n + 1] or ""
-    end )
+        local v = arg[n + 1]
+        if v == nil then
+            throw(FormatException())
+        end
+        return tostring(v) 
+    end)
 end
 
 function String.startsWith(str, prefix)

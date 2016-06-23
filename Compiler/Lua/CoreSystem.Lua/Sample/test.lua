@@ -171,6 +171,7 @@ print("-----------------", "Console")
 
 local v = System.Console.readLine()
 System.Console.writeLine(v)
+System.Console.writeLine("{0}---> {1}", "yes?", false)
 
 print("------------------------------", "loadBattleLua")
 package.path = package.path .. ";D:/testlua/sample/battle/out/?.lua"
