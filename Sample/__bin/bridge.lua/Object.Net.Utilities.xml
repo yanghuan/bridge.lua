@@ -1,0 +1,1036 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Object.Net.Utilities</name>
+    </assembly>
+    <members>
+        <member name="T:Object.Net.Utilities.DateTimeUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.ToISOString(System.DateTime)">
+            <summary>
+            Returns an ISO 8601 formatted DateTime string
+            </summary>
+            <param name="instance">The DateTime object to format</param>
+            <returns>The ISO 8601 formatted string</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.ToISODateString(System.DateTime)">
+            <summary>
+            Returns the Date portion only of an ISO 8601 formatted DateTime string
+            </summary>
+            <param name="instance">The DateTime object to format</param>
+            <returns>The ISO 8601 formatted string</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.ToISOTimeString(System.DateTime)">
+            <summary>
+            Returns the Time portion only of an ISO 8601 formatted DateTime string
+            </summary>
+            <param name="instance">The DateTime object to format</param>
+            <returns>The ISO 8601 formatted string</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.ConvertPHPToNet(System.String)">
+            <summary>
+            Accepts a Unix/PHP date string format and returns a valid .NET date format
+            </summary>
+            <param name="format">The PHP format string</param>
+            <returns>The format string converted to .NET DateTime format specifiers</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.ConvertNetToPHP(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="format"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.ConvertNetToPHP(System.String,System.Globalization.CultureInfo)">
+            <summary>
+            Accepts a Unix/PHP date string format and returns a valid .NET date format
+            </summary>
+            <param name="format">The .NET format string</param>
+            <param name="culture"></param>
+            <returns>The format string converted to PHP format specifiers</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.DateNetToJs(System.DateTime)">
+            <summary>
+            Convert .NET DateTime to JavaScript object
+            </summary>
+            <param name="date">.NET DateTime</param>
+            <returns>JavaScript Date as string</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.DateTimeUtils.ClientDateTimeFormatInfo">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Object.Net.Utilities.EnumerableUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.EnumerableUtils.Each``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0})">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="instance"></param>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.EnumerableUtils.Each``1(System.Int32,System.Action{System.Int32})">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="instance"></param>
+            <param name="action"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Object.Net.Utilities.HtmlUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.HtmlUtils.StripWhitespaceChars(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="html"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.HtmlUtils.StripExtraSpaces(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="html"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Object.Net.Utilities.Inflatr.Base">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Object.Net.Utilities.Inflatr.Base.index">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Object.Net.Utilities.Inflatr.Base.input">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Object.Net.Utilities.Inflatr.Base.c">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Object.Net.Utilities.Inflatr.Base.r">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.#ctor(Object.Net.Utilities.Inflatr.Options)">
+            <summary>
+            
+            </summary>
+            <param name="options"></param>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Inflate(System.String)">
+            <summary>
+            Inflate the string
+            </summary>
+            <param name="input">compressed string</param>
+            <returns>Inflated string</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Escape(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="pattern"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Indent">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.LastIndexOf(System.Text.RegularExpressions.Regex)">
+            <summary>
+            
+            </summary>
+            <param name="pattern"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.LastIndexOf(System.Text.RegularExpressions.Regex,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="pattern"></param>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.After(System.Text.RegularExpressions.Regex,System.Text.RegularExpressions.Regex)">
+            <summary>
+            
+            </summary>
+            <param name="pattern"></param>
+            <param name="start"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Append(System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="strings"></param>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Peek(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="pat"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Scan(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="pat"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.NextChar">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.WhiteSpace">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.NewLine">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.ScanUntil(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="pat"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Between(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="start"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Base.Between(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="start"></param>
+            <param name="finish"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Object.Net.Utilities.Inflatr.Base.Options">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Object.Net.Utilities.Inflatr.Javascript">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Object.Net.Utilities.Inflatr.Javascript.KEYWORDS">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Object.Net.Utilities.Inflatr.Javascript.OPERATORS">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Inflate(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Comment">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.String">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Regex">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Operator">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Keyword">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.OpenBlock">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.CloseBlock">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Comma">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Parens">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Eos">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Javascript.Eol">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Object.Net.Utilities.Inflatr.Options">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.Inflatr.Options.Clone">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Object.Net.Utilities.Inflatr.Options.Wrap">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Object.Net.Utilities.Inflatr.Options.Indent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Object.Net.Utilities.Inflatr.Options.Level">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Object.Net.Utilities.FileUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.FileUtils.ReadFile(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.FileUtils.WriteFile(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="path"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Object.Net.Utilities.FileUtils.WriteToStart(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="path"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:Object.Net.Utilities.FileUtils.WriteToEnd(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="path"></param>
+            <param name="value"></param>
+        </member>
+        <member name="T:Object.Net.Utilities.JsonUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.JsonUtils.Enquote(System.String)">
+            <summary>
+            Produce a string in double quotes with backslash sequences in all the right places.
+            </summary>
+            <param name="s">A String</param>
+            <returns>A String correctly formatted for insertion in a JSON message.</returns>
+        </member>
+        <member name="T:Object.Net.Utilities.ObjectUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.ObjectUtils.IfNull``1(``0,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <param name="valueIfNull"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ObjectUtils.If``1(``0,System.Func{System.Boolean},``0,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <param name="test"></param>
+            <param name="valueIfTrue"></param>
+            <param name="valueIfFalse"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ObjectUtils.IfNot``1(``0,System.Func{System.Boolean},``0,``0)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <param name="test"></param>
+            <param name="valueIfTrue"></param>
+            <param name="valueIfFalse"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ObjectUtils.IsNull(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="instance"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ObjectUtils.Apply``1(System.Object,System.Object)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="to"></param>
+            <param name="from"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ObjectUtils.Apply(System.Object,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="to"></param>
+            <param name="from"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ObjectUtils.Apply(System.Object,System.Object,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="to"></param>
+            <param name="from"></param>
+            <param name="ignoreDefaultValues"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Object.Net.Utilities.ReflectionUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.GetDefaultValue(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.GetDefaultValue(System.Reflection.PropertyInfo)">
+            <summary>
+            
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.IsTypeOf(System.Object,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.IsTypeOf(System.Object,System.Type,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="type"></param>
+            <param name="shallow"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.IsTypeOf(System.Object,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="typeFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.IsTypeOf(System.Object,System.String,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="typeFullName"></param>
+            <param name="shallow"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.IsInTypeOf(System.Web.UI.Control,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="control"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.IsInTypeOf(System.Web.UI.Control,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="control"></param>
+            <param name="typeFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.GetTypeOfParent(System.Web.UI.Control,System.Type)">
+            <summary>
+            
+            </summary>
+            <param name="control"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.ReflectionUtils.GetTypeOfParent(System.Web.UI.Control,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="control"></param>
+            <param name="typeFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Object.Net.Utilities.StringUtils">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.If(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="test"></param>
+            <param name="valueIfTrue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.IfNot(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="test"></param>
+            <param name="valueIfTrue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Replace(System.String,System.String[],System.String)">
+            <summary>
+            Replaces all occurrences of System.String in the oldValues String Array, with
+            another specified System.String of newValue.
+            </summary>
+            <param name="instance">this string</param>
+            <param name="oldValues">An Array of String objects to be replaced.</param>
+            <param name="newValue">The new value to replace old values.</param>
+            <returns>
+            The modified original string.
+            </returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Replace(System.String,System.String[],System.Func{System.String,System.String})">
+            <summary>
+            Replaces all occurrences of System.String in the oldValue String Array, with the
+            return String value of the specified Function convert.
+            </summary>
+            <param name="instance">this string</param>
+            <param name="oldValues">An Array of String objects to be replaced.</param>
+            <param name="convert">The Function to convert the found old value.</param>
+            <returns>
+            The modified original string.
+            </returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.FormatWith(System.String,System.Object[])">
+            <summary>
+            Format the string with the args.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.FormatWith(System.String,System.IFormatProvider,System.Object[])">
+            <summary>
+            
+            </summary>
+            <param name="format"></param>
+            <param name="provider"></param>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.FormatWith(System.String,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="format"></param>
+            <param name="source"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.FormatWith(System.String,System.IFormatProvider,System.Object)">
+            http://james.newtonking.com/archive/2008/03/29/formatwith-2-0-string-formatting-with-named-variables.aspx
+            <summary>
+            
+            </summary>
+            <param name="format"></param>
+            <param name="provider"></param>
+            <param name="source"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Eval(System.Object,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="source"></param>
+            <param name="expression"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ConcatWith(System.String,System.String)">
+            <summary>
+            Add the text string to the source string.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ConcatWith(System.String,System.Object[])">
+            <summary>
+            Add the args strings the source text string.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Contains(System.String,System.String[])">
+            <summary>
+            Determines if the string contains any of the args. If yes, returns true, otherwise returns false.
+            </summary>
+            <param name="instance">The instance of the string</param>
+            <param name="args">The string to check if contained within the string instance.</param>
+            <returns>boolean</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.IsEmpty(System.String)">
+            <summary>
+            Determine is the string is null or empty.
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.IsNotEmpty(System.String)">
+            <summary>
+            Determine is the string is NOT null or empty.
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Between(System.String,System.String,System.String)">
+            <summary>
+            Return a string from between the start and end positions. 
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Subarray(System.String[],System.Int32)">
+            <summary>
+            Return a sub array of this string array.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Subarray(System.String[],System.Int32,System.Int32)">
+            <summary>
+            Return a sub array of this string array.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Join(System.Collections.IEnumerable)">
+            <summary>
+            
+            </summary>
+            <param name="items"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Join(System.Collections.IEnumerable,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="items"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Join(System.Collections.IEnumerable,System.String,System.String)">
+            <summary>
+            Join the items together
+            </summary>
+            <param name="items">The items to join.</param>
+            <param name="separator">The separator.</param>
+            <param name="template">The template to format the items with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Chop(System.String)">
+            <summary>
+            Chops one character from each end of string.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Chop(System.String,System.Int32)">
+            <summary>
+            Chops the specified number of characters from each end of string. 
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Chop(System.String,System.String)">
+            <summary>
+            Chops the specified string from each end of the string. If the character does not exist on both ends 
+            of the string, the characters are not chopped.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToMD5Hash(System.String)">
+            <summary>
+            MD5Hash's a string. 
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToTitleCase(System.String)">
+            <summary>
+            Converts the first character of each word to Uppercase. Example: "the lazy dog" returns "The Lazy Dog"
+            </summary>
+            <param name="text">The text to convert to sentence case</param>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToTitleCase(System.String,System.Globalization.CultureInfo)">
+            <summary>
+            Converts the first character of each word to Uppercase. Example: "the lazy dog" returns "The Lazy Dog"
+            </summary>
+            <param name="ci"></param>
+            <param name="text">The text to convert to sentence case</param>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToTitleCase(System.String[])">
+            <summary>
+            Converts the first character of each word to Uppercase. Example: "the lazy dog" returns "The Lazy Dog"
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToTitleCase(System.String[],System.Globalization.CultureInfo)">
+            <summary>
+            Converts the first character of each word to Uppercase. Example: "the lazy dog" returns "The Lazy Dog"
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.IsLowerCamelCase(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToLowerCamelCase(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToLowerCamelCase(System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="values"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToCamelCase(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToCamelCase(System.String[],System.String)">
+            <summary>
+            
+            </summary>
+            <param name="values"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToCamelCase(System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="values"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.PadLeft(System.String,System.Char,System.Int32)">
+            <summary>
+            Pad the left side of a string with characters to make the total length.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.PadRight(System.String)">
+            <summary>
+            Pad the right side of a string with a '0' if a single character.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.PadRight(System.String,System.Char,System.Int32)">
+            <summary>
+            Pad the right side of a string with characters to make the total length.
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.LeftOf(System.String,System.Char)">
+            <summary>
+            Left of the first occurance of c
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.LeftOf(System.String,System.String)">
+            <summary>
+            Left of the first occurance of text
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.LeftOf(System.String,System.Char,System.Int32)">
+            <summary>
+            Left of the n'th occurance of c
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.RightOf(System.String,System.Char)">
+            <summary>
+            Right of the first occurance of c
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.RightOf(System.String,System.String)">
+            <summary>
+            Right of the first occurance of text
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.RightOf(System.String,System.Char,System.Int32)">
+            <summary>
+            Right of the n'th occurance of c
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.RightOf(System.String,System.String,System.Int32)">
+            <summary>
+            Right of the n'th occurance of c
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.LeftOfRightmostOf(System.String,System.Char)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.LeftOfRightmostOf(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.RightOfRightmostOf(System.String,System.Char)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="c"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.RightOfRightmostOf(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ReplaceLastInstanceOf(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="oldValue"></param>
+            <param name="newValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.ToCharacterSeparatedFileName(System.String,System.Char,System.String)">
+            <summary>
+            Accepts a string like "ArrowRotateClockwise" and returns "arrow_rotate_clockwise.png".
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Enquote(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.EnsureSemiColon(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Wrap(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="wrapByText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Wrap(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="wrapStart"></param>
+            <param name="wrapEnd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Test(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="pattern"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Test(System.String,System.String,System.Text.RegularExpressions.RegexOptions)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <param name="pattern"></param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Ellipsis(System.String,System.Int32)">
+            <summary>
+            Truncate a string and add an ellipsis ('...') to the end if it exceeds the specified length
+            </summary>
+            <param name="text">The string to truncate</param>
+            <param name="length">The maximum length to allow before truncating</param>
+            <returns>The converted text</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Ellipsis(System.String,System.Int32,System.Boolean)">
+            <summary>
+            Truncate a string and add an ellipsis ('...') to the end if it exceeds the specified length
+            </summary>
+            <param name="text">The string to truncate</param>
+            <param name="length">The maximum length to allow before truncating</param>
+            <param name="word">True to try to find a common work break</param>
+            <returns>The converted text</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Base64Decode(System.String)">
+            <summary>
+            Base64 string decoder
+            </summary>
+            <param name="text">The text string to decode</param>
+            <returns>The decoded string</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Base64Encode(System.String)">
+            <summary>
+            Base64 string encoder
+            </summary>
+            <param name="text">The text string to encode</param>
+            <returns>The encoded string</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.FormatRegexPattern(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="regex"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Randomize(System.String,System.Int32)">
+            <summary>
+            Generate a random string of character at a certain length
+            </summary>
+            <param name="chars">The Characters to use in the random string</param>
+            <param name="length">The length of the random string</param>
+            <returns>A string of random characters</returns>
+        </member>
+        <member name="M:Object.Net.Utilities.StringUtils.Randomize(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="chars"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Object.Net.Utilities.Verify">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Object.Net.Utilities.Verify.IsNotNull(System.Object,System.String)">
+            <summary>
+            Checks if parameter is not null. Throws ArgumentNullException with name of parameter if null
+            </summary>
+            <param name="parameter">The parameter value to check.</param>
+            <param name="parameterName">The name of the parameter.</param>
+        </member>
+        <member name="M:Object.Net.Utilities.Verify.IsString(System.Object,System.String)">
+            <summary>
+            Checks if the value is a type of String object. Throws ArgumentException if value is not a String type object.  
+            </summary>
+            <param name="value">The object to check.</param>
+            <param name="paramterName">The name of the parameter.</param>
+        </member>
+        <member name="M:Object.Net.Utilities.CompressionUtils.Send(System.Byte[],System.String,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="instance"></param>
+            <param name="responseType"></param>
+        </member>
+    </members>
+</doc>

@@ -307,7 +307,7 @@ namespace Bridge.Lua {
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("return function(dir)");
-            sb.AppendLine("dir = dir or \"\"");
+            sb.AppendLine("dir = dir and dir .. '.' or \"\"");
             sb.AppendLine("local require = require");
             sb.AppendLine("local load = function(module) return require(dir .. module) end");
             sb.AppendLine();
