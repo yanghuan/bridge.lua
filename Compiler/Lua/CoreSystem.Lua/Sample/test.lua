@@ -1,5 +1,4 @@
-package.path = package.path .. ";D:/Project/CapCode/ProjectCapCode/trunk/Code/Server/External/tools_project/Bridge/Bridge/Resources.Lua/?.lua"
-package.path = package.path .. ";D:/Person/Project/code/ProjectCapCode/ProjectCapCode/trunk/Code/Server/External/tools_project/Bridge/Bridge/Resources.Lua/?.lua"
+package.path = package.path .. ";D:/Project/Bridge.lua/Compiler/Lua/CoreSystem.Lua/?.lua"
 
 require("All");
 
@@ -168,8 +167,13 @@ print(System.is(2, System.String))
 print(System.as("yang", System.String))
 print(System.cast("huan", System.String))
 
+print("-----------------", "Console")
+
+local v = System.Console.readLine()
+System.Console.writeLine(v)
+
 print("------------------------------", "loadBattleLua")
-package.path = package.path .. ";D:/Person/testtolua/out/?.lua"
+package.path = package.path .. ";D:/testlua/sample/battle/out/?.lua"
 ProtoBuf = {}
 ProtoBuf.IExtensible = {}
 require "manifest" ()

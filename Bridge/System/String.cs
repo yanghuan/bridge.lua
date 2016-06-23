@@ -896,5 +896,8 @@ namespace System
 
         [Template("Bridge.String.remove({this}, {index}, {count})")]
         public extern string Remove(int index, int count);
+
+        [Template("tostring({this})")]
+        public extern override string ToString();
     }
 }

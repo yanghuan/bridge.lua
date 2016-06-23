@@ -71,6 +71,7 @@
     <None Include="CoreSystem.Lua\CoreSystem\Collections\List.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Collections\Queue.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Collections\Stack.lua" />
+    <None Include="CoreSystem.Lua\CoreSystem\Console.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Core.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\DateTime.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Delegate.lua" />

@@ -96,6 +96,7 @@
     <Compile Include="System\Collections\Generic\Queue.cs" />
     <Compile Include="System\Collections\Generic\Stack.cs" />
     <Compile Include="System\Collections\ObjectModel\ReadOnlyCollection.cs" />
+    <Compile Include="System\Console.cs" />
     <Compile Include="System\DateTimeKind.cs" />
     <Compile Include="System\Enum.cs" />
     <Compile Include="System\Environment.cs" />
@@ -677,7 +678,6 @@
       <Path>$(SolutionDir).build\specs\Bridge.Dev.nuspec</Path>
     </NuGetPackageSourcePath>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(SolutionDir)\.build\NuGet.Build.Package.targets" />
   <Target Name="CleanProjectNuGetOutput" BeforeTargets="Clean">
     <ItemGroup>
