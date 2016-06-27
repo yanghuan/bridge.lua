@@ -1,8 +1,15 @@
-﻿using System;
+﻿using Microsoft.CSharp;
+using Mono.Cecil;
+using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Bridge.Lua {
@@ -53,7 +60,7 @@ namespace Bridge.Lua {
                 if(isOption) {
                     return null;
                 }
-                throw new CmdArgumentException(name +  " is not found");
+                throw new CmdArgumentException(name + " is not found");
             }
             return values[0];
         }
@@ -77,5 +84,54 @@ namespace Bridge.Lua {
             File.Copy(lib, path, true);
             return path;
         }
+
+        /// <summary>
+        /// http://stackoverflow.com/questions/2210309/how-to-find-out-if-a-property-is-an-auto-implemented-property-with-reflection
+        /// </summary>
+        public static bool IsAutoProperty(this PropertyDefinition prop) {
+            return prop.DeclaringType.Fields.Any(f => f.IsPrivate && !f.IsStatic && f.Name.Contains("<" + prop.Name + ">"));
+        }
+
+        public static bool IsVolatile(this FieldDefinition fieldDefinition) {
+            RequiredModifierType modifierType = fieldDefinition.FieldType as RequiredModifierType;
+            if(modifierType != null && modifierType.ModifierType.FullName == "System.Runtime.CompilerServices.IsVolatile") {
+                return true;
+            }
+            return false;
+        }
+
+        private static Regex genericInstanceRegex_ = new Regex(@"`\d+", RegexOptions.Compiled | RegexOptions.Singleline);
+
+        public static string RemoveGenericInstanceSign(string name) {
+            return genericInstanceRegex_.Replace(name, "");
+        }
+
+
+        public static string Compile(this CodeCompileUnit unit) {
+            using(MemoryStream stream = new MemoryStream()) {
+                StreamWriter sourceWriter = new StreamWriter(stream);
+                CSharpCodeProvider provider = new CSharpCodeProvider();
+                provider.GenerateCodeFromCompileUnit(unit, sourceWriter, new CodeGeneratorOptions());
+                sourceWriter.Flush();
+                stream.Seek(0, SeekOrigin.Begin);
+
+                StringBuilder sb = new StringBuilder();
+                int lineNum = 0;
+                StreamReader reader = new StreamReader(stream);
+                while(true) {
+                    string line = reader.ReadLine();
+                    if(line != null) {
+                        line = line.Replace("sealed abstract", "static");
+                        sb.AppendLine(line);
+                    }
+                    else {
+                        break;
+                    }
+                    ++lineNum;
+                }
+                return sb.ToString();
+            }
+        }
+
     }
 }

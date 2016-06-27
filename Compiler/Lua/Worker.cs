@@ -13,6 +13,7 @@ using ICSharpCode.NRefactory.TypeSystem;
 using Bridge.Translator.Logging;
 using Bridge.Contract;
 using Bridge.Translator;
+using Mono.Cecil;
 
 namespace Bridge.Lua {
     public sealed class BridgeLuaException : System.Exception {
@@ -74,16 +75,16 @@ namespace Bridge.Lua {
         private string[] PretreatmentLibs() {
             List<string> libs = new List<string>();
             if(libs_ != null) {
-                List<Assembly> assemblyDefinitions = new List<Assembly>();
+                List<AssemblyDefinition> assemblyDefinitions = new List<AssemblyDefinition>();
                 foreach(string lib in libs_) {
-                    Assembly assembly = Assembly.ReflectionOnlyLoadFrom(lib);
-                    bool isFind = assembly.GetReferencedAssemblies().Any(i => i.Name == kBridge);
+                    AssemblyDefinition assemblyDefinition = AssemblyDefinition.ReadAssembly(lib);
+                    bool isFind = assemblyDefinition.MainModule.AssemblyReferences.Any(i => i.Name == kBridge);
                     if(isFind) {
                         string newPath = Utility.Move(tempDirectory_, lib);
                         libs.Add(newPath);
                     }
                     else {
-                        assemblyDefinitions.Add(assembly);
+                        assemblyDefinitions.Add(assemblyDefinition);
                     }
                 }
                 if(assemblyDefinitions.Count > 0) {
