@@ -71,5 +71,11 @@ namespace Bridge.Lua {
 
             return Path.Combine(Environment.CurrentDirectory, path);
         }
+
+        public static string Move(string directory, string lib) {
+            string path = Path.Combine(directory, Path.GetFileName(lib));
+            File.Copy(lib, path, true);
+            return path;
+        }
     }
 }

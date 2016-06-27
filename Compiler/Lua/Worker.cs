@@ -4,15 +4,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 using System.IO;
 using System.CodeDom.Compiler;
-
 using Microsoft.CSharp;
 using Newtonsoft.Json;
+using ICSharpCode.NRefactory.TypeSystem;
 using Bridge.Translator.Logging;
 using Bridge.Contract;
 using Bridge.Translator;
-using ICSharpCode.NRefactory.TypeSystem;
 
 namespace Bridge.Lua {
     public sealed class BridgeLuaException : System.Exception {
@@ -20,8 +20,10 @@ namespace Bridge.Lua {
     }
 
     public sealed class Worker {
-        const string kTempDirName = "__temp__";
-        const string kOutDllName = "out.dll";
+        private const string kBridge = "Bridge";
+        private const string kDefaultBridgePath = "~/" + kBridge + ".dll";
+        private const string kTempDirName = "__temp__";
+        private const string kOutDllName = "__out__.dll";
         private static readonly UTF8Encoding UTF8Encoding = new UTF8Encoding(false);
 
         private string folder_;
@@ -34,7 +36,7 @@ namespace Bridge.Lua {
             folder_ = folder;
             output_ = output;
             if(string.IsNullOrWhiteSpace(bridgeDllPath)) {
-                bridgeDllPath = "~/bridge.dll";
+                bridgeDllPath = kDefaultBridgePath;
             }
             bridgeDllPath_ = Utility.GetCurrentDirectory(bridgeDllPath);
             if(!string.IsNullOrEmpty(lib)) {
@@ -56,7 +58,8 @@ namespace Bridge.Lua {
                     Directory.CreateDirectory(tempDirectory_);
                 }
 
-                string dllPath = Compiler();
+                string[] libs = PretreatmentLibs();
+                string dllPath = Compiler(libs);
                 ToLua(dllPath);
             }
             finally {
@@ -68,7 +71,30 @@ namespace Bridge.Lua {
             }
         }
 
-        private string Compiler() {
+        private string[] PretreatmentLibs() {
+            List<string> libs = new List<string>();
+            if(libs_ != null) {
+                List<Assembly> assemblyDefinitions = new List<Assembly>();
+                foreach(string lib in libs_) {
+                    Assembly assembly = Assembly.ReflectionOnlyLoadFrom(lib);
+                    bool isFind = assembly.GetReferencedAssemblies().Any(i => i.Name == kBridge);
+                    if(isFind) {
+                        string newPath = Utility.Move(tempDirectory_, lib);
+                        libs.Add(newPath);
+                    }
+                    else {
+                        assemblyDefinitions.Add(assembly);
+                    }
+                }
+                if(assemblyDefinitions.Count > 0) {
+                    string newPath = Wrap.Build(assemblyDefinitions, tempDirectory_, bridgeDllPath_);
+                    libs.Add(newPath);
+                }
+            }
+            return libs.ToArray();
+        }
+
+        private string Compiler(string[] libs) {
             string[] files = Directory.GetFiles(folder_, "*.cs", SearchOption.AllDirectories);
             if(files.Length == 0) {
                 throw new BridgeLuaException(string.Format("{0} is empty", folder_));
@@ -81,8 +107,8 @@ namespace Bridge.Lua {
             cp.TreatWarningsAsErrors = true;
             cp.OutputAssembly = Path.Combine(tempDirectory_, kOutDllName);
             cp.ReferencedAssemblies.Add(bridgeDllPath_);
-            if(libs_ != null) {
-                foreach(string lib in libs_) {
+            if(libs != null) {
+                foreach(string lib in libs) {
                     cp.ReferencedAssemblies.Add(lib);
                 }
             }
@@ -136,18 +162,7 @@ namespace Bridge.Lua {
         }
 
         private void ToLua(string outDllPath) {
-            List<string> moveDlls = new List<string>();
-            if(libs_ != null) {
-                moveDlls.AddRange(libs_);
-            }
-            moveDlls.Add(bridgeDllPath_);
-
-            foreach(string lib in moveDlls) {
-                string path = Path.Combine(tempDirectory_, Path.GetFileName(lib));
-                File.Copy(lib, path, true);
-            }
-
-            string bridgeDllPath = Path.Combine(tempDirectory_, Path.GetFileName(bridgeDllPath_));
+            string bridgeDllPath = Utility.Move(tempDirectory_, bridgeDllPath_);
             var translator = new LuaTranslater(folder_, output_, outDllPath, bridgeDllPath);
             translator.Translate();
             Save(translator);
