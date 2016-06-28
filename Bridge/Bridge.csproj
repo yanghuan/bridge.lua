@@ -113,6 +113,7 @@
     <Compile Include="System\MidpointRounding.cs" />
     <Compile Include="System\StringComparison.cs" />
     <Compile Include="System\StringSplitOptions.cs" />
+    <Compile Include="System\SystemException.cs" />
     <Compile Include="System\Type.cs" />
     <Compile Include="System\Version.cs" />
     <Compile Include="This.cs" />

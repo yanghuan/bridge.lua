@@ -8,17 +8,6 @@ namespace System
     public class Exception : IBridgeClass
     {
         /// <summary>
-        /// Gets a collection of key/value pairs that provide additional user-defined information about the exception.
-        /// </summary>
-        public virtual IDictionary<object, object> Data
-        {
-            get
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
         /// Gets a message that describes the current exception.
         /// </summary>
         public virtual string Message

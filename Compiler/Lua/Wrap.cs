@@ -108,19 +108,21 @@ namespace Bridge.Lua {
                 return false;
             }
 
+            if(!methodInfo.IsPublic) {
+                return false;
+            }
+
             if(methodInfo.IsGetter || methodInfo.IsSetter) {
                 return false;
             }
             return true;
         }
 
-
         private static CodeTypeDeclaration GetCodeTypeDelegate(TypeDefinition typeDefinition) {
             if(typeDefinition.IsClass && typeDefinition.BaseType.FullName == "System.MulticastDelegate") {
                 CodeTypeDelegate codeTypeDelegate = new CodeTypeDelegate() { Name = GetTypeName(typeDefinition) };
-                codeTypeDelegate.TypeAttributes = GetTypeAttributes(typeDefinition);
                 if(typeDefinition.IsPublic || typeDefinition.IsNestedPublic) {
-                    codeTypeDelegate.TypeAttributes |= TypeAttributes.Public;
+                    codeTypeDelegate.TypeAttributes = TypeAttributes.Public;
                 }
                 FillCustomAttribute(codeTypeDelegate.CustomAttributes, typeDefinition.CustomAttributes);
                 FillGenericParameters(codeTypeDelegate.TypeParameters, typeDefinition.GenericParameters);
@@ -325,6 +327,10 @@ namespace Bridge.Lua {
             if(!methodDefinition.IsVirtual) {
                 memberAttributes |= MemberAttributes.Final;
             }
+            else if(!methodDefinition.IsNewSlot) {
+                memberAttributes |= MemberAttributes.Override;
+            }
+
             if(methodDefinition.IsStatic) {
                 memberAttributes |= MemberAttributes.Static;
             }
@@ -351,7 +357,7 @@ namespace Bridge.Lua {
 
         private static void FillGenericParameters(CodeTypeParameterCollection codes, IEnumerable<GenericParameter> defines) {
             foreach(var genericParameter in defines) {
-                CodeTypeParameter t = new CodeTypeParameter(genericParameter.FullName ?? genericParameter.Name);
+                CodeTypeParameter t = new CodeTypeParameter(genericParameter.FullName);
                 if(genericParameter.IsContravariant) {
                     t.HasConstructorConstraint = true;
                 }
@@ -363,8 +369,15 @@ namespace Bridge.Lua {
             }
         }
 
+        private static bool IsAttributeEnable(CustomAttribute attribute) {
+            if(attribute.AttributeType.Resolve().IsNotPublic) {
+                return false;
+            }
+            return true;
+        }
+
         private static void FillCustomAttribute(CodeAttributeDeclarationCollection codes, IEnumerable<CustomAttribute> defines) {
-            foreach(var customAttribute in defines) {
+            foreach(var customAttribute in defines.Where(IsAttributeEnable)) {
                 List<CodeAttributeArgument> codeAttributeArguments = new List<CodeAttributeArgument>();
                 foreach(var attributeArgument in customAttribute.ConstructorArguments) {
                     CodeExpression codeExpress;
@@ -392,7 +405,7 @@ namespace Bridge.Lua {
                         }
                     }
                     else {
-                        codeExpress = null;
+                        throw new Exception();
                     }
                     codeAttributeArguments.Add(new CodeAttributeArgument(codeExpress));
                 }
@@ -432,7 +445,6 @@ namespace Bridge.Lua {
             }
             return memberAttributes;
         }
-
 
         private static string GetFieldName(FieldDefinition fieldDefinition) {
             string name = GetTypeReferenceName(fieldDefinition.FieldType);

@@ -105,8 +105,7 @@ namespace Bridge.Lua {
         public static string RemoveGenericInstanceSign(string name) {
             return genericInstanceRegex_.Replace(name, "");
         }
-
-
+ 
         public static string Compile(this CodeCompileUnit unit) {
             using(MemoryStream stream = new MemoryStream()) {
                 StreamWriter sourceWriter = new StreamWriter(stream);
@@ -132,6 +131,5 @@ namespace Bridge.Lua {
                 return sb.ToString();
             }
         }
-
     }
 }
