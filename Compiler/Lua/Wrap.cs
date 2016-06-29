@@ -16,15 +16,17 @@ namespace Bridge.Lua {
     public static class Wrap {
         private const string kWrapDllName = "__wrap__.dll";
 
-        public static string Build(IEnumerable<AssemblyDefinition> assemblys, string outDirectory, string bridgeDllPath) {
+        public static string Build(IEnumerable<AssemblyDefinition> assemblys, string outDirectory, string bridgeDllPath, string libWhite, string libBlack) {
+            TypeDefinitionBuilder builder = new TypeDefinitionBuilder(libWhite, libBlack);
             List<CodeCompileUnit> units = new List<CodeCompileUnit>();
+
             foreach(var assemblyDefinition in assemblys) {
                 CodeCompileUnit unit = new CodeCompileUnit();
                 Dictionary<string, CodeNamespace> namespaces = new Dictionary<string, CodeNamespace>();
                 foreach(var module in assemblyDefinition.Modules) {
                     foreach(var type in module.Types) {
-                        if(TypeDefinitionBuilder.IsEnableType(type)) {
-                            CodeTypeDeclaration codeTypeDeclaration = TypeDefinitionBuilder.Build(type);
+                        if(builder.IsEnableType(type)) {
+                            CodeTypeDeclaration codeTypeDeclaration = builder.Build(type);
                             CodeNamespace codeNamespace = namespaces.GetOrDefault(type.Namespace);
                             if(codeNamespace == null) {
                                 codeNamespace = new CodeNamespace(type.Namespace);
@@ -34,6 +36,7 @@ namespace Bridge.Lua {
                         }
                     }
                 }
+
                 unit.Namespaces.AddRange(namespaces.Values.ToArray());
                 units.Add(unit);
             }
@@ -62,13 +65,69 @@ namespace Bridge.Lua {
         }
     }
 
-    public static class TypeDefinitionBuilder {
-        public static CodeTypeDeclaration Build(TypeDefinition type) {
+    public sealed class TypeDefinitionBuilder {
+        private sealed class FilterInfo {
+            private HashSet<string> namespaces_ = new HashSet<string>();
+            private HashSet<string> types_ = new HashSet<string>();
+
+            public FilterInfo(string namesString) {
+                if(!string.IsNullOrWhiteSpace(namesString)) {
+                    string[] names = namesString.Split(';');
+                    foreach(string name in names) {
+                        if(name.StartsWith("#")) {
+                            namespaces_.Add(name.Remove(0, 1));
+                        }
+                        else {
+                            types_.Add(name);
+                        }
+                    }
+                }
+            }
+
+            public bool IsEmpty {
+                get {
+                    return namespaces_.Count == 0 && types_.Count == 0;
+                }
+            }
+
+            public bool IsExists(TypeDefinition type) {
+                if(namespaces_.Contains(type.Namespace)) {
+                    return true;
+                }
+
+                if(namespaces_.Contains(GetName(type))) {
+                    return true;
+                }
+
+                return false;
+            }
+
+            private string GetName(TypeDefinition typeDefinition) {
+                string name = typeDefinition.FullName;
+                if(typeDefinition.HasGenericParameters) {
+                    name = Utility.RemoveGenericInstanceSign(name);
+                }
+                if(typeDefinition.IsNested) {
+                    name = name.Replace('/', '.');
+                }
+                return name;
+            }
+        }
+
+        private FilterInfo whiteFilter_;
+        private FilterInfo blackFilter_;
+
+        public TypeDefinitionBuilder(string libWhite, string libBlack) {
+            whiteFilter_ = new FilterInfo(libWhite);
+            blackFilter_ = new FilterInfo(libBlack);
+        }
+
+        public CodeTypeDeclaration Build(TypeDefinition type) {
             return GetCodeTypeDeclaration(type);
         }
 
-        public static bool IsEnableType(TypeDefinition type) {
-            if(type.IsNotPublic) {
+        public bool IsEnableType(TypeDefinition type) {
+            if(!type.IsPublic && !type.IsNestedPublic) {
                 return false;
             }
 
@@ -79,19 +138,27 @@ namespace Bridge.Lua {
             if(type.CustomAttributes.Any(i => i.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")) {
                 return false;
             }
+
+            if(!whiteFilter_.IsEmpty && !whiteFilter_.IsExists(type)) {
+                return false;
+            }
+
+            if(blackFilter_.IsExists(type)) {
+                return false;
+            }
+
             return true;
         }
 
         private static string GetTypeName(TypeDefinition typeDefinition) {
             if(typeDefinition.HasGenericParameters) {
-                int pos = typeDefinition.Name.IndexOf('`');
-                return typeDefinition.Name.Substring(0, pos);
+                return Utility.RemoveGenericInstanceSign(typeDefinition.Name);
             }
             return typeDefinition.Name;
         }
 
         private static bool IsEnableField(FieldDefinition fieldInfo) {
-            if(fieldInfo.IsPrivate) {
+            if(!fieldInfo.IsPublic) {
                 return false;
             }
 
@@ -104,10 +171,6 @@ namespace Bridge.Lua {
         }
 
         private static bool IsEnableMethod(MethodDefinition methodInfo) {
-            if(methodInfo.IsPrivate) {
-                return false;
-            }
-
             if(!methodInfo.IsPublic) {
                 return false;
             }
@@ -118,7 +181,7 @@ namespace Bridge.Lua {
             return true;
         }
 
-        private static CodeTypeDeclaration GetCodeTypeDelegate(TypeDefinition typeDefinition) {
+        private CodeTypeDeclaration GetCodeTypeDelegate(TypeDefinition typeDefinition) {
             if(typeDefinition.IsClass && typeDefinition.BaseType.FullName == "System.MulticastDelegate") {
                 CodeTypeDelegate codeTypeDelegate = new CodeTypeDelegate() { Name = GetTypeName(typeDefinition) };
                 if(typeDefinition.IsPublic || typeDefinition.IsNestedPublic) {
@@ -138,7 +201,7 @@ namespace Bridge.Lua {
             return null;
         }
 
-        private static CodeTypeDeclaration GetCodeTypeDeclaration(TypeDefinition typeDefinition) {
+        private CodeTypeDeclaration GetCodeTypeDeclaration(TypeDefinition typeDefinition) {
             var codeTypeDelegate = GetCodeTypeDelegate(typeDefinition);
             if(codeTypeDelegate != null) {
                 return codeTypeDelegate;
@@ -163,6 +226,13 @@ namespace Bridge.Lua {
                     declaration.BaseTypes.Add(GetTypeReferenceName(typeDefinition.BaseType));
                 }
             }
+            else if(declaration.IsEnum) {
+                FieldDefinition fieldDefinition = typeDefinition.Fields.First(i => i.Name == "value__");
+                if(fieldDefinition.FieldType.MetadataType != MetadataType.Int32) {
+                    declaration.BaseTypes.Add(GetTypeReferenceName(fieldDefinition.FieldType));
+                }
+            }
+
             if(declaration.IsClass || declaration.IsStruct) {
                 foreach(var i in typeDefinition.Interfaces) {
                     declaration.BaseTypes.Add(GetTypeReferenceName(i));
@@ -180,7 +250,7 @@ namespace Bridge.Lua {
             foreach(var fieldDefinition in typeDefinition.Fields.Where(IsEnableField)) {
                 declaration.Members.Add(GetCodeMemberField(fieldDefinition));
             }
-            foreach(var propertyDefinition in typeDefinition.Properties.Where(i => i.GetMethod != null && !i.GetMethod.IsPrivate)) {
+            foreach(var propertyDefinition in typeDefinition.Properties.Where(i => i.GetMethod != null && i.GetMethod.IsPublic)) {
                 CodeMemberProperty codeMemberProperty = GetCodeMemberProperty(propertyDefinition);
                 if(codeMemberProperty != null) {
                     declaration.Members.Add(codeMemberProperty);
@@ -269,7 +339,7 @@ namespace Bridge.Lua {
             return new CodeDefaultValueExpression(new CodeTypeReference(GetTypeReferenceName(typeReference)));
         }
 
-        private static CodeParameterDeclarationExpression GetParameterExpression(ParameterDefinition parameter) {
+        private CodeParameterDeclarationExpression GetParameterExpression(ParameterDefinition parameter) {
             CodeParameterDeclarationExpression p = new CodeParameterDeclarationExpression(GetTypeReferenceName(parameter.ParameterType), parameter.Name);
             FillCustomAttribute(p.CustomAttributes, parameter.CustomAttributes);
             if(parameter.IsOut) {
@@ -284,7 +354,7 @@ namespace Bridge.Lua {
             return p;
         }
 
-        private static CodeMemberMethod GetCodeMemberMethod(MethodDefinition methodDefinition) {
+        private CodeMemberMethod GetCodeMemberMethod(MethodDefinition methodDefinition) {
             CodeMemberMethod codeMemberMethod;
             if(!methodDefinition.IsConstructor) {
                 codeMemberMethod = new CodeMemberMethod() { Name = methodDefinition.Name };
@@ -355,7 +425,7 @@ namespace Bridge.Lua {
             return memberAttributes;
         }
 
-        private static void FillGenericParameters(CodeTypeParameterCollection codes, IEnumerable<GenericParameter> defines) {
+        private void FillGenericParameters(CodeTypeParameterCollection codes, IEnumerable<GenericParameter> defines) {
             foreach(var genericParameter in defines) {
                 CodeTypeParameter t = new CodeTypeParameter(genericParameter.FullName);
                 if(genericParameter.IsContravariant) {
@@ -369,14 +439,25 @@ namespace Bridge.Lua {
             }
         }
 
-        private static bool IsAttributeEnable(CustomAttribute attribute) {
-            if(attribute.AttributeType.Resolve().IsNotPublic) {
+        private static HashSet<string> filterAttributes = new HashSet<string>() {
+            "System.Diagnostics.ConditionalAttribute",
+            "System.Security.SecuritySafeCriticalAttribute",
+            "System.Security.SecurityCriticalAttribute",
+        };
+
+        private bool IsAttributeEnable(CustomAttribute attribute) {
+            if(!IsEnableType(attribute.AttributeType.Resolve())) {
                 return false;
             }
+
+            if(filterAttributes.Contains(attribute.AttributeType.FullName)) {
+                return false;
+            }
+
             return true;
         }
 
-        private static void FillCustomAttribute(CodeAttributeDeclarationCollection codes, IEnumerable<CustomAttribute> defines) {
+        private void FillCustomAttribute(CodeAttributeDeclarationCollection codes, IEnumerable<CustomAttribute> defines) {
             foreach(var customAttribute in defines.Where(IsAttributeEnable)) {
                 List<CodeAttributeArgument> codeAttributeArguments = new List<CodeAttributeArgument>();
                 foreach(var attributeArgument in customAttribute.ConstructorArguments) {
@@ -454,7 +535,7 @@ namespace Bridge.Lua {
             return name;
         }
 
-        private static CodeMemberField GetCodeMemberField(FieldDefinition fieldDefinition) {
+        private CodeMemberField GetCodeMemberField(FieldDefinition fieldDefinition) {
             CodeMemberField codeMemberField = new CodeMemberField(GetFieldName(fieldDefinition), fieldDefinition.Name);
             codeMemberField.Attributes = GetFieldAttribute(fieldDefinition);
             if(fieldDefinition.HasConstant) {
@@ -464,7 +545,7 @@ namespace Bridge.Lua {
             return codeMemberField;
         }
 
-        private static CodeMemberProperty GetCodeMemberProperty(PropertyDefinition propertyDefinition) {
+        private CodeMemberProperty GetCodeMemberProperty(PropertyDefinition propertyDefinition) {
             CodeMemberProperty codeMemberProperty = new CodeMemberProperty() {
                 Type = new CodeTypeReference(GetTypeReferenceName(propertyDefinition.PropertyType)),
                 Name = propertyDefinition.Name,

@@ -21,13 +21,13 @@ namespace System
         public const float Epsilon = (float)1.4e-45;
 
         [Template("0 / 0")]
-        public static readonly float NaN = 0;
+        public const float NaN = 0;
 
         [Template("-1 / 0")]
-        public static readonly float NegativeInfinity = 0;
+        public const float NegativeInfinity = 0;
 
         [Template("1 / 0")]
-        public static readonly float PositiveInfinity = 0;
+        public const float PositiveInfinity = 0;
 
         [Template("tostring({this})")]
         public override string ToString()

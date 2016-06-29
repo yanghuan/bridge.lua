@@ -32,8 +32,10 @@ namespace Bridge.Lua {
         private string[] libs_;
         private string bridgeDllPath_;
         private string tempDirectory_;
+        private string libWhite_;
+        private string libBlack_;
 
-        public Worker(string folder, string output, string bridgeDllPath, string lib) {
+        public Worker(string folder, string output, string bridgeDllPath, string lib, string libWhite, string libBlack) {
             folder_ = folder;
             output_ = output;
             if(string.IsNullOrWhiteSpace(bridgeDllPath)) {
@@ -50,6 +52,8 @@ namespace Bridge.Lua {
                 }
                 libs_ = list.ToArray();
             }
+            libWhite_ = libWhite;
+            libBlack_ = libBlack;
         }
 
         public void Do() {
@@ -88,7 +92,7 @@ namespace Bridge.Lua {
                     }
                 }
                 if(assemblyDefinitions.Count > 0) {
-                    string newPath = Wrap.Build(assemblyDefinitions, tempDirectory_, bridgeDllPath_);
+                    string newPath = Wrap.Build(assemblyDefinitions, tempDirectory_, bridgeDllPath_, libWhite_, libBlack_);
                     libs.Add(newPath);
                 }
             }
