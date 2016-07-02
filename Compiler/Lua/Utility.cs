@@ -100,6 +100,10 @@ namespace Bridge.Lua {
             return false;
         }
 
+        public static bool IsExtensionMethod(this MethodDefinition methodDefinition) {
+            return methodDefinition.CustomAttributes.Any(i => i.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute");
+        }
+
         private static Regex genericInstanceRegex_ = new Regex(@"`\d+", RegexOptions.Compiled | RegexOptions.Singleline);
 
         public static string RemoveGenericInstanceSign(string name) {
@@ -120,7 +124,7 @@ namespace Bridge.Lua {
                 while(true) {
                     string line = reader.ReadLine();
                     if(line != null) {
-                        line = line.Replace("sealed abstract", "static");
+                        FixLineCode(ref line);
                         sb.AppendLine(line);
                     }
                     else {
@@ -130,6 +134,75 @@ namespace Bridge.Lua {
                 }
                 return sb.ToString();
             }
+        }
+
+        /*
+        private static Regex fixLineCodeRegex_ = new Regex(@"sealed abstract|(\S+)\sop_Implicit@|(\S+)\sop_Explicit@", RegexOptions.Compiled | RegexOptions.Singleline);
+
+        public static void FixLineCode(ref string lineCode) {
+            lineCode = fixLineCodeRegex_.Replace(lineCode, m => {
+                if(m.Value == "sealed abstract") {
+                    return "static";
+                }
+                else if(m.Value.EndsWith("op_Implicit@")) {
+                    return "implicit operator " + m.Groups[1].Value;
+                }
+                else if(m.Value.EndsWith("p_Explicit@")) {
+                    return "explicit operator " + m.Groups[1].Value;
+                }
+                throw new Exception();
+            });
+        }*/
+
+        public static void FixLineCode(ref string lineCode) {
+            bool isChanged = FixStaticClass(ref lineCode);
+            if(isChanged) {
+                return;
+            }
+
+            isChanged = FixOpImplicit(ref lineCode);
+            if(isChanged) {
+                return;
+            }
+
+            FixOpExplicit(ref lineCode);
+        }
+
+        public static bool FixStaticClass(ref string lineCode) {
+            string code = lineCode.Replace("sealed abstract", "static");
+            if(code.Length != lineCode.Length) {
+                lineCode = code;
+                return true;
+            }
+            return false;
+        }
+
+        public static bool FixOpImplicit(ref string lineCode) {
+            const string kSign = " op_Implicit@";
+            int pos = lineCode.IndexOf(kSign);
+            if(pos != -1) {
+                int prev = lineCode.LastIndexOf(' ', pos - 1);
+                if(prev != -1) {
+                    string value = lineCode.Substring(prev + 1, pos - prev - 1);
+                    lineCode = lineCode.Replace(value + kSign, "implicit operator " + value);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool FixOpExplicit(ref string lineCode) {
+            const string kSign = " op_Explicit@";
+            int pos = lineCode.IndexOf(kSign);
+            if(pos != -1) {
+                int prev = lineCode.LastIndexOf(' ', pos - 1);
+                if(prev != -1) {
+                    string value = lineCode.Substring(prev + 1, pos - prev - 1);
+                    lineCode = lineCode.Replace(value + kSign, "explicit operator " + value);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
