@@ -45,7 +45,7 @@ namespace Bridge.Lua {
             cp.CoreAssemblyFileName = bridgeDllPath;
             cp.GenerateExecutable = false;
             cp.GenerateInMemory = false;
-            //cp.TreatWarningsAsErrors = true;
+            cp.TreatWarningsAsErrors = false;
             cp.TempFiles.KeepFiles = true;
             cp.OutputAssembly = Path.Combine(outDirectory, kWrapDllName);
             cp.ReferencedAssemblies.Add(bridgeDllPath);
@@ -206,6 +206,14 @@ namespace Bridge.Lua {
             return null;
         }
 
+        private static bool IsDefaultCodeConstructor(CodeTypeMember codeTypeMember) {
+            CodeConstructor codeConstructor = codeTypeMember as CodeConstructor;
+            if(codeConstructor != null && codeConstructor.Parameters.Count == 0) {
+                return true;
+            }
+            return false;
+        }
+
         private CodeTypeDeclaration GetCodeTypeDeclaration(TypeDefinition typeDefinition) {
             var codeTypeDelegate = GetCodeTypeDelegate(typeDefinition);
             if(codeTypeDelegate != null) {
@@ -249,9 +257,17 @@ namespace Bridge.Lua {
             foreach(var nestedType in typeDefinition.NestedTypes.Where(IsEnableType)) {
                 declaration.Members.Add(GetCodeTypeDeclaration(nestedType));
             }
+            List<CodeTypeMember> memberMethods = new List<CodeTypeMember>();
             foreach(var methodDefinition in typeDefinition.Methods.Where(IsEnableMethod)) {
-                declaration.Members.Add(GetCodeMemberMethod(methodDefinition));
+                memberMethods.Add(GetCodeMemberMethod(methodDefinition));
             }
+            if(declaration.IsClass && !typeDefinition.IsSealed) {
+                if(!memberMethods.Exists(IsDefaultCodeConstructor)) {
+                    CodeConstructor defaultCodeConstructor = new CodeConstructor() { Attributes = MemberAttributes.Family };
+                    memberMethods.Add(defaultCodeConstructor);
+                }
+            }
+            declaration.Members.AddRange(memberMethods.ToArray());
             foreach(var fieldDefinition in typeDefinition.Fields.Where(IsEnableField)) {
                 declaration.Members.Add(GetCodeMemberField(fieldDefinition));
             }
@@ -388,14 +404,11 @@ namespace Bridge.Lua {
                 if(operatorSign != null) {
                     name = "operator " + operatorSign;
                 }
-                else if(name == "op_Implicit" || name == "op_Explicit") {
-                    name += '@';
-                }
             }
             return name;
         }
 
-        private CodeMemberMethod GetCodeMemberMethod(MethodDefinition methodDefinition) {
+        private CodeTypeMember GetCodeMemberMethod(MethodDefinition methodDefinition) {
             CodeMemberMethod codeMemberMethod;
             if(!methodDefinition.IsConstructor) {
                 codeMemberMethod = new CodeMemberMethod() { Name = GetMemberMethodName(methodDefinition) };
@@ -434,6 +447,16 @@ namespace Bridge.Lua {
                 if(methodDefinition.ReturnType.MetadataType != MetadataType.Void) {
                     codeMemberMethod.Statements.Add(new CodeMethodReturnStatement(GetDefalutValue(methodDefinition.ReturnType)));
                 }
+            }
+            if(methodDefinition.IsOpImplicit()) {
+                string code = codeMemberMethod.GenCode();
+                Utility.FixOpImplicit(ref code);
+                return new CodeSnippetTypeMember(code);
+            }
+            else if(methodDefinition.IsOpExplicit()) {
+                string code = codeMemberMethod.GenCode();
+                Utility.FixOpExplicit(ref code);
+                return new CodeSnippetTypeMember(code);
             }
             return codeMemberMethod;
         }
@@ -614,13 +637,11 @@ namespace Bridge.Lua {
                 Attributes = GetMemberAttributes(propertyDefinition.GetMethod),
             };
             FillCustomAttribute(codeMemberProperty.CustomAttributes, propertyDefinition.CustomAttributes);
+            CodeAttributeDeclaration protoMemberAttribute = new CodeAttributeDeclaration("Bridge.FieldProperty");
+            codeMemberProperty.CustomAttributes.Add(protoMemberAttribute);
             foreach(var parameter in propertyDefinition.Parameters) {
                 CodeParameterDeclarationExpression p = GetParameterExpression(parameter);
                 codeMemberProperty.Parameters.Add(p);
-            }
-            if(propertyDefinition.IsAutoProperty()) {
-                CodeAttributeDeclaration protoMemberAttribute = new CodeAttributeDeclaration("Bridge.FieldProperty");
-                codeMemberProperty.CustomAttributes.Add(protoMemberAttribute);
             }
             codeMemberProperty.GetStatements.Add(new CodeMethodReturnStatement(GetDefalutValue(propertyDefinition.PropertyType)));
             if(propertyDefinition.SetMethod != null && !propertyDefinition.SetMethod.IsPrivate) {

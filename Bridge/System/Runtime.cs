@@ -10,6 +10,7 @@ namespace System
 {
     [External]
     [Name("Bridge.Attribute")]
+    [AttributeUsageAttribute(AttributeTargets.All, Inherited = true, AllowMultiple = false)]
     public class Attribute : IBridgeClass
     {
         protected Attribute()

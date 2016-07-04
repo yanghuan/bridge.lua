@@ -1,6 +1,4 @@
-﻿using Microsoft.CSharp;
-using Mono.Cecil;
-using System;
+﻿using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -11,6 +9,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+using Microsoft.CSharp;
+using Mono.Cecil;
 
 namespace Bridge.Lua {
     public sealed class CmdArgumentException : Exception {
@@ -104,6 +105,18 @@ namespace Bridge.Lua {
             return methodDefinition.CustomAttributes.Any(i => i.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute");
         }
 
+        public static bool IsStaticClass(this TypeDefinition typeDefinition) {
+            return typeDefinition.IsSealed && typeDefinition.IsAbstract;
+        }
+
+        public static bool IsOpImplicit(this MethodDefinition methodDefinition) {
+            return methodDefinition.IsSpecialName && methodDefinition.Name == "op_Implicit";
+        }
+
+        public static bool IsOpExplicit(this MethodDefinition methodDefinition) {
+            return methodDefinition.IsSpecialName && methodDefinition.Name == "op_Explicit";
+        }
+
         private static Regex genericInstanceRegex_ = new Regex(@"`\d+", RegexOptions.Compiled | RegexOptions.Singleline);
 
         public static string RemoveGenericInstanceSign(string name) {
@@ -136,36 +149,18 @@ namespace Bridge.Lua {
             }
         }
 
-        /*
-        private static Regex fixLineCodeRegex_ = new Regex(@"sealed abstract|(\S+)\sop_Implicit@|(\S+)\sop_Explicit@", RegexOptions.Compiled | RegexOptions.Singleline);
-
-        public static void FixLineCode(ref string lineCode) {
-            lineCode = fixLineCodeRegex_.Replace(lineCode, m => {
-                if(m.Value == "sealed abstract") {
-                    return "static";
-                }
-                else if(m.Value.EndsWith("op_Implicit@")) {
-                    return "implicit operator " + m.Groups[1].Value;
-                }
-                else if(m.Value.EndsWith("p_Explicit@")) {
-                    return "explicit operator " + m.Groups[1].Value;
-                }
-                throw new Exception();
-            });
-        }*/
+        public static string GenCode(this CodeTypeMember codeTypeMember) {
+            CSharpCodeProvider provider = new CSharpCodeProvider();
+            StringWriter sw = new StringWriter();
+            provider.GenerateCodeFromMember(codeTypeMember, sw, new CodeGeneratorOptions());
+            return sw.ToString();
+        }
 
         public static void FixLineCode(ref string lineCode) {
             bool isChanged = FixStaticClass(ref lineCode);
             if(isChanged) {
                 return;
             }
-
-            isChanged = FixOpImplicit(ref lineCode);
-            if(isChanged) {
-                return;
-            }
-
-            FixOpExplicit(ref lineCode);
         }
 
         public static bool FixStaticClass(ref string lineCode) {
@@ -178,7 +173,7 @@ namespace Bridge.Lua {
         }
 
         public static bool FixOpImplicit(ref string lineCode) {
-            const string kSign = " op_Implicit@";
+            const string kSign = " op_Implicit";
             int pos = lineCode.IndexOf(kSign);
             if(pos != -1) {
                 int prev = lineCode.LastIndexOf(' ', pos - 1);
@@ -192,7 +187,7 @@ namespace Bridge.Lua {
         }
 
         public static bool FixOpExplicit(ref string lineCode) {
-            const string kSign = " op_Explicit@";
+            const string kSign = " op_Explicit";
             int pos = lineCode.IndexOf(kSign);
             if(pos != -1) {
                 int prev = lineCode.LastIndexOf(' ', pos - 1);

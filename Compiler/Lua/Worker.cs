@@ -109,7 +109,7 @@ namespace Bridge.Lua {
             cp.CoreAssemblyFileName = bridgeDllPath_;
             cp.GenerateExecutable = false;
             cp.GenerateInMemory = false;
-            cp.TreatWarningsAsErrors = true;
+            cp.TreatWarningsAsErrors = false;
             cp.OutputAssembly = Path.Combine(tempDirectory_, kOutDllName);
             cp.ReferencedAssemblies.Add(bridgeDllPath_);
             if(libs != null) {
