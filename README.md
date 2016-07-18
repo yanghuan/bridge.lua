@@ -31,17 +31,12 @@ namespace Ice.Utils {
 
         private void Insert(Event e) {
             ids_.Add(e.Id, e);
-            var next = GetUpperBound(e.Expiration);
+            Event next = events_.FirstOrDefault(i => i.Expiration > e.Expiration);
             if(next != null) {
-                e.LinkNode = events_.AddBefore(next, e);
+                e.LinkNode = events_.AddBefore(next.LinkNode, e);
             } else {
                 e.LinkNode = events_.AddLast(e);
             }
-        }
-
-        private LinkedListNode<Event> GetUpperBound(Int64 expiration) {
-            Event e = events_.FirstOrDefault(i => i.Expiration > expiration);
-            return e != null ? e.LinkNode : null;
         }
 
         public int Add(Int64 now, Int64 delay, Action<int, Int64> callback) {
@@ -87,15 +82,20 @@ namespace Ice.Utils {
             return RunInternal(now, false);
         }
 
+        public bool IsEmpty {
+            get {
+                return ids_.Count == 0;
+            }
+        }
+
+        public bool Contains(int id) {
+            return ids_.ContainsKey(id);
+        }
+
         private Int64 RunInternal(Int64 now, bool onceOnly) {
             Int64 nextExp;
             do {
-                List<Event> expired = new List<Event>();
-                var end = GetUpperBound(now);
-                for(var begin = events_.First; begin != end; begin = begin.Next) {
-                    expired.Add(begin.Value);
-                }
-
+                List<Event> expired = events_.TakeWhile(i => i.Expiration <= now).ToList();
                 foreach(Event e in expired) {
                     Erase(e.Id);
                     if(e.RepeatInterval > 0) {
@@ -103,7 +103,6 @@ namespace Ice.Utils {
                         Insert(e);
                     }
                 }
-
                 foreach(Event e in expired) {
                     e.Callback(e.Id, now);
                 }
@@ -113,7 +112,6 @@ namespace Ice.Utils {
         }
     }
 }
-
 ```
 You will get the equivalent, the possibility of a good lua code.
 ```lua
@@ -126,8 +124,8 @@ end)
 
 System.namespace("Ice.Utils", function(namespace)
     namespace.class("TimeoutQueue", function ()
-        local getNextId, getNextExpiration, insert, getUpperBound, add, addRepeating, addRepeating_1, erase
-        local runOnce, runLoop, runInternal
+        local getNextId, getNextExpiration, getIsEmpty, insert, add, addRepeating, addRepeating_1, erase
+        local runOnce, runLoop, contains, runInternal
         local __init__, __ctor1__
         __init__ = function (this) 
             this.ids_ = System.Dictionary(System.Int, IceUtilsTimeoutQueue.Event)()
@@ -145,20 +143,19 @@ System.namespace("Ice.Utils", function(namespace)
         getNextExpiration = function (this) 
             return System.ternary(#this.events_ > 0, this.events_:getFirst().value.expiration, 9007199254740991)
         end
+        getIsEmpty = function (this) 
+            return this.ids_:getCount() == 0
+        end
         insert = function (this, e) 
             this.ids_:add(e.id, e)
-            local next = getUpperBound(this, e.expiration)
+            local next = System.Linq(this.events_):firstOrDefault(function (i) 
+                return i.expiration > e.expiration
+            end)
             if next ~= nil then
-                e.linkNode = this.events_:addBefore(next, e)
+                e.linkNode = this.events_:addBefore(next.linkNode, e)
             else
                 e.linkNode = this.events_:addLast(e)
             end
-        end
-        getUpperBound = function (this, expiration) 
-            local e = System.Linq(this.events_):firstOrDefault(function (i) 
-                return i.expiration > expiration
-            end)
-            return System.ternary(e ~= nil, e.linkNode, nil)
         end
         add = function (this, now, delay, callback) 
             return addRepeating_1(this, now, delay, 0, callback)
@@ -193,19 +190,15 @@ System.namespace("Ice.Utils", function(namespace)
         runLoop = function (this, now) 
             return runInternal(this, now, false)
         end
+        contains = function (this, id) 
+            return this.ids_:containsKey(id)
+        end
         runInternal = function (this, now, onceOnly) 
             local nextExp
             repeat 
-                local expired = System.List(IceUtilsTimeoutQueue.Event)()
-                local end1 = getUpperBound(this, now)
-                do
-                    local begin = this.events_:getFirst()
-                    while begin ~= end1 do
-                        expired:add(begin.value)
-                        begin = begin.next
-                    end
-                end
-
+                local expired = System.Linq(this.events_):takeWhile(function (i) 
+                    return i.expiration <= now
+                end):toList()
                 for _, e in System.each(expired) do
                     erase(this, e.id)
                     if e.repeatInterval > 0 then
@@ -213,7 +206,6 @@ System.namespace("Ice.Utils", function(namespace)
                         insert(this, e)
                     end
                 end
-
                 for _, e in System.each(expired) do
                     e.callback(e.id, now)
                 end
@@ -225,12 +217,14 @@ System.namespace("Ice.Utils", function(namespace)
             nextId_ = 1,
             __ctor__ = __ctor1__,
             getNextExpiration = getNextExpiration,
+            getIsEmpty = getIsEmpty,
             add = add,
             addRepeating = addRepeating,
             addRepeating_1 = addRepeating_1,
             erase = erase,
             runOnce = runOnce,
-            runLoop = runLoop
+            runLoop = runLoop,
+            contains = contains
         }
     end)
     namespace.class("TimeoutQueue.Event", function ()
@@ -256,15 +250,17 @@ end)
 ###Command Line Parameters
 ```cmd
 D:\bridge>Bridge.Lua.exe -h
-Usage: Bridge.Lua [-f srcfolder] [-p outfolder] [-l thridlibs]
-Options and arguments
+Usage: Bridge.Lua [-f srcfolder] [-p outfolder]
+Arguments 
 -f              : intput directory, all *.cs files whill be compiled
 -p              : out directory, will put the out lua files
--l [option]     : third-party libraries referenced, use ';' to separate
+
+Options
 -b [option]     : the path of bridge.all, defalut will use bridge.all under the same directory of Bridge.Lua.exe
-
-
-Compiled successfully, and then will have a manifest file to the output directory named manifest.lua, use require("manifest.lua")(you_put_dir) to load all
+-l [option]     : third-party libraries referenced, use ';' to separate
+-lb [option]    : blacklist of third-party libraries, use ';' to separate,
+                  E.g '#System.Collections;System.Text.StringBuilder', except class named System.Text.StringBuilder, namespace named System.Collections
+-lw [option]    : whitelist of third-party libraries, use ';' to separate         
 ```
 ###Download
 [bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)
