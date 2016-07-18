@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace Bridge.Lua {
     class Program {
-       private const string HelpCmdString = @"Usage: Bridge.Lua [-f srcfolder] [-p outfolder] [-l thridlibs]
-Options and arguments 
+       private const string HelpCmdString = @"Usage: Bridge.Lua [-f srcfolder] [-p outfolder]
+Arguments 
 -f              : intput directory, all *.cs files whill be compiled
 -p              : out directory, will put the out lua files
+
+Options
 -b [option]     : the path of bridge.all, defalut will use bridge.all under the same directory of Bridge.Lua.exe
 -l [option]     : third-party libraries referenced, use ';' to separate
+-lb [option]    : blacklist of third-party libraries, use ';' to separate,
+                  E.g '#System.Collections;System.Text.StringBuilder', except class named System.Text.StringBuilder, namespace named System.Collections
 -lw [option]    : whitelist of third-party libraries, use ';' to separate           
--lb [option]    : blacklist of third-party libraries, use ';' to separate
-
-Compiled successfully, and then will have a manifest file to the output directory named manifest.lua, use require(""manifest.lua"")(you_put_dir) to load all
 ";
         static void Main(string[] args) {
             if(args.Length > 0) {
