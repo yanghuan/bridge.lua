@@ -29,6 +29,10 @@ namespace System
         public DateTime(int year, int month, int day, int hours, int minutes, int seconds, DateTimeKind kind) {
         }
 
+        [Template("System.DateTime({year}, {month}, {day}, {hours}, {minutes}, {seconds}, {milliseconds}, 2)")]
+        public DateTime(int year, int month, int day, int hours, int minutes, int seconds, int milliseconds) {
+        }
+
         public DateTime(int year, int month, int day, int hours, int minutes, int seconds, int milliseconds, DateTimeKind kind) {
         }
 

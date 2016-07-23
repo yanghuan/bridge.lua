@@ -131,8 +131,8 @@ function Collection.insertArray(t, index, v)
 end
 
 function Collection.removeArrayAll(t)
-    for i = 1, #t do
-        tremove(t)
+    for i = #t, 1, -1 do
+        tremove(t, i)
     end
     changeVersion(t)
 end
