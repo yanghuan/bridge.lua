@@ -156,6 +156,41 @@ local sb = System.StringBuilder()
 sb:append("aaaa"):append("kk"):append(true)
 print(sb, #sb)
 
+
+print("-----------------", "Delegate")
+
+local d1 = function() print("d1") end
+local d2 = function() print("d2") end
+local d3 = function() print("d3") end
+
+System.fn.combine(nil, d1)()
+print("--")
+System.fn.combine(d1, nil)()
+print("--")
+System.fn.combine(d1, d2)()
+print("--")
+System.fn.combine(d1, System.fn.combine(d2, d3))()
+print("--")
+System.fn.combine(System.fn.combine(d1, d2), System.fn.combine(d2, d3))()
+print("--")
+System.fn.remove(System.fn.combine(d1, d2), d1)()
+print("--")
+System.fn.remove(System.fn.combine(d1, d2), d2)()
+print("--")
+System.fn.remove(System.fn.combine(System.fn.combine(d1, d2), d1), d1)()
+print("--")
+System.fn.remove(System.fn.combine(System.fn.combine(d1, d2), d3), System.fn.combine(d1, d2))()
+print("--")
+System.fn.remove(System.fn.combine(System.fn.combine(d1, d2), d3), System.fn.combine(d2, d1))()
+print("--")
+fn0 = System.fn.combine(System.fn.combine(d1, d2), System.fn.combine(System.fn.combine(d3, d1), d2))
+fn1 = System.fn.combine(d1, d2)
+System.fn.remove(fn0, fn1)()
+print("--")
+local i = System.fn.remove(System.fn.combine(d1, d2), System.fn.combine(d1, d2))
+print(i == nil)
+
+
 print("-----------------", "Type")
 
 local ins = 2
