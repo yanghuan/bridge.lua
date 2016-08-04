@@ -53,7 +53,7 @@ function Delegate.combine(fn1, fn2)
 end
 
 function Delegate.bind(target, method)
-    if t == nil then
+    if target == nil then
         throw(System.ArgumentNullException())
     end
     local t = {
@@ -104,8 +104,8 @@ local function remove(fn1, fn2)
             end
         else
             local count = #fn1
-            for i, v in ipairs(fn1) do
-                if equalsSingle(v, fn2) then
+            for i = count, 1, -1 do
+                if equalsSingle(fn1[i], fn2) then
                     if count == 2 then
                         return fn1[3 - i]
                     else
@@ -117,7 +117,7 @@ local function remove(fn1, fn2)
     elseif getmetatable(fn1) == multicast then
         local count1, count2 = #fn1, # fn2
         local diff = count1 - count2
-        for i = 1, diff + 1 do
+        for i = diff + 1, 1, -1 do
             if equalsMulticast(fn1, fn2, i - 1, count2) then
                 if diff == 0 then 
                     return nil

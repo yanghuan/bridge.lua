@@ -328,7 +328,7 @@ end
 local namespace = {}
 
 local function namespaceDef(kind, name, f)
-    name = namespace.name .. '.' .. name
+    name = namespace.name .. name
     assert(modules[name] == nil, name)
     modules[name] = function()
        local t = f()
@@ -353,6 +353,9 @@ function namespace.enum(name, f)
 end
 
 function System.namespace(name, f)
+    if name ~= "" then
+        name = name .. '.'
+    end
     namespace.name = name
     f(namespace)
 end
