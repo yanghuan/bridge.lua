@@ -53,7 +53,7 @@ function Delegate.combine(fn1, fn2)
 end
 
 function Delegate.bind(target, method)
-    if t == nil then
+    if target == nil then
         throw(System.ArgumentNullException())
     end
     local t = {
