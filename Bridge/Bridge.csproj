@@ -99,6 +99,8 @@
     <Compile Include="System\Collections\ObjectModel\ReadOnlyCollection.cs" />
     <Compile Include="System\Console.cs" />
     <Compile Include="System\DateTimeKind.cs" />
+    <Compile Include="System\Diagnostics\Contracts\Contract.cs" />
+    <Compile Include="System\Diagnostics\Debug.cs" />
     <Compile Include="System\Enum.cs" />
     <Compile Include="System\Environment.cs" />
     <Compile Include="System\EventArgs.cs" />
