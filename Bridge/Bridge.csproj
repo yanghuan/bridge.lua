@@ -101,12 +101,16 @@
     <Compile Include="System\DateTimeKind.cs" />
     <Compile Include="System\Diagnostics\Contracts\Contract.cs" />
     <Compile Include="System\Diagnostics\Debug.cs" />
+    <Compile Include="System\Diagnostics\StackFrame.cs" />
+    <Compile Include="System\Diagnostics\StackTrace.cs" />
     <Compile Include="System\Enum.cs" />
     <Compile Include="System\Environment.cs" />
     <Compile Include="System\EventArgs.cs" />
     <Compile Include="System\EventHandler.cs" />
     <Compile Include="System\Collections\IDictionary.cs" />
+    <Compile Include="System\IConvertible.cs" />
     <Compile Include="System\IDisposable.cs" />
+    <Compile Include="System\IO\File.cs" />
     <Compile Include="System\Random.cs" />
     <Compile Include="System\RankException.cs" />
     <Compile Include="System\Linq\Enumerable.cs" />
@@ -115,7 +119,9 @@
     <Compile Include="System\Linq\Lookup.cs" />
     <Compile Include="System\Linq\OrderedEnumerable.cs" />
     <Compile Include="System\MidpointRounding.cs" />
+    <Compile Include="System\Reflection\FieldInfo.cs" />
     <Compile Include="System\Reflection\MethodInfo.cs" />
+    <Compile Include="System\Reflection\PropertyInfo.cs" />
     <Compile Include="System\StringComparison.cs" />
     <Compile Include="System\StringSplitOptions.cs" />
     <Compile Include="System\SystemException.cs" />

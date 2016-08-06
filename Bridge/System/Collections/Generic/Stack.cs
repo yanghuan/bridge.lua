@@ -5,7 +5,7 @@ namespace System.Collections.Generic {
     [External]
     [Namespace("Bridge")]
     [Name("System.Stack")]
-    public class Stack<T> : ICollection, IBridgeClass {
+    public class Stack<T> : IEnumerable<T>, ICollection, IBridgeClass {
 
         public Stack() {
         }

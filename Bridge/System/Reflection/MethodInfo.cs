@@ -1,7 +1,7 @@
-﻿using Bridge;
+using Bridge;
 
 namespace System.Reflection {
     [External]
-    public sealed class MethodInfo {
+    public abstract class MethodInfo {
     }
 }

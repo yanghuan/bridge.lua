@@ -5,7 +5,7 @@ namespace System.Collections.Generic
     [External]
     [Namespace("Bridge")]
     [Name("System.List")]
-    public class List<T> : IList<T>, IBridgeClass
+    public class List<T> : IList<T>, ICollection, IBridgeClass
     {
         public List()
         {

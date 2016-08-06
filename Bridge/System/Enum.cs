@@ -33,9 +33,9 @@ namespace System
             return null;
         }
 
-        public static extern Enum Parse(Type enumType, string value);
+        public static extern object Parse(Type enumType, string value);
 
-        public static extern Enum Parse(Type enumType, string value, bool ignoreCase);
+        public static extern object Parse(Type enumType, string value, bool ignoreCase);
 
         public static extern string ToString(Type enumType, Enum value);
 

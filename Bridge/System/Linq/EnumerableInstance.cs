@@ -7,8 +7,7 @@ namespace System.Linq
     [External]
     [IgnoreGeneric]
     public class EnumerableInstance<TElement> : IEnumerable<TElement> {
-        internal EnumerableInstance() {
-        }
+        internal EnumerableInstance() { }
 
         public extern IEnumerator<TElement> GetEnumerator();
 

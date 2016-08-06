@@ -6,7 +6,7 @@ namespace System
 {
     [External]
     [Namespace("Bridge")]
-    public sealed class Array : IEnumerable, ICloneable
+    public sealed class Array : ICollection, IEnumerable, ICloneable
     {
         [Template("#{this}")]
         public readonly int Length = 0;
@@ -27,6 +27,12 @@ namespace System
         {
             get
             {
+                return 0;
+            }
+        }
+
+        int ICollection.Count {
+            get {
                 return 0;
             }
         }

@@ -1,6 +1,8 @@
 using Bridge;
 
 namespace System.Diagnostics.Contracts {
+
+    [External]
     public static class Contract {
         [Template("assert({condition})")]
         public static void Assert(bool condition) {

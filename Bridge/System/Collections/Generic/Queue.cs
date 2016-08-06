@@ -1,11 +1,11 @@
-﻿using Bridge;
+using Bridge;
 
 namespace System.Collections.Generic {
 
     [External]
     [Namespace("Bridge")]
     [Name("System.Queue")]
-    public class Queue<T> : ICollection, IBridgeClass {
+    public class Queue<T> : IEnumerable<T>, ICollection, IBridgeClass {
 
         public Queue() {
         }

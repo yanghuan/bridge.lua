@@ -89,5 +89,9 @@ namespace Bridge.Contract
                 return 0;
             }
         }
+
+        public override string ToString() {
+            return string.Format("{0}\n at {1}: line {2}\n{3}", Message, FileName, StartLine, base.ToString());
+        }
     }
 }
