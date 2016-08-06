@@ -310,7 +310,7 @@ namespace Bridge.Contract
                 }
 
                 var mutableFields = type.GetFields(f => !f.IsReadOnly && !f.IsConst, GetMemberOptions.IgnoreInheritedMembers);
-                var autoProps = typeDef.Properties.Where(Helpers.IsAutoProperty);
+                var autoProps = typeDef.Properties.Where(Helpers.IsAutoPropertyOfDefinition);
                 var autoEvents = type.GetEvents(null, GetMemberOptions.IgnoreInheritedMembers);
 
                 if (!mutableFields.Any() && !autoProps.Any() && !autoEvents.Any())
@@ -371,15 +371,15 @@ namespace Bridge.Contract
         public static bool IsAutoProperty(PropertyDeclaration propertyDeclaration, IProperty propertyMember)
         {
             return propertyDeclaration.Getter.Body.IsNull && propertyDeclaration.Setter.Body.IsNull;
-
             /*
             // auto properties don't have bodies
             return (propertyDeclaration.CanGet && !propertyDeclaration.Getter.HasBody) ||
                    (propertyDeclaration.CanSet && !propertyDeclaration.Setter.HasBody);*/
         }
 
-        public static bool IsAutoProperty(PropertyDefinition propDef)
-        {
+        private static Dictionary<PropertyDefinition, bool> cacheOfIsAutoPropertyOfDefinition = new Dictionary<PropertyDefinition, bool>();
+
+        private static bool InnerIsAutoPropertyOfDefinition(PropertyDefinition propDef) {
             if(propDef.GetMethod == null || propDef.SetMethod == null) {
                 return false;
             }
@@ -390,6 +390,15 @@ namespace Bridge.Contract
 
             var typeDef = propDef.DeclaringType;
             return typeDef.Fields.Any(f => !f.IsPublic /*&& !f.IsStatic*/ && f.Name.Contains("BackingField") && f.Name.Contains("<" + propDef.Name + ">"));
+        }
+
+        public static bool IsAutoPropertyOfDefinition(PropertyDefinition propDef) {
+            bool isAuto;
+            if(!cacheOfIsAutoPropertyOfDefinition.TryGetValue(propDef, out isAuto)) {
+                isAuto = InnerIsAutoPropertyOfDefinition(propDef);
+                cacheOfIsAutoPropertyOfDefinition.Add(propDef, isAuto);
+            }
+            return isAuto;
         }
 
         public static bool IsFieldProperty(PropertyDeclaration propertyDeclaration, IMember propertyMember, IAssemblyInfo assemblyInfo)
@@ -420,7 +429,7 @@ namespace Bridge.Contract
             {
                 var typeDef = emitter.GetTypeDefinition(propertyMember.DeclaringType);
                 var propDef = typeDef.Properties.FirstOrDefault(p => p.Name == propertyMember.Name);
-                return Helpers.IsAutoProperty(propDef);
+                return Helpers.IsAutoPropertyOfDefinition(propDef);
             }
             return isAuto;
         }
@@ -430,7 +439,7 @@ namespace Bridge.Contract
             bool isAuto = property.CustomAttributes.Any(a => a.AttributeType.FullName == "Bridge.FieldPropertyAttribute");
             if (!isAuto && emitter.AssemblyInfo.AutoPropertyToField)
             {
-                return Helpers.IsAutoProperty((PropertyDefinition)property);
+                return Helpers.IsAutoPropertyOfDefinition((PropertyDefinition)property);
             }
             return isAuto;
         }
@@ -468,7 +477,7 @@ namespace Bridge.Contract
 
             var typeDef = emitter.GetTypeDefinition();
             var propDef = typeDef.Properties.FirstOrDefault(p => p.Name == property.Name);
-            return Helpers.IsAutoProperty(propDef);
+            return Helpers.IsAutoPropertyOfDefinition(propDef);
         }
 
         public static string GetEventRef(CustomEventDeclaration property, IEmitter emitter, bool remove = false, bool noOverload = false, bool ignoreInterface = false)

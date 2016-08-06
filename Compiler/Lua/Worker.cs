@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -146,7 +146,7 @@ namespace Bridge.Lua {
             public LuaTranslater(string folder, string output, string dll, string bridgeDllPath) : base(folder, null, true, dll) {
                 output_ = output;
                 this.BridgeLocation = bridgeDllPath;
-                this.Log = new Logger("LuaTranslater", true, new ConsoleLoggerWriter(), SimpleFileLoggerWriter.Instance);
+                this.Log = new Logger("LuaTranslater", true, new ConsoleLoggerWriter());
                 TransformCtx.GetEntityName = GetEntityName;
             }
 

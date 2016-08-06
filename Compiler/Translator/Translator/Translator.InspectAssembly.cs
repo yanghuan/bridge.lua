@@ -52,9 +52,13 @@ namespace Bridge.Translator
                     continue;
                 }
 
-                this.Validator.CheckType(type, this);
-                this.TypeDefinitions.Add(BridgeTypes.GetTypeDefinitionKey(type), type);
                 string key = BridgeTypes.GetTypeDefinitionKey(type);
+                this.Validator.CheckType(type, this);
+                if(this.TypeDefinitions.ContainsKey(key)) {
+                    throw new System.Exception(type + " is already exists");
+                }
+
+                this.TypeDefinitions.Add(key, type);
                 this.BridgeTypes.Add(key, new BridgeType(key)
                 {
                     TypeDefinition = type
