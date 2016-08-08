@@ -327,25 +327,25 @@ namespace Bridge.Lua {
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("return function(dir)");
-            sb.AppendLine("dir = dir and dir .. '.' or \"\"");
-            sb.AppendLine("local require = require");
-            sb.AppendLine("local load = function(module) return require(dir .. module) end");
+            sb.AppendLine("    dir = dir and dir .. '.' or \"\"");
+            sb.AppendLine("    local require = require");
+            sb.AppendLine("    local load = function(module) return require(dir .. module) end");
             sb.AppendLine();
 
             foreach(LuaFileInfo info in luaFiles) {
                 string module = info.OutPath.Replace(Path.DirectorySeparatorChar, '.');
-                sb.AppendFormat("load(\"{0}\")", module);
+                sb.AppendFormat("    load(\"{0}\")", module);
                 sb.AppendLine();
             }
 
             sb.AppendLine();
-            sb.AppendLine("System.init{");
+            sb.AppendLine("    System.init{");
             foreach(var type in types) {
                 string name = ToCorrectTypeName(type.Key);
-                sb.AppendFormat("\"{0}\",", name);
+                sb.AppendFormat("        \"{0}\",", name);
                 sb.AppendLine();
             }
-            sb.AppendLine("}");
+            sb.AppendLine("    }");
             sb.Append("end");
 
             string manifestPath = Path.Combine(output_, "manifest.lua");

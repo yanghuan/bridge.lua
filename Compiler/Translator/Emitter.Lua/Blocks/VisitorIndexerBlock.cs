@@ -28,7 +28,7 @@ namespace Bridge.Translator.Lua
         {
             if (!accessor.IsNull && this.Emitter.GetInline(accessor) == null)
             {
-                this.EnsureComma();
+                this.EnsureNewLine();
 
                 this.ResetLocals();
 
@@ -44,7 +44,13 @@ namespace Bridge.Translator.Lua
                 var overloads = OverloadsCollection.Create(this.Emitter, indexerDeclaration, setter);
 
                 string name = overloads.GetOverloadName();
-                this.Write((setter ? "set" : "get") + name);
+                name = (setter ? "set" : "get") + name;
+                TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() {
+                    Name = name,
+                    IsPrivate = accessor.HasModifier(Modifiers.Private),
+                });
+
+                this.Write(name);
                 this.WriteEqualsSign();
                 this.WriteFunction();
                 this.EmitMethodParameters(indexerDeclaration.Parameters, indexerDeclaration, setter);
@@ -59,7 +65,9 @@ namespace Bridge.Translator.Lua
 
                 if (script == null)
                 {
+                    this.BeginFunctionBlock();
                     accessor.Body.AcceptVisitor(this.Emitter);
+                    this.EndFunctionBlock();
                 }
                 else
                 {
