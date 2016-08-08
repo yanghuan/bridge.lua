@@ -1,6 +1,6 @@
 package.path = package.path .. ";D:/Project/Bridge.lua/Compiler/Lua/CoreSystem.Lua/?.lua"
 
-require("All");
+require("All")("");
 
 print("-----------------", "dateTime & timeSpan")
 
