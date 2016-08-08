@@ -379,6 +379,8 @@ namespace Bridge.Translator.Lua
                 }
                 else if (this.Emitter.AssignmentType != AssignmentOperatorType.Assign)
                 {
+                    this.PushWriter(Helpers.GetPropertyRef(memberResult.Member, this.Emitter, true) + "({0})");
+                    /*
                     string trg;
 
                     if (memberResult.Member.IsStatic)
@@ -396,7 +398,7 @@ namespace Bridge.Translator.Lua
                         ".",
                         Helpers.GetPropertyRef(memberResult.Member, this.Emitter, false),
                         "()",
-                        "{0})"));
+                        "{0})"));*/
                 }
                 else
                 {

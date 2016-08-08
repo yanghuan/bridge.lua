@@ -722,13 +722,15 @@ namespace Bridge.Translator.Lua {
                             var trg = this.Emitter.Output.ToString();
 
                             this.RestoreWriter(oldWriter);
+                            this.PushWriter(Helpers.GetPropertyRef(member.Member, this.Emitter, true) +  "({0})");
+                            /*
                             this.PushWriter(string.Concat(Helpers.GetPropertyRef(member.Member, this.Emitter, true),
-                                proto ? ".call(this, " : "(",
-                                trg,
-                                ".",
-                                Helpers.GetPropertyRef(member.Member, this.Emitter, false),
-                                proto ? ".call(this)" : "()",
-                                "{0})"));
+                               proto ? ".call(this, " : "(",
+                               trg,
+                               ".",
+                               Helpers.GetPropertyRef(member.Member, this.Emitter, false),
+                               proto ? ".call(this)" : "()",
+                               "{0})"));*/
                         }
                     }
                     else {

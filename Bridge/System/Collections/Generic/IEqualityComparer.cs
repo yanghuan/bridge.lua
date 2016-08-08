@@ -19,7 +19,6 @@ namespace System.Collections.Generic
     {
         public static EqualityComparer<T> Default
         {
-            [Template("new Bridge.EqualityComparer$1({T})()")]
             get
             {
                 return null;

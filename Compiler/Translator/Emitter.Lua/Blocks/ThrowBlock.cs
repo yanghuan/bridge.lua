@@ -41,11 +41,10 @@ namespace Bridge.Translator.Lua
                 var exceptionType = (firstClause == null || firstClause.Type.IsNull) ? null : BridgeTypes.ToJsName(firstClause.Type, this.Emitter);
                 var isBaseException = exceptionType == null || exceptionType == "Bridge.Exception";
 
-                string name = "$e";
+                string name = "e".Ident();
                 if (count == 1 && isBaseException)
                 {
                     var clause = tryStatement.CatchClauses.First();
-
                     if (!String.IsNullOrEmpty(clause.VariableName))
                     {
                         name = clause.VariableName;
