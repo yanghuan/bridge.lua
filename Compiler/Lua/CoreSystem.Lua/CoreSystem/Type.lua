@@ -169,7 +169,7 @@ local function isAssignableFrom(this, c)
         return true
     end
     if getIsInterface(this) then
-        return implementInterface(this, c)
+        return implementInterface(c, this)
     end
     return false
 end 
