@@ -190,6 +190,7 @@ end
 System.define("System.Type", Type)
 
 function is(obj, cls)
+    if obj == nil then return false end
     return isAssignableFrom(getType(obj), typeof(cls))
 end
 
