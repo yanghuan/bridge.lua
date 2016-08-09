@@ -38,6 +38,12 @@ namespace Bridge.Contract
                 return;
             }
 
+            foreach(var comment in visitor.Comments) {
+                block.Write("--", comment.Content);
+                block.WriteNewLine();
+            }
+
+            /*
             object value = null;
             if (node is FieldDeclaration)
             {
@@ -86,8 +92,7 @@ namespace Bridge.Contract
             }
 
             block.Write(block.WriteIndentToString(XmlToJsDoc.Convert(source, rr, block.Emitter, value)));
-
-            block.WriteNewLine();
+            block.WriteNewLine();*/
         }
 
         private static string BuildCommentString(IList<Comment> comments)
