@@ -416,7 +416,14 @@ namespace Bridge.Translator.Lua
                         baseName = overloads.GetOverloadName();
                     }
                 }
-                string baseTypName = BridgeTypes.ToJsName(baseType, this.Emitter);
+
+                string baseTypName;
+                if(this.TypeInfo.GetBaseTypes(this.Emitter).Any()) {
+                    baseTypName = BridgeTypes.ToJsName(this.TypeInfo.GetBaseClass(this.Emitter), this.Emitter);
+                }
+                else {
+                    baseTypName = BridgeTypes.ToJsName(baseType, this.Emitter);
+                }
                 this.Write(baseTypName);
                 this.WriteDot();
                 this.Write("__ctor__");
