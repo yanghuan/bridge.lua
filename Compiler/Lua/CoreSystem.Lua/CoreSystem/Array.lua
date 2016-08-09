@@ -54,7 +54,7 @@ System.define("System.Array", function(T)
     return cls
 end, Array)
 
-function System.ArrayFromTable(t, T)
+function System.arrayFromTable(t, T)
     return setmetatable(t, System.Array(T))
 end
 

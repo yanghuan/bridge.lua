@@ -543,7 +543,7 @@ function Collection.toArray(t)
             tinsert(array, wrap(v))
         end
      end
-     return System.ArrayFromTable(array, t.__genericT__)
+     return System.arrayFromTable(array, t.__genericT__)
 end
 
 local DictionaryEnumerator = {}

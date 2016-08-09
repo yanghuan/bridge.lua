@@ -2,7 +2,6 @@ local System = System
 local throw = System.throw
 local Int = System.Int
 local Double = System.Double
-local ArrayFromTable = System.ArrayFromTable
 local NullReferenceException = System.NullReferenceException
 local InvalidCastException = System.InvalidCastException
 
@@ -130,13 +129,14 @@ Type.getIsInterface = getIsInterface
 local function getInterfaces(this)
     local interfaces = this.interfaces
     if interfaces == nil then
+        interfaces = {}
         local interfacesCls = this.c.__interfaces__
         if interfacesCls ~= nil then
             for _, i in ipairs(interfacesCls) do
                 tinsert(interfaces, typeof(i))
             end
-            ArrayFromTable(interfaces, Type)
         end
+        this.interfaces = System.arrayFromTable(interfaces, Type)
     end
     return interfaces
 end
@@ -191,7 +191,7 @@ System.define("System.Type", Type)
 
 function is(obj, cls)
     if obj == nil then return false end
-    return isAssignableFrom(getType(obj), typeof(cls))
+    return isAssignableFrom(typeof(cls), getType(obj))
 end
 
 System.is = is

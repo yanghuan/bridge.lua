@@ -297,7 +297,7 @@ function String.split(s, strings, count, options)
         end 
         startIndex = posEnd + 1
     end   
-    return System.ArrayFromTable(arr, String) 
+    return System.arrayFromTable(arr, String) 
 end
 
 function String.trimEnd(s, chars)
