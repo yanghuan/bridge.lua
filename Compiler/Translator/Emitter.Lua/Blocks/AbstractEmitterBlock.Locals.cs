@@ -259,7 +259,7 @@ namespace Bridge.Translator.Lua
                             {
                                 if (prm.IsOptional)
                                 {
-                                    if (prm.ConstantValue == null && prm.Type.Kind == TypeKind.Struct && !prm.Type.IsKnownType(KnownTypeCode.NullableOfT))
+                                    if (prm.ConstantValue == null && (prm.Type.Kind == TypeKind.Struct || prm.Type.Kind == TypeKind.TypeParameter) && !prm.Type.IsKnownType(KnownTypeCode.NullableOfT))
                                     {
                                         this.Write(string.Format("if {0} == nil then {0} = ", prm.Name));
                                         this.Write(Inspector.GetStructDefaultValue(prm.Type, this.Emitter));

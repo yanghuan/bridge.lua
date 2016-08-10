@@ -373,6 +373,10 @@ namespace Bridge.Translator.Lua
                                     new ExpressionListBlock(this.Emitter, argsExpressions, paramsArg, invocationExpression).Emit();
                                     if(!isIgnoreClass && argsInfo.HasTypeArguments) {
                                         this.WriteComma();
+                                        foreach(var nullParams in argsExpressions.SkipWhile(i => i != null)) {
+                                            this.Write("nil");
+                                            this.WriteComma();
+                                        }
                                         new TypeExpressionListBlock(this.Emitter, argsInfo.TypeArguments).Emit();
                                     }
                                     this.WriteCloseParentheses();
