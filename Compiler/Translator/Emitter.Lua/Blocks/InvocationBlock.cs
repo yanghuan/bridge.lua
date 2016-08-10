@@ -489,7 +489,7 @@ namespace Bridge.Translator.Lua
                     baseMethod = this.Emitter.AssemblyInfo.PreserveMemberCase ? baseMethod : Object.Net.Utilities.StringUtils.ToLowerCamelCase(baseMethod);
                 }
 
-                this.Write(name, ".prototype.", baseMethod);
+                this.Write(name, '.', baseMethod);
 
                 if (!isIgnore && argsInfo.HasTypeArguments)
                 {
@@ -497,10 +497,6 @@ namespace Bridge.Translator.Lua
                     new TypeExpressionListBlock(this.Emitter, argsInfo.TypeArguments).Emit();
                     this.WriteCloseParentheses();
                 }
-
-                this.WriteDot();
-
-                this.Write("call");
                 this.WriteOpenParentheses();
 
                 this.WriteThis();

@@ -49,6 +49,10 @@ namespace Bridge.Translator.Lua
         }
 
         public void BeginFunctionBlock() {
+            BeginCodeBlock();
+        }
+
+        public void BeginCodeBlock() {
             this.WriteNewLine();
             this.Indent();
         }
