@@ -639,7 +639,7 @@ namespace Bridge.Contract
                     }
 
                     var name = this.Emitter.GetEntityName(m, false, true);
-                    if ((name == this.JsName || name == this.AltJsName) && m.IsStatic == this.Static &&
+                    if ((name == this.JsName || name == this.AltJsName) /*&& m.IsStatic == this.Static*/ &&
                         ((m.IsConstructor && this.JsName == "$constructor") || m.IsConstructor == this.Constructor))
                     {
                         if (m.IsConstructor != this.Constructor)

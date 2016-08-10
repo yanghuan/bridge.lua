@@ -227,6 +227,9 @@ local IGrouping = System.Linq.IGrouping
 local Grouping = setmetatable({}, Enumerable)
 Grouping.__index = Grouping
 Grouping.getEnumerator = Collection.arrayEnumerator 
+Grouping.getKey = function(this)
+    return this.key
+end
 
 local function addToLookup(this, key, value)
     key = this.comparer.getHashCode(key)
