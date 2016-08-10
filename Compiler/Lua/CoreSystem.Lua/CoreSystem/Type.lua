@@ -126,6 +126,12 @@ end
 
 Type.getIsInterface = getIsInterface
 
+local function getIsValueType(this)
+    return this.c.__kind__ == "S"
+end
+
+Type.getIsValueType = getIsValueType
+
 local function getInterfaces(this)
     local interfaces = this.interfaces
     if interfaces == nil then
@@ -156,6 +162,7 @@ local function implementInterface(this, ifaceType)
         end
         t = getBaseType(t)
     end
+    return false
 end
 
 local function isAssignableFrom(this, c)
@@ -190,25 +197,27 @@ end
 System.define("System.Type", Type)
 
 function is(obj, cls)
-    if obj == nil then return false end
-    return isAssignableFrom(typeof(cls), getType(obj))
+    if obj ~= nil then 
+        return isAssignableFrom(typeof(cls), getType(obj))
+    end
+    return false
 end
 
 System.is = is
 
 function System.as(obj, cls)
-    if obj ~= nil and is(obj, cls) then
+    if is(obj, cls) then
         return obj
     end
     return nil
 end
 
-function System.cast(obj, type)
-    if obj ~= nil and not is(obj, type) then
-         throw(InvalidCastException(), 1)
+function System.cast(obj, cls)
+    if is(obj, cls) then
+        return obj
     end
-    return obj
+    if obj == nil and cls.__kind__ ~= "S" then
+        return nil
+    end
+    throw(InvalidCastException(), 1)
 end
-
-
-

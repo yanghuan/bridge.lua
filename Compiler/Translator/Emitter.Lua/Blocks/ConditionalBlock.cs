@@ -21,6 +21,26 @@ namespace Bridge.Translator.Lua
         protected override void DoEmit()
         {
             var conditionalExpression = this.ConditionalExpression;
+
+            var iteratorVar = this.GetTempVarName();
+            var iteratorName = this.AddLocal(iteratorVar, AstType.Null);
+            this.PushWriter("{0}");
+
+            this.Write("if ");
+            conditionalExpression.Condition.AcceptVisitor(this.Emitter);
+            this.Write(" then ");
+            this.Write(iteratorName, " = ");
+            conditionalExpression.TrueExpression.AcceptVisitor(this.Emitter);
+            this.Write(" else ");
+            this.Write(iteratorName, " = ");
+            conditionalExpression.FalseExpression.AcceptVisitor(this.Emitter);
+
+            string script = this.PopWriter(true);
+            this.WriteToPrevLine(script);
+            this.Write(iteratorName);
+
+            /*
+            var conditionalExpression = this.ConditionalExpression;
             this.Write(LuaHelper.Root, ".ternary");
             this.WriteOpenParentheses();
             conditionalExpression.Condition.AcceptVisitor(this.Emitter);
@@ -28,7 +48,7 @@ namespace Bridge.Translator.Lua
             conditionalExpression.TrueExpression.AcceptVisitor(this.Emitter);
             this.WriteComma();
             conditionalExpression.FalseExpression.AcceptVisitor(this.Emitter);
-            this.WriteCloseParentheses();
+            this.WriteCloseParentheses();*/
         }
     }
 }

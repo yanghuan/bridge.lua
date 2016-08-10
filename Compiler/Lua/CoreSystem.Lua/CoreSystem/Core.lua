@@ -256,10 +256,6 @@ function System.using(t, f, ...)
     end
 end
 
-function System.ternary(cond, T, F)
-    if cond then return T else return F end
-end
-
 function System.merge(t, f)
     f(t)
     return t
