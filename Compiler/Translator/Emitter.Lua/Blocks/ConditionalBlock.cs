@@ -18,26 +18,32 @@ namespace Bridge.Translator.Lua
             set;
         }
 
+        /// <summary>
+        /// http://lua-users.org/wiki/TernaryOperator
+        /// </summary>
         protected override void DoEmit()
         {
             var conditionalExpression = this.ConditionalExpression;
 
-            var iteratorVar = this.GetTempVarName();
-            var iteratorName = this.AddLocal(iteratorVar, AstType.Null);
+            var tempName = this.GetTempVarName();
             this.PushWriter("{0}");
 
+            this.Write("local ", tempName);
+            this.WriteNewLine();
             this.Write("if ");
             conditionalExpression.Condition.AcceptVisitor(this.Emitter);
             this.Write(" then ");
-            this.Write(iteratorName, " = ");
+            this.Write(tempName, " = ");
             conditionalExpression.TrueExpression.AcceptVisitor(this.Emitter);
             this.Write(" else ");
-            this.Write(iteratorName, " = ");
+            this.Write(tempName, " = ");
             conditionalExpression.FalseExpression.AcceptVisitor(this.Emitter);
+            this.Write(" end");
 
             string script = this.PopWriter(true);
             this.WriteToPrevLine(script);
-            this.Write(iteratorName);
+            this.Write(tempName);
+            this.RemoveTempVar(tempName);
 
             /*
             var conditionalExpression = this.ConditionalExpression;
