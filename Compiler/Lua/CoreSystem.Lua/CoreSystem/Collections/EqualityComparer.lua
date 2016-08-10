@@ -133,7 +133,7 @@ System.define("System.Comparer_1", function(T)
 end, Comparer)
 
 local function compareT(this, other, T)
-    System.Comparer_1(T).getDefault().compare(this, other)
+    return System.Comparer_1(T).getDefault().compare(this, other)
 end
 
 System.compareT = compareT
