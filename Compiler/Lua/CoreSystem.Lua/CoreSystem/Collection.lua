@@ -11,6 +11,7 @@ local tinsert = table.insert
 local tremove = table.remove
 local setmetatable = setmetatable
 local select = select
+local type = type
 
 local Collection = {}
 local null = {}
@@ -504,6 +505,10 @@ end
 
 Collection.isArrayLike = isArrayLike
 
+function Collection.isEnumerableLike(t)
+    return type(t) == "table" and t.getEnumerator ~= nil
+end
+
 local function eachFn(en)
     if en:moveNext() then
         return true, en:getCurrent()
@@ -661,6 +666,7 @@ System.each = Collection.each
 System.ipairs = Collection.ipairs
 System.pairs = Collection.pairs
 System.isArrayLike = Collection.isArrayLike
+System.isEnumerableLike = Collection.isEnumerableLike
 System.yieldEnumerator = Collection.yieldEnumerator
 System.yieldReturn = Collection.yieldReturn 
 

@@ -10,17 +10,10 @@ local tostring = tostring
 local unpack = unpack
 local schar = string.char
 local tinsert = table.insert
+local tconcat = table.concat
 
 local String = {}
 local meta = getmetatable("")
-
-function String.FromChar(c, count)
-    if count >= 0 then
-        return schar(c):rep(count)
-    else
-        throw(ArgumentOutOfRangeException("count"))
-    end
-end
 
 local function check(s, startIndex, count)
     local len = #s
@@ -35,7 +28,16 @@ local function check(s, startIndex, count)
     return startIndex, count, len
 end
 
-function String.FromArray(value, startIndex, length)
+function String.build(...)
+    local len = select("#", ...)
+    if len == 2 then
+        local c, count = ...
+        if count <= 0 then
+            throw(ArgumentOutOfRangeException("count"))
+        end
+        return schar(c):rep(count)
+    end
+    local value, startIndex, length = ...
     startIndex, length = check(value, startIndex, length)
     return schar(unpack(value, startIndex + 1, startIndex + length))
 end
@@ -96,6 +98,8 @@ function String.equals(this, v, comparisonType)
     return compare(this, v, comparisonType) == 0
 end
 
+meta.equals = String.equals
+
 function String.equalsObj(this, v)
     if type(v) == "string" then
         return this == v
@@ -103,15 +107,73 @@ function String.equalsObj(this, v)
     return false
 end
 
+meta.equalsObj = String.equalsObj
+
 function String.getHashCode(this)
     return this
 end
+
+meta.getHashCode = String.getHashCode
 
 function String.get(this, index)
     if index < 0 or index >= #this then
         throw(IndexOutOfRangeException())
     end
     return this:byte(index + 1)
+end
+
+meta.get = String.get
+
+function String.concat(...)
+    local t = {}
+    local len = select("#", ...)
+    if len == 1 then
+        local v = ...
+        if System.isEnumerableLike(v) then
+            for _, v in System.each(array) do
+                tinsert(t, tostring(v))
+            end
+        else 
+            return tostring(v)
+        end
+    else
+        for i = 1, len do
+            local v = select(i, ...)
+        tinsert(t, tostring(v))
+        end
+    end
+    return tconcat(t)
+end
+
+function String.join(separator, value, startIndex, count)
+    local t = {}
+    local has
+    if startIndex then  
+        check(value, startIndex, count)
+        for i = startIndex + 1, startIndex + count do
+            local v = value:get(i)
+            if v ~= nil then
+                if has then
+                    tinsert(t, separator)
+                else 
+                    has = true
+                end
+                tinsert(t, v)
+            end
+        end
+    else
+        for _, v in System.each(value) do
+            if v ~= nil then
+                if has then
+                    tinsert(t, separator)
+                else 
+                    has = true
+                end
+                tinsert(t, v)
+            end      
+        end
+    end
+    return tconcat(t)
 end
 
 local function checkIndexOf(str, value, startIndex, count, comparisonType)
@@ -128,6 +190,9 @@ local function checkIndexOf(str, value, startIndex, count, comparisonType)
 end
 
 function String.lastIndexOf(str, value, startIndex, count, comparisonType)
+    if type(value) == "number" then
+        value = schar(value)
+    end
     str, value, startIndex = checkIndexOf(str, value, startIndex, count, comparisonType)
     local index = str:match(".*()" .. value)
     if index then
@@ -135,6 +200,8 @@ function String.lastIndexOf(str, value, startIndex, count, comparisonType)
     end
     return -1
 end
+
+meta.get = String.lastIndexOf
 
 local function indexOfAny(str, chars, startIndex, count)
     if chars == nil then
@@ -153,6 +220,8 @@ function String.lastIndexOfAny(str, chars, startIndex, count)
     end
     return -1
 end
+
+meta.get = String.lastIndexOfAny
 
 function String.isNullOrWhiteSpace(value)
     return value == nil or value:find("^%s*$") ~= nil
@@ -173,20 +242,26 @@ function String.format(format, ...)
     end)
 end
 
-function String.startsWith(str, prefix)
-    return string.find(str, "^" .. prefix) ~= nil
+function String.startsWith(this, prefix)
+    return this:sub(1, #prefix) == prefix
 end
 
-function String.endsWith(str, suffix)
-    return string.find(str, prefix .. "$") ~= nil
+meta.startsWith = String.startsWith
+
+function String.endsWith(this, suffix)
+    return suffix == "" or this:sub(-#suffix) == suffix
 end
 
-function String.contains(str, value)
+meta.endsWith = String.endsWith
+
+function String.contains(this, value)
     if value == nil then
         throw(ArgumentNullException("value"))
     end
-    return str:find(value) ~= nil
+    return this:find(value) ~= nil
 end
+
+meta.contains = String.contains
 
 function String.indexOfAny(str, chars, startIndex, count)
     str, chars, startIndex = indexOfAny(str, chars, startIndex, count)
@@ -197,14 +272,21 @@ function String.indexOfAny(str, chars, startIndex, count)
     return -1
 end
 
+meta.indexOfAny = String.indexOfAny
+
 function String.indexOf(str, value, startIndex, count, comparisonType)
+    if type(value) == "number" then
+        value = schar(value)
+    end
     str, value, startIndex = checkIndexOf(str, value, startIndex, count, comparisonType)
     local index = str:find(value)
     if index then
         return index - 1 + startIndex
     end
-    return -1;
+    return -1
 end
+
+meta.get = String.indexOf
 
 function String.toCharArray(str, startIndex, count)
     startIndex, count = check(str, startIndex, count)
@@ -219,10 +301,16 @@ local function escape(s)
     return s:gsub("([%%%^%.])", "%%%1")
 end
 
-function String.replaceAll(this, a, b)
+function String.replace(this, a, b)
+    if type(a) == "number" then
+        a = schar(a)
+        b = schar(b)
+    end
     a = escape(a)
     return this:gsub(b)
 end
+
+meta.replace = String.replace
 
 function String.insert(this, startIndex, value) 
     if value == nil then
@@ -232,15 +320,21 @@ function String.insert(this, startIndex, value)
     return this:sub(1, startIndex) .. value .. this:sub(startIndex + 1)
 end
 
+meta.insert = String.insert
+
 function String.remove(this, startIndex, count) 
     startIndex, count = stringCheck(this, startIndex, count)
     return this:sub(1, startIndex) .. this:sub(startIndex + 1 + count)
 end
 
+meta.remove = String.remove
+
 function String.substring(this, startIndex, count)
     startIndex, count = check(str, startIndex, count)
     return this:sub(startIndex + 1, startIndex + count)
 end
+
+meta.substring = String.substring
 
 local function findAny(s, strings, startIndex)
     local findBegin, findEnd, findStr
@@ -302,6 +396,8 @@ function String.split(this, strings, count, options)
     return System.arrayFromTable(t, String) 
 end
 
+meta.split = String.split
+
 function String.trimEnd(this, chars)
     if chars then
         chars = schar(unpack(chars))
@@ -312,6 +408,8 @@ function String.trimEnd(this, chars)
     end
     return (this:gsub(chars, "%1"))
 end
+
+meta.trimEnd = String.trimEnd
 
 function String.trimStart(this, chars) 
     if chars then
@@ -324,6 +422,8 @@ function String.trimStart(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
+meta.trimStart = String.trimStart
+
 function String.trim(this, chars) 
     if chars then
         chars = schar(unpack(chars))
@@ -334,6 +434,8 @@ function String.trim(this, chars)
     end
     return (this:gsub(chars, "%1"))
 end
+
+meta.trim = String.trim
 
 System.define("System.String", String)
 
