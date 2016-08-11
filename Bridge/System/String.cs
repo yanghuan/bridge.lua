@@ -12,12 +12,12 @@ namespace System
     /// </summary>
     [External]
     [Name("System.String")]
-    [Constructor("String")]
     public sealed class String : IEnumerable, IEnumerable<char>, IComparable<String>, IEquatable<String>
     {
         [FieldProperty]
         public int Length
         {
+            [Template("#{this}")]
             get
             {
                 return 0;
@@ -27,37 +27,17 @@ namespace System
         [InlineConst]
         public const string Empty = "";
 
-        [Template("String.fromCharCode.apply(null, {value})")]
+        [Template("System.String.FromArray({value})")]
         public String(char[] value)
         {
         }
 
-        /// <summary>
-        /// The String global object is a constructor for strings, or a sequence of characters.
-        /// </summary>
-        public String()
-        {
-        }
-
-        /// <summary>
-        /// The String global object is a constructor for strings, or a sequence of characters.
-        /// </summary>
-        /// <param name="thing">Anything to be converted to a string.</param>
-        public String(object thing)
-        {
-        }
-
-        /// <summary>
-        /// Constructs a string from the value indicated by a specified character repeated a specified number of times.
-        /// </summary>
-        /// <param name="c">A character.</param>
-        /// <param name="count">The number of times the character occurs.</param>
-        [Template("Bridge.String.fromCharCount({c}, {count})")]
+        [Template("System.String.FromChar({c}, {count})")]
         public String(char c, int count)
         {
         }
 
-        [Template("String.fromCharCode.apply(null, {value}.slice({startIndex}, {startIndex} + {length}))")]
+        [Template("System.String.FromArray({value}, {startIndex}, {length})")]
         public extern String(char[] value, int startIndex, int length);
 
         /// <summary>
@@ -75,33 +55,6 @@ namespace System
         /// <returns>true if the value parameter is null or String.Empty, or if value consists exclusively of white-space characters. </returns>
         [Template("Bridge.String.isNullOrWhiteSpace({value})")]
         public static extern bool IsNullOrWhiteSpace(string value);
-
-        /// <summary>
-        /// The static String.fromCharCode() method returns a string created by using the specified sequence of Unicode values.
-        /// </summary>
-        /// <returns>String.Empty</returns>
-        public static extern string FromCharCode();
-
-        /// <summary>
-        /// The static String.fromCharCode() method returns a string created by using the specified sequence of Unicode values.
-        /// </summary>
-        /// <param name="numbers">A sequence of numbers that are Unicode values.</param>
-        /// <returns></returns>
-        public static extern string FromCharCode(params int[] numbers);
-
-        /// <summary>
-        /// The charAt() method returns the specified character from a string.
-        /// </summary>
-        /// <param name="index">An integer between 0 and 1-less-than the length of the string.</param>
-        /// <returns></returns>
-        public extern string CharAt(int index);
-
-        /// <summary>
-        /// The charCodeAt() method returns the numeric Unicode value of the character at the given index (except for unicode codepoints > 0x10000).
-        /// </summary>
-        /// <param name="index">An integer greater than or equal to 0 and less than the length of the string; if it is not a number, it defaults to 0.</param>
-        /// <returns></returns>
-        public extern int CharCodeAt(int index);
 
         /// <summary>
         /// Determines whether two specified String objects have the same value.
@@ -838,11 +791,8 @@ namespace System
             return false;
         }
 
-        [IndexerName("Chars")]
         public char this[int index]
         {
-            [External]
-            [Template("charCodeAt({0})")]
             get
             {
                 return default(char);

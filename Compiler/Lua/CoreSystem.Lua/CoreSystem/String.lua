@@ -1,14 +1,43 @@
 local System = System
-local throw = System.throw
+local throw = System.throwstringmeta
 local ArgumentException = System.ArgumentException
+local ArgumentNullException = System.ArgumentNullException
+local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
 local FormatException = System.FormatException
+local IndexOutOfRangeException = System.IndexOutOfRangeException
+
+local tostring = tostring
+local unpack = unpack
+local schar = string.char
+local tinsert = table.insert
 
 local String = {}
+local meta = getmetatable("")
 
-function System.checkThis(this)
-    if this == nil then
-        throw(System.NullReferenceException())
+function String.FromChar(c, count)
+    if count >= 0 then
+        return schar(c):rep(count)
+    else
+        throw(ArgumentOutOfRangeException("count"))
     end
+end
+
+local function check(s, startIndex, count)
+    local len = #s
+    startIndex = startIndex or 0
+    if startIndex < 0 or startIndex > len then
+        throw(ArgumentOutOfRangeException("startIndex"))
+    end
+    count = count or len - startIndex
+    if count < 0 or count > len - startIndex then
+        throw(ArgumentOutOfRangeException("count"))
+    end
+    return startIndex, count, len
+end
+
+function String.FromArray(value, startIndex, length)
+    startIndex, length = check(value, startIndex, length)
+    return schar(unpack(value, startIndex + 1, startIndex + length))
 end
 
 local function compare(strA, strB, ignoreCaseOrType, cultureInfo)
@@ -24,14 +53,14 @@ local function compare(strA, strB, ignoreCaseOrType, cultureInfo)
         if type(ignoreCaseOrType) == "number" then
             -- StringComparison
             if ignoreCaseOrType % 2 ~= 0 then
-                strA = string.lower(strA)
-                strB = string.lower(strB)
+                strA = strA:lower()
+                strB = strB:lower()
             end
         else
             -- ignoreCase
             if ignoreCaseOrType then
-                strA = string.lower(strA)
-                strB = string.lower(strB)
+                strA = strA:lower()
+                strB = strB:lower()
             end
 
             if cultureInfo then
@@ -48,12 +77,12 @@ end
 String.compare = compare
 
 function String.compareTo(this, v)
-    checkThis(this)
     return compare(this, v)
 end
 
+meta.compareTo = String.compareTo
+
 function String.compareToObj(this, v)
-    checkThis(this)
     if v == nil then return 1 end
     if type(v) ~= "string" then
         throw(ArgumentException("Arg_MustBeString"))
@@ -61,13 +90,13 @@ function String.compareToObj(this, v)
     return compare(this, v)
 end
 
-function String.Equals(this, v, comparisonType)
-    checkThis(this)
+meta.compareToObj = String.compareToObj
+
+function String.equals(this, v, comparisonType)
     return compare(this, v, comparisonType) == 0
 end
 
-function String.EqualsObj(this, v)
-    checkThis(this) 
+function String.equalsObj(this, v)
     if type(v) == "string" then
         return this == v
     end
@@ -78,63 +107,47 @@ function String.getHashCode(this)
     return this
 end
 
-function String.charCodeAt(s, index)
-    if index < 0 or index >= #s then
-        throw(System.IndexOutOfRangeException())
+function String.get(this, index)
+    if index < 0 or index >= #this then
+        throw(IndexOutOfRangeException())
     end
-    return string.byte(s, index + 1)
-end
-
-local function check(s, startIndex, count)
-    local len = #s
-    startIndex = startIndex or 0
-    if startIndex < 0 or startIndex > len then
-        throw(System.ArgumentOutOfRangeException("startIndex", "startIndex cannot be less than zero and must refer to a location within the string"))
-    end
-
-    count = count or len - startIndex
-    if count < 0 or count > len - startIndex then
-        throw(System.ArgumentOutOfRangeException("count", "must be non-negative and must refer to a location within the string"))
-    end
-    return startIndex, count, len
+    return this:byte(index + 1)
 end
 
 local function checkIndexOf(str, value, startIndex, count, comparisonType)
     if value == nil then
-        throw(System.ArgumentNullException("value"))
+        throw(ArgumentNullException("value"))
     end
-
     startIndex, count = check(str, startIndex, count)
-    str = string.sub(str, startIndex + 1, startIndex + count)
+    str = str:sub(startIndex + 1, startIndex + count)
     if comparisonType and comparisonType % 2 ~= 0 then
-        str = string.lower(str)
-        value = string.lower(value)
+        str = str:lower()
+        value = value:lower()
     end
     return str, value, startIndex
 end
 
 function String.lastIndexOf(str, value, startIndex, count, comparisonType)
     str, value, startIndex = checkIndexOf(str, value, startIndex, count, comparisonType)
-    local index = string.match(str, ".*()" .. value)
+    local index = str:match(".*()" .. value)
     if index then
         return index - 1 + startIndex
     end
-    return -1;
+    return -1
 end
 
 local function indexOfAny(str, chars, startIndex, count)
     if chars == nil then
-        throw(System.ArgumentNullException("chars"))
+        throw(ArgumentNullException("chars"))
     end
-
     startIndex, count = check(str, startIndex, count)
-    str = string.sub(str, startIndex + 1, startIndex + count)
-    return str, "[" .. string.char(unpack(chars)) .. "]", startIndex
+    str = str:sub(startIndex + 1, startIndex + count)
+    return str, "[" .. schar(unpack(chars)) .. "]", startIndex
 end
 
 function String.lastIndexOfAny(str, chars, startIndex, count)
     str, chars, startIndex = indexOfAny(str, chars, startIndex, count)
-    local index = string.match(str, "^.*()" .. chars)
+    local index = str:match("^.*()" .. chars)
     if index then
         return index - 1 + startIndex
     end
@@ -142,24 +155,16 @@ function String.lastIndexOfAny(str, chars, startIndex, count)
 end
 
 function String.isNullOrWhiteSpace(value)
-    return value == nil or string.find(value, "^%s*$") ~= nil
+    return value == nil or value:find("^%s*$") ~= nil
 end
 
 function String.isNullOrEmpty(value)
     return value == nil or #value == 0
 end
 
-function String.fromCharCount(c, count)
-    if count >= 0 then
-        return string.rep(string.char(c), count)
-    else
-        throw(System.ArgumentOutOfRangeException("count", "cannot be less than zero"))
-    end
-end
-
 function String.format(format, ...)
     local arg = { ... }
-    return string.gsub(format, "{(%d)}", function(n)
+    return format:gsub("{(%d)}", function(n)
         local v = arg[n + 1]
         if v == nil then
             throw(FormatException())
@@ -178,14 +183,14 @@ end
 
 function String.contains(str, value)
     if value == nil then
-        throw(System.ArgumentNullException("value"))
+        throw(ArgumentNullException("value"))
     end
-    return string.find(str, value) ~= nil
+    return str:find(value) ~= nil
 end
 
 function String.indexOfAny(str, chars, startIndex, count)
     str, chars, startIndex = indexOfAny(str, chars, startIndex, count)
-    local index = string.find(str, chars)
+    local index = str:find(chars)
     if index then
         return index - 1 + startIndex
     end
@@ -194,7 +199,7 @@ end
 
 function String.indexOf(str, value, startIndex, count, comparisonType)
     str, value, startIndex = checkIndexOf(str, value, startIndex, count, comparisonType)
-    local index = string.find(str, value)
+    local index = str:find(value)
     if index then
         return index - 1 + startIndex
     end
@@ -203,40 +208,38 @@ end
 
 function String.toCharArray(str, startIndex, count)
     startIndex, count = check(str, startIndex, count)
-
-    local arr = { }
+    local t = { }
     for i = startIndex + 1, startIndex + count do
-        table.insert(arr, string.byte(str, i))
+        tinsert(t, str:byte(i))
     end
-    return arr
+    return System.arrayFromTable(t, System.Char)
 end
 
-local function escape(str)
-    return string.gsub(str, "([%%%^%.])", "%%%1")
+local function escape(s)
+    return s:gsub("([%%%^%.])", "%%%1")
 end
 
-function String.replaceAll(str, a, b)
+function String.replaceAll(this, a, b)
     a = escape(a)
-    return string.gsub(str, a, b)
+    return this:gsub(b)
 end
 
-function String.insert(s, startIndex, value) 
+function String.insert(this, startIndex, value) 
     if value == nil then
         error(System.new(System.ArgumentNullException, "value"))
     end
-
-    startIndex = check(s, startIndex)
-    return string.sub(s, 1, startIndex) .. value .. string.sub(s, startIndex + 1)
+    startIndex = check(this, startIndex)
+    return this:sub(1, startIndex) .. value .. this:sub(startIndex + 1)
 end
 
-function String.remove(s, startIndex, count) 
-    startIndex, count = stringCheck(s, startIndex, count)
-    return string.sub(s, 1, startIndex) .. string.sub(s, startIndex + 1 + count)
+function String.remove(this, startIndex, count) 
+    startIndex, count = stringCheck(this, startIndex, count)
+    return this:sub(1, startIndex) .. this:sub(startIndex + 1 + count)
 end
 
-function String.substring(str, startIndex, count)
+function String.substring(this, startIndex, count)
     startIndex, count = check(str, startIndex, count)
-    return string.sub(str, startIndex + 1, startIndex + count)
+    return this:sub(startIndex + 1, startIndex + count)
 end
 
 local function findAny(s, strings, startIndex)
@@ -255,35 +258,35 @@ end
 
 String.findAny = findAny
 
-function String.split(s, strings, count, options) 
-    local arr = {}
+function String.split(this, strings, count, options) 
+    local t = {}
     local find = string.find
     if type(strings) == "table" then
         if #strings == 0 then
-            return arr
+            return t
         end  
 
         if type(strings[1]) == "string" then
             find = findAny
         else
-            strings = string.char(unpack(strings))
+            strings = schar(unpack(strings))
             strings = escape(strings)
             strings = "[" .. strings .. "]"
         end
     elseif type(strings) == "string" then       
         strings = escape(strings)         
     else
-        string = string.char(strings)
+        string = schar(strings)
         strings = escape(strings)
     end
 
     local startIndex = 1
     while true do
-        local posBegin, posEnd = find(s, strings, startIndex)
+        local posBegin, posEnd = find(this, strings, startIndex)
         posBegin = posBegin or 0
-        local subStr = string.sub(s, startIndex, posBegin -1)
+        local subStr = this:sub(startIndex, posBegin -1)
         if options ~= 1 or #subStr > 0 then
-            table.insert(arr, subStr)
+            tinsert(t, subStr)
             if count then
                 count = count -1
                 if count == 0 then
@@ -291,46 +294,45 @@ function String.split(s, strings, count, options)
                 end
             end  
         end
-         
         if posBegin == 0 then
             break
         end 
         startIndex = posEnd + 1
     end   
-    return System.arrayFromTable(arr, String) 
+    return System.arrayFromTable(t, String) 
 end
 
-function String.trimEnd(s, chars)
+function String.trimEnd(this, chars)
     if chars then
-        chars = string.char(unpack(chars))
+        chars = schar(unpack(chars))
         chars = escape(chars)
         chars = "(.-)[" .. chars .. "]*$"
     else 
         chars = "(.-)%s*$"
     end
-    return (string.gsub(s, chars, "%1"))
+    return (this:gsub(chars, "%1"))
 end
 
-function String.trimStart(s, chars) 
+function String.trimStart(this, chars) 
     if chars then
-        chars = string.char(unpack(chars))
+        chars = schar(unpack(chars))
         chars = escape(chars)
         chars = "^[" .. chars .. "]*(.-)"
     else 
         chars = "^%s*(.-)"
     end
-    return (string.gsub(s, chars, "%1"))
+    return (this:gsub(chars, "%1"))
 end
 
-function String.trim(s, chars) 
+function String.trim(this, chars) 
     if chars then
-        chars = string.char(unpack(chars))
+        chars = schar(unpack(chars))
         chars = escape(chars)
         chars = "^[" .. chars .. "]*(.-)[" .. chars .. "]*$"
     else 
         chars = "^%s*(.-)%s*$"
     end
-    return (string.gsub(s, chars, "%1"))
+    return (this:gsub(chars, "%1"))
 end
 
 System.define("System.String", String)

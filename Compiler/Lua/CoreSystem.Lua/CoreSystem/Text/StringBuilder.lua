@@ -2,8 +2,11 @@ local System = System
 local throw = System.throw
 local Collection = System.Collection
 local addCount = Collection.addCount
+local removeArrayAll = Collection.removeArrayAll
 local clearCount = Collection.clearCount
 local ArgumentNullException = System.ArgumentNullException
+
+local tinsert = table.insert
 
 local StringBuilder = {}
 
@@ -11,17 +14,14 @@ local function build(this, value, startIndex, length)
     value = System.String.substring(value, startIndex, length)
     local len = #value
     if len > 0 then
-        this.buffer = { value } 
+        tinser(this, value)
         addCount(this, len) 
-    else
-        this.buffer = {} 
     end
 end
 
 function StringBuilder.__ctor__(this, ...)
     local len = select("#", ...)
     if len == 0 then
-        build(this, "", 0, 0)
     elseif len == 1 or len == 2 then
         local value = ...
         if type(value) == "string" then
@@ -43,7 +43,7 @@ function StringBuilder.append(this, ...)
         local value = ...
         if value ~= nil then
             value = tostring(value)
-            table.insert(this.buffer, value)
+            tinsert(this, value)
             addCount(this, #value) 
         end
     else
@@ -52,7 +52,7 @@ function StringBuilder.append(this, ...)
             throw(ArgumentNullException("value"))
         end
         value = System.String.substring(value, startIndex, length)
-        table.insert(this.buffer, value)
+        tinsert(this, value)
         addCount(this, #value) 
     end
     return this
@@ -60,7 +60,7 @@ end
 
 function StringBuilder.appendFormat(this, format, ...)
     local value = System.String.format(format, ...)
-    table.insert(this.buffer, this)
+    tinsert(this, this)
     addCount(this, #value) 
     return this
 end
@@ -68,22 +68,22 @@ end
 function StringBuilder.appendLine(this, value)
     local count = 1;
     if value ~= nil then
-        table.insert(this.buffer, value)
+        tinsert(this, value)
         count = count + #value
     end
-    table.insert(this.buffer, "\n")
+    tinsert(this, "\n")
     addCount(this, count) 
     return this
 end
 
 function StringBuilder.clear(this)
-    this.buffer = {}
+    removeArrayAll(this)
     clearCount(this)
     return this
 end
 
 function StringBuilder.toString(this)
-    return table.concat(this.buffer)
+    return table.concat(this)
 end
 
 StringBuilder.__tostring = StringBuilder.toString
