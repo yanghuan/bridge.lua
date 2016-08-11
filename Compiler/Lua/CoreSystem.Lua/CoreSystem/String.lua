@@ -232,6 +232,19 @@ function String.isNullOrEmpty(value)
 end
 
 function String.format(format, ...)
+    local len = select("#", ...)
+    if len == 1 then
+        local v = ...
+        if System.isArrayLike(v) then
+            return format:gsub("{(%d)}", function(n) 
+                local v = v:get(n)
+                if v == nil then
+                    throw(FormatException())
+                end
+                return tostring(v) 
+            end)
+        end 
+    end
     local arg = { ... }
     return format:gsub("{(%d)}", function(n)
         local v = arg[n + 1]
