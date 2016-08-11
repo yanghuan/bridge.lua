@@ -1,5 +1,5 @@
 local System = System
-local throw = System.throwstringmeta
+local throw = System.throw
 local ArgumentException = System.ArgumentException
 local ArgumentNullException = System.ArgumentNullException
 local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
@@ -8,12 +8,12 @@ local IndexOutOfRangeException = System.IndexOutOfRangeException
 
 local tostring = tostring
 local unpack = unpack
+local string = string
 local schar = string.char
 local tinsert = table.insert
 local tconcat = table.concat
 
 local String = {}
-local meta = getmetatable("")
 
 local function check(s, startIndex, count)
     local len = #s
@@ -82,7 +82,7 @@ function String.compareTo(this, v)
     return compare(this, v)
 end
 
-meta.compareTo = String.compareTo
+string.compareTo = String.compareTo
 
 function String.compareToObj(this, v)
     if v == nil then return 1 end
@@ -92,13 +92,13 @@ function String.compareToObj(this, v)
     return compare(this, v)
 end
 
-meta.compareToObj = String.compareToObj
+string.compareToObj = String.compareToObj
 
 function String.equals(this, v, comparisonType)
     return compare(this, v, comparisonType) == 0
 end
 
-meta.equals = String.equals
+string.equals = String.equals
 
 function String.equalsObj(this, v)
     if type(v) == "string" then
@@ -107,13 +107,13 @@ function String.equalsObj(this, v)
     return false
 end
 
-meta.equalsObj = String.equalsObj
+string.equalsObj = String.equalsObj
 
 function String.getHashCode(this)
     return this
 end
 
-meta.getHashCode = String.getHashCode
+string.getHashCode = String.getHashCode
 
 function String.get(this, index)
     if index < 0 or index >= #this then
@@ -122,7 +122,7 @@ function String.get(this, index)
     return this:byte(index + 1)
 end
 
-meta.get = String.get
+string.get = String.get
 
 function String.concat(...)
     local t = {}
@@ -201,7 +201,7 @@ function String.lastIndexOf(str, value, startIndex, count, comparisonType)
     return -1
 end
 
-meta.get = String.lastIndexOf
+string.get = String.lastIndexOf
 
 local function indexOfAny(str, chars, startIndex, count)
     if chars == nil then
@@ -221,7 +221,7 @@ function String.lastIndexOfAny(str, chars, startIndex, count)
     return -1
 end
 
-meta.get = String.lastIndexOfAny
+string.get = String.lastIndexOfAny
 
 function String.isNullOrWhiteSpace(value)
     return value == nil or value:find("^%s*$") ~= nil
@@ -246,13 +246,13 @@ function String.startsWith(this, prefix)
     return this:sub(1, #prefix) == prefix
 end
 
-meta.startsWith = String.startsWith
+string.startsWith = String.startsWith
 
 function String.endsWith(this, suffix)
     return suffix == "" or this:sub(-#suffix) == suffix
 end
 
-meta.endsWith = String.endsWith
+string.endsWith = String.endsWith
 
 function String.contains(this, value)
     if value == nil then
@@ -261,7 +261,7 @@ function String.contains(this, value)
     return this:find(value) ~= nil
 end
 
-meta.contains = String.contains
+string.contains = String.contains
 
 function String.indexOfAny(str, chars, startIndex, count)
     str, chars, startIndex = indexOfAny(str, chars, startIndex, count)
@@ -272,7 +272,7 @@ function String.indexOfAny(str, chars, startIndex, count)
     return -1
 end
 
-meta.indexOfAny = String.indexOfAny
+string.indexOfAny = String.indexOfAny
 
 function String.indexOf(str, value, startIndex, count, comparisonType)
     if type(value) == "number" then
@@ -286,7 +286,7 @@ function String.indexOf(str, value, startIndex, count, comparisonType)
     return -1
 end
 
-meta.get = String.indexOf
+string.get = String.indexOf
 
 function String.toCharArray(str, startIndex, count)
     startIndex, count = check(str, startIndex, count)
@@ -307,10 +307,10 @@ function String.replace(this, a, b)
         b = schar(b)
     end
     a = escape(a)
-    return this:gsub(b)
+    return this:gsub(a, b)
 end
 
-meta.replace = String.replace
+string.replace = String.replace
 
 function String.insert(this, startIndex, value) 
     if value == nil then
@@ -320,21 +320,21 @@ function String.insert(this, startIndex, value)
     return this:sub(1, startIndex) .. value .. this:sub(startIndex + 1)
 end
 
-meta.insert = String.insert
+string.insert = String.insert
 
 function String.remove(this, startIndex, count) 
     startIndex, count = stringCheck(this, startIndex, count)
     return this:sub(1, startIndex) .. this:sub(startIndex + 1 + count)
 end
 
-meta.remove = String.remove
+string.remove = String.remove
 
 function String.substring(this, startIndex, count)
     startIndex, count = check(str, startIndex, count)
     return this:sub(startIndex + 1, startIndex + count)
 end
 
-meta.substring = String.substring
+string.substring = String.substring
 
 local function findAny(s, strings, startIndex)
     local findBegin, findEnd, findStr
@@ -396,7 +396,7 @@ function String.split(this, strings, count, options)
     return System.arrayFromTable(t, String) 
 end
 
-meta.split = String.split
+string.split = String.split
 
 function String.trimEnd(this, chars)
     if chars then
@@ -409,7 +409,7 @@ function String.trimEnd(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
-meta.trimEnd = String.trimEnd
+string.trimEnd = String.trimEnd
 
 function String.trimStart(this, chars) 
     if chars then
@@ -422,7 +422,7 @@ function String.trimStart(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
-meta.trimStart = String.trimStart
+string.trimStart = String.trimStart
 
 function String.trim(this, chars) 
     if chars then
@@ -435,7 +435,7 @@ function String.trim(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
-meta.trim = String.trim
+string.trim = String.trim
 
 System.define("System.String", String)
 

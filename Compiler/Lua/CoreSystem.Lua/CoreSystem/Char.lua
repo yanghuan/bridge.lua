@@ -1,6 +1,6 @@
 local System = System
+local throw = System.throw
 local Int = System.Int
-local charCodeAt = System.String.charCodeAt
 
 local Char = {}
 
@@ -12,14 +12,14 @@ Char.getHashCode = Int.getHashCode
 
 function Char.isControl(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return (c >=0 and c <= 31) or (c >= 127 and c <= 159)
 end
 
 function Char.isDigit(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return (c >= 48 and c <= 57)
 end
@@ -27,7 +27,7 @@ end
 -- https://msdn.microsoft.com/zh-cn/library/yyxz6h5w(v=vs.110).aspx
 function Char.isLetter(c, index)    
     if index then
-        c = charCodeAt(c, index) 
+        c = c:get(index) 
     end
     if c < 256 then
         return (c >= 65 and c <= 90) or (c >= 97 and c <= 122)
@@ -45,28 +45,28 @@ end
 
 function Char.isLetterOrDigit(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return Char.isDigit(c) or Char.isLetter(c)
 end
 
 function Char.isLower(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return (c >= 0x0061 and c <= 0x007A) and (c >= 0x03AC and c <= 0x03CE)
 end
 
 function Char.isNumber(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return (c >= 48 and c <= 57) or c == 178 or c == 179 or c == 185 or c == 188 or c == 189 or c == 190
 end
 
 function Char.isPunctuation(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     if c < 256 then
         return (c >= 0x0021 and c <= 0x0023) 
@@ -96,7 +96,7 @@ local isSeparatorTable = {
 
 function Char.isSeparator(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return (c >= 0x2000 and c <= 0x200A) or isSeparatorTable[c] == true
 end
@@ -121,7 +121,7 @@ local isSymbolTable = {
 
 function Char.isSymbol(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     if c < 256 then
         return (c >= 162 and c <= 169) or (c >= 174 and c <= 177) or isSymbolTable(c) == true
@@ -131,7 +131,7 @@ end
 
 function Char.isUpper(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return (c >= 0x0041 and c <= 0x005A) or (c >= 0x0400 and c <= 0x042F)
 end
@@ -151,26 +151,26 @@ local isWhiteSpace = {
 
 function Char.isWhiteSpace(c, index)
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return (c >= 0x2000 and c <= 0x200A) or (c >= 0x0009 and c <= 0x000d) or isWhiteSpace[c] == true
 end
 
 function Char.parse(s)
     if s == nil then
-        System.throw(System.ArgumentNullException())
+        throw(System.ArgumentNullException())
     end
     if #s ~= 1 then
-        System.throw(System.FormatException())
+        throw(System.FormatException())
     end
-    return string.byte(s)
+    return s:byte()
 end
 
 function Char.tryParse(s)
     if s == nil or #s ~= 1 then
         return false
     end 
-    return true, string.byte(s)
+    return true, s:byte()
 end
 
 function Char.toLower(c)
@@ -187,21 +187,21 @@ end
 
 function Char.isHighSurrogate(c, index) 
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return c >= 0xD800 and c <= 0xDBFF
 end
         
 function Char.isLowSurrogate(c, index) 
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return c >= 0xDC00 and c <= 0xDFFF
 end
 
 function Char.isSurrogate(c, index) 
     if index then
-        c = charCodeAt(c, index)
+        c = c:get(index)
     end
     return c >= 0xD800 and c <= 0xDFFF
 end
