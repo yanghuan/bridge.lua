@@ -6,11 +6,14 @@ namespace Bridge.Translator.Lua
 {
     public class TypeExpressionListBlock : AbstractEmitterBlock
     {
-        public TypeExpressionListBlock(IEmitter emitter, IEnumerable<TypeParamExpression> expressions)
+        private bool isIgnoreInherited_;
+
+        public TypeExpressionListBlock(IEmitter emitter, IEnumerable<TypeParamExpression> expressions, bool isIgnoreInherited = true)
             : base(emitter, null)
         {
             this.Emitter = emitter;
             this.Expressions = expressions;
+            isIgnoreInherited_ = isIgnoreInherited;
         }
 
         public TypeExpressionListBlock(IEmitter emitter, IEnumerable<AstType> types)
@@ -50,7 +53,7 @@ namespace Bridge.Translator.Lua
 
             foreach (var expr in expressions)
             {
-                if (expr.Inherited)
+                if (isIgnoreInherited_ && expr.Inherited)
                 {
                     continue;
                 }

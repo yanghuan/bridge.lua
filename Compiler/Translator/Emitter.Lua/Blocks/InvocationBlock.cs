@@ -575,7 +575,6 @@ namespace Bridge.Translator.Lua
                 else
                 {
                     var isIgnore = false;
-
                     if (method != null && method.DeclaringTypeDefinition != null && this.Emitter.Validator.IsIgnoreType(method.DeclaringTypeDefinition))
                     {
                         isIgnore = true;
@@ -596,6 +595,17 @@ namespace Bridge.Translator.Lua
                         }
                         new TypeExpressionListBlock(this.Emitter, argsInfo.TypeArguments).Emit();
                     }
+                    //泛型委托,泛型参数放弃传递,绝大多数不会产生问题
+                    /*
+                    else if(!isIgnore) {
+                        var targetType = argsInfo.ResolveResult.TargetResult.Type;
+                        if(targetType != null && targetType.Kind == TypeKind.Delegate && targetType.TypeParameterCount > 0) {
+                            if(argsExpressions.Length > 0) {
+                                this.WriteComma();
+                            }
+                            new TypeExpressionListBlock(this.Emitter, argsInfo.TypeArguments, false).Emit();
+                        }
+                    }*/
                     this.WriteCloseParentheses();
                 }
             }
