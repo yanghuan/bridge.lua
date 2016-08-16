@@ -171,7 +171,7 @@ function DictionaryCollection.getCount(this)
 end
 
 function DictionaryCollection.getEnumerator(this)
-    return Collection.DictionaryEnumerator(this.dict, this.isKey and 1 or 2)
+    return Collection.dictionaryEnumerator(this.dict, this.isKey and 1 or 2)
 end
 
 function DictionaryCollection.contains(this, v)
