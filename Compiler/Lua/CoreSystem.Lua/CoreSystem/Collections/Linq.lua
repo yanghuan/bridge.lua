@@ -106,7 +106,11 @@ function Enumerable.select(source, selector, T)
     end)
 end
 
-function Enumerable.selectMany(source, collectionSelector, resultSelector, T)
+local function identityFn(x)
+    return x
+end
+
+local function selectMany(source, collectionSelector, resultSelector, T)
     return createInternal(T, function() 
         local midEn
         local index = -1
@@ -128,6 +132,16 @@ function Enumerable.selectMany(source, collectionSelector, resultSelector, T)
             end
         end)
     end)
+end
+
+function Enumerable.selectMany(source, ...)
+    local len = select("#", ...)
+    if len == 2 then
+        local collectionSelector, T = ...
+        return selectMany(source, collectionSelector, identityFn, T)
+    else
+        return selectMany(source, ...)
+    end
 end
 
 function Enumerable.take(source, count)
@@ -257,10 +271,6 @@ local function groupBy(source, keySelector, elementSelector, comparer, TKey, TEl
     return createInternal(IGrouping, function()
         return createLookup(source, keySelector, elementSelector, comparer, TKey, TElement):getEnumerator()
     end)
-end
-
-local function identityFn(x)
-    return x
 end
 
 function Enumerable.groupBy(source, ...)

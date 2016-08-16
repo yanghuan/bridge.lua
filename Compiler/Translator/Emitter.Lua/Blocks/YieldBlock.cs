@@ -79,6 +79,8 @@ namespace Bridge.Translator.Lua
         public static void EmitYieldReturn(AbstractEmitterBlock block, IType returnType)
         {
             block.EndFunctionBlock();
+            block.WriteComma();
+            block.Write(BridgeTypes.ToJsName(returnType.TypeArguments[0], block.Emitter));
             block.WriteCloseParentheses();
             block.WriteNewLine();
         }

@@ -232,9 +232,6 @@ namespace Bridge.Contract
         }
 
         public static string ToNameIgnoreEnum(IType type, IEmitter emitter, ToNameTypeEnum kind = ToNameTypeEnum.None) {
-            if(type.Kind == TypeKind.Enum) {
-                return "System.Int";
-            }
             return ToJsName(type, emitter, false, false, kind);
         }
 
@@ -323,6 +320,10 @@ namespace Bridge.Contract
             }
             else if(type.Kind == TypeKind.Array) {
                 name += "(" + BridgeTypes.ToNameIgnoreEnum(((ICSharpCode.NRefactory.TypeSystem.ArrayType)type).ElementType, emitter) + ")";
+            }
+
+            if(type.Kind == TypeKind.Enum) {
+                TransformCtx.ExportEnums.Add(type);
             }
 
             return name;

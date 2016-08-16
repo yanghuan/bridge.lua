@@ -12,6 +12,8 @@ local tremove = table.remove
 local setmetatable = setmetatable
 local select = select
 local type = type
+local assert = assert
+local coroutine = coroutine
 
 local Collection = {}
 local null = {}
@@ -655,8 +657,8 @@ function YieldEnumerator.getCurrent(this)
     return this.current
 end
 
-function Collection.yieldEnumerator(f)
-    return setmetatable({ co = coroutine.create(f) }, YieldEnumerator)
+function Collection.yieldEnumerator(f, T)
+    return setmetatable({ co = coroutine.create(f), __genericT__ = T }, YieldEnumerator)
 end
 
 Collection.yieldReturn = coroutine.yield

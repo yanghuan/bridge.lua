@@ -1,4 +1,4 @@
-﻿using Bridge.Contract;
+using Bridge.Contract;
 using ICSharpCode.NRefactory.CSharp;
 using Object.Net.Utilities;
 using System.Collections.Generic;
@@ -103,6 +103,8 @@ namespace Bridge.Translator.Lua
                     this.EnsureNewLine();
                     this.Write("getDefaultValue = function () return " + structName + CtorOpenCloseParentheses + " end");
                     this.Emitter.Comma = true;
+
+                    TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() { Name = "getDefaultValue" });
                 }
             }
         }
