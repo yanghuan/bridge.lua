@@ -462,6 +462,10 @@ namespace Bridge.Translator
 
         public virtual bool IsDelegateOrLambda(ResolveResult result)
         {
+            MemberResolveResult memberResolveResult = result as MemberResolveResult;
+            if(memberResolveResult != null) {
+                return memberResolveResult.Member.SymbolKind != SymbolKind.Method && result.Type.Kind == ICSharpCode.NRefactory.TypeSystem.TypeKind.Delegate;
+            }
             return result.Type.Kind == ICSharpCode.NRefactory.TypeSystem.TypeKind.Delegate || result is LambdaResolveResult;
         }
 
