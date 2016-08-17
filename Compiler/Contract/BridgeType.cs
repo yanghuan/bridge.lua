@@ -322,7 +322,7 @@ namespace Bridge.Contract
                 name += "(" + BridgeTypes.ToNameIgnoreEnum(((ICSharpCode.NRefactory.TypeSystem.ArrayType)type).ElementType, emitter) + ")";
             }
 
-            if(type.Kind == TypeKind.Enum) {
+            if(kind != ToNameTypeEnum.Definition && type.Kind == TypeKind.Enum) {
                 TransformCtx.ExportEnums.Add(type);
             }
 

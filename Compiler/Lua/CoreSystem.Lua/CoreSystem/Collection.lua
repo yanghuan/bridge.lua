@@ -223,7 +223,7 @@ end
 
 Collection.findIndexOfArray = findIndexOfArray
 
-function Collection.existsOfArray(t, macth)
+function Collection.existsOfArray(t, match)
     return findIndexOfArray(t, match) ~= -1
 end
 

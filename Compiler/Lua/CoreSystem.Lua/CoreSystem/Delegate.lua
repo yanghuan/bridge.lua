@@ -4,6 +4,7 @@ local setmetatable = setmetatable
 local getmetatable = getmetatable
 local insert = table.insert
 local ipairs = ipairs
+local assert = assert
 
 local Delegate = {}
 Delegate.__index = Delegate
@@ -56,6 +57,7 @@ function Delegate.bind(target, method)
     if target == nil then
         throw(System.ArgumentNullException())
     end
+    assert(method)
     local t = {
       target = target,
       method = method,

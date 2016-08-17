@@ -598,7 +598,17 @@ namespace Bridge.Translator.Lua
 
         public virtual bool IsMemberConst(IMember member)
         {
-            return (member is DefaultResolvedField) && (((DefaultResolvedField)member).IsConst);
+            DefaultResolvedField defaultResolvedField = member as DefaultResolvedField;
+            if(defaultResolvedField != null) {
+                return defaultResolvedField.IsConst;
+            }
+
+            SpecializedField specializedField = member as SpecializedField;
+            if(specializedField != null) {
+                return specializedField.IsConst;
+            }
+
+            return false;
         }
 
         public virtual bool IsInlineConst(IMember member)

@@ -377,8 +377,6 @@ namespace Bridge.Contract
                    (propertyDeclaration.CanSet && !propertyDeclaration.Setter.HasBody);*/
         }
 
-        private static Dictionary<PropertyDefinition, bool> cacheOfIsAutoPropertyOfDefinition = new Dictionary<PropertyDefinition, bool>();
-
         private static bool InnerIsAutoPropertyOfDefinition(PropertyDefinition propDef) {
             if(propDef.GetMethod == null || propDef.SetMethod == null) {
                 return false;
@@ -392,6 +390,8 @@ namespace Bridge.Contract
             return typeDef.Fields.Any(f => !f.IsPublic /*&& !f.IsStatic*/ && f.Name.Contains("BackingField") && f.Name.Contains("<" + propDef.Name + ">"));
         }
 
+        private static Dictionary<PropertyDefinition, bool> cacheOfIsAutoPropertyOfDefinition = new Dictionary<PropertyDefinition, bool>();
+
         public static bool IsAutoPropertyOfDefinition(PropertyDefinition propDef) {
             bool isAuto;
             if(!cacheOfIsAutoPropertyOfDefinition.TryGetValue(propDef, out isAuto)) {
@@ -399,6 +399,10 @@ namespace Bridge.Contract
                 cacheOfIsAutoPropertyOfDefinition.Add(propDef, isAuto);
             }
             return isAuto;
+        }
+
+        public static void SetCacheOfAutoPropertyOfDefinition(PropertyDefinition propertyDefinition) {
+            cacheOfIsAutoPropertyOfDefinition[propertyDefinition] = false;
         }
 
         public static bool IsFieldProperty(PropertyDeclaration propertyDeclaration, IMember propertyMember, IAssemblyInfo assemblyInfo)
