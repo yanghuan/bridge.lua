@@ -255,6 +255,7 @@ namespace Bridge.Translator.Lua {
                     }
                 }
 
+                bool isInvokeInCurClass = false;
                 if(resolveResult is TypeResolveResult) {
                     TypeResolveResult typeResolveResult = (TypeResolveResult)resolveResult;
                     this.Write(BridgeTypes.ToJsName(typeResolveResult.Type, this.Emitter));
@@ -370,7 +371,10 @@ namespace Bridge.Translator.Lua {
                     if(isConstTarget) {
                         this.Write("(");
                     }
-                    memberReferenceExpression.Target.AcceptVisitor(this.Emitter);
+                    isInvokeInCurClass = resolveResult is InvocationResolveResult && member.Member.DeclaringType == TransformCtx.CurClass;
+                    if(!isInvokeInCurClass) {
+                        memberReferenceExpression.Target.AcceptVisitor(this.Emitter);
+                    }
                     if(isConstTarget) {
                         this.Write(")");
                     }
@@ -397,14 +401,15 @@ namespace Bridge.Translator.Lua {
                 }
 
                 var targetResolveResult = targetrr as MemberResolveResult;
-
                 if(targetResolveResult == null || this.Emitter.IsGlobalTarget(targetResolveResult.Member) == null) {
                     if(member != null && member.Member != null) {
-                        if(!member.Member.IsStatic && ((member.Member.SymbolKind == SymbolKind.Method && !this.Emitter.Validator.IsDelegateOrLambda(expressionResolveResult)) || (member.Member.SymbolKind == SymbolKind.Property && !Helpers.IsFieldProperty(member.Member, this.Emitter)))) {
-                            this.WriteObjectColon();
-                        }
-                        else {
-                            this.WriteDot();
+                        if(!isInvokeInCurClass) {
+                            if(!member.Member.IsStatic && ((member.Member.SymbolKind == SymbolKind.Method && !this.Emitter.Validator.IsDelegateOrLambda(expressionResolveResult)) || (member.Member.SymbolKind == SymbolKind.Property && !Helpers.IsFieldProperty(member.Member, this.Emitter)))) {
+                                this.WriteObjectColon();
+                            }
+                            else {
+                                this.WriteDot();
+                            }
                         }
                     }
                     else {

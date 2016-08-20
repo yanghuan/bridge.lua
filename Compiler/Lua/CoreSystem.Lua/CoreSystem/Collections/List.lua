@@ -71,7 +71,7 @@ end
 List.exists = Collection.existsOfArray
 List.find = Collection.findOfArray
 List.findAll = Collection.findAllOfArray
-List.findIndex = Collection.indexOfArray
+List.findIndex = Collection.findIndexOfArray
 List.findLast = Collection.findLastOfArray
 List.findLastIndex = Collection.findLastIndexOfArray
 List.forEach = Collection.forEachArray

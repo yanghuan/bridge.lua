@@ -106,10 +106,6 @@ function Enumerable.select(source, selector, T)
     end)
 end
 
-local function identityFn(x)
-    return x
-end
-
 local function selectMany(source, collectionSelector, resultSelector, T)
     return createInternal(T, function() 
         local midEn
@@ -135,6 +131,10 @@ local function selectMany(source, collectionSelector, resultSelector, T)
 end
 
 function Enumerable.selectMany(source, ...)
+    local function identityFn(s, x)
+        return x
+    end
+
     local len = select("#", ...)
     if len == 2 then
         local collectionSelector, T = ...
@@ -271,6 +271,10 @@ local function groupBy(source, keySelector, elementSelector, comparer, TKey, TEl
     return createInternal(IGrouping, function()
         return createLookup(source, keySelector, elementSelector, comparer, TKey, TElement):getEnumerator()
     end)
+end
+
+local function identityFn(x)
+    return x
 end
 
 function Enumerable.groupBy(source, ...)
@@ -780,7 +784,7 @@ end
 
 function Enumerable.contains(source, value, comparer)
     if source == nil then throw(ArgumentNullException("source")) end
-    local equals = getComparer(first, comparer).equals
+    local equals = getComparer(source, comparer).equals
     for _, v in each(source) do
         if equals(v, value) then
             return true

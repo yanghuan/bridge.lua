@@ -237,7 +237,7 @@ function Collection.findOfArray(t, match)
             return item
         end
     end
-    return this.__genericT__.__defaultVal__
+    return t.__genericT__.__defaultVal__
 end
 
 function Collection.findAllOfArray(t, match)

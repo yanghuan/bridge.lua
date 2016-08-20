@@ -161,9 +161,10 @@ end
 local DictionaryCollection = {}
 DictionaryCollection.__index = DictionaryCollection
 
-function DictionaryCollection.__ctor__(this, dict, isKey)
+function DictionaryCollection.__ctor__(this, dict, isKey, T)
     this.dict = dict
     this.isKey = isKey
+    this.__genericT__ = T
 end
 
 function DictionaryCollection.getCount(this)
@@ -174,19 +175,12 @@ function DictionaryCollection.getEnumerator(this)
     return Collection.dictionaryEnumerator(this.dict, this.isKey and 1 or 2)
 end
 
-function DictionaryCollection.contains(this, v)
-    if this.isKey then
-        return this.dict.containsKey(v)
-    end 
-    return this.dict.containsValue(v)
-end
-
 function Dictionary.getKeys(this)
-    return new(DictionaryCollection, this, true)
+    return new(DictionaryCollection, this, true, this.__genericTKey__)
 end
 
 function Dictionary.getValues(this)
-    return new(DictionaryCollection, this, false)
+    return new(DictionaryCollection, this, false, this.__genericTValue__)
 end
 
 System.define("System.Dictionary", function(TKey, TValue) 

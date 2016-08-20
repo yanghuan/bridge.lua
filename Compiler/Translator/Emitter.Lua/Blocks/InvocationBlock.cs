@@ -582,7 +582,13 @@ namespace Bridge.Translator.Lua
 
                     this.WriteOpenParentheses();
                     if(method != null && !method.IsStatic && method.DeclaringType == TransformCtx.CurClass) {
-                        this.WriteThis();
+                        MemberReferenceExpression targetMemberReferenceExpression = invocationExpression.Target as MemberReferenceExpression;
+                        if(targetMemberReferenceExpression != null) {
+                            targetMemberReferenceExpression.Target.AcceptVisitor(this.Emitter);
+                        }
+                        else {
+                            this.WriteThis();
+                        }
                         if(argsExpressions.Length > 0) {
                             this.WriteComma();
                         }
