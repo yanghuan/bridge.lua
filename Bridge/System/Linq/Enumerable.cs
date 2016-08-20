@@ -2615,7 +2615,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):max({selector})")]
+        [Template("Bridge.Linq({source}):max({selector}, System.Decimal)")]
         public static decimal Max<TSource>(this IEnumerable<TSource> source, Func<TSource, decimal> selector)
         {
             return default(decimal);
@@ -2670,7 +2670,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):max({selector})")]
+        [Template("Bridge.Linq({source}):max({selector}, System.Double)")]
         public static double Max<TSource>(this IEnumerable<TSource> source, Func<TSource, double> selector)
         {
             return default(double);
@@ -2725,7 +2725,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):max({selector})")]
+        [Template("Bridge.Linq({source}):max({selector}, System.Double)")]
         public static float Max<TSource>(this IEnumerable<TSource> source, Func<TSource, float> selector)
         {
             return default(float);
@@ -2780,7 +2780,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):max({selector})")]
+        [Template("Bridge.Linq({source}):max({selector}, System.Int)")]
         public static int Max<TSource>(this IEnumerable<TSource> source, Func<TSource, int> selector)
         {
             return default(int);
@@ -2835,7 +2835,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):max({selector})")]
+        [Template("Bridge.Linq({source}):max({selector}, System.Int)")]
         public static long Max<TSource>(this IEnumerable<TSource> source, Func<TSource, long> selector)
         {
             return default(long);
@@ -2933,7 +2933,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):max({selector})")]
+        [Template("Bridge.Linq({source}):max({selector}, {TResult})")]
         public static TResult Max<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
             return default(TResult);
@@ -2988,7 +2988,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):min({selector})")]
+        [Template("Bridge.Linq({source}):min({selector}, {TResult})")]
         public static TResult Min<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
             return default(TResult);
@@ -3421,7 +3421,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):min({selector})")]
+        [Template("Bridge.Linq({source}):min({selector}, System.Decimal)")]
         public static decimal Min<TSource>(this IEnumerable<TSource> source, Func<TSource, decimal> selector)
         {
             return default(decimal);
@@ -3476,7 +3476,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):min({selector})")]
+        [Template("Bridge.Linq({source}):min({selector}, System.Double)")]
         public static double Min<TSource>(this IEnumerable<TSource> source, Func<TSource, double> selector)
         {
             return default(double);
@@ -3531,7 +3531,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):min({selector})")]
+        [Template("Bridge.Linq({source}):min({selector}, System.Double)")]
         public static float Min<TSource>(this IEnumerable<TSource> source, Func<TSource, float> selector)
         {
             return default(float);
@@ -3586,7 +3586,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):min({selector})")]
+        [Template("Bridge.Linq({source}):min({selector}, System.Int)")]
         public static int Min<TSource>(this IEnumerable<TSource> source, Func<TSource, int> selector)
         {
             return default(int);
@@ -3641,7 +3641,7 @@ namespace System.Linq
         /// <exception cref="System.InvalidOperationException">
         /// source contains no elements.
         /// </exception>
-        [Template("Bridge.Linq({source}):min({selector})")]
+        [Template("Bridge.Linq({source}):min({selector}, System.Int)")]
         public static long Min<TSource>(this IEnumerable<TSource> source, Func<TSource, long> selector)
         {
             return default(long);

@@ -251,19 +251,25 @@ namespace System.Linq
             return default(TSource);
         }
 
-        public static TResult Max<TSource, TResult>(Func<TSource, TResult> selector)
+        [Template("{this}:max({selector}, {TResult})")]
+        public TResult Max<TSource, TResult>(Func<TSource, TResult> selector)
         {
             return default(TResult);
         }
 
+        [Template("{this}:max({selector}, System.Int)")]
         public extern int Max(Func<TElement, int> selector);
 
+        [Template("{this}:max({selector}, System.Int)")]
         public extern long Max(Func<TElement, long> selector);
 
+        [Template("{this}:max({selector}, System.Double)")]
         public extern float Max(Func<TElement, float> selector);
 
+        [Template("{this}:max({selector}, System.Double)")]
         public extern double Max(Func<TElement, double> selector);
 
+        [Template("{this}:max({selector}, System.Decimal)")]
         public extern decimal Max(Func<TElement, decimal> selector);
 
         public TElement MaxBy(Func<TElement, int> selector)
@@ -298,19 +304,25 @@ namespace System.Linq
             return default(TSource);
         }
 
-        public static TResult Min<TSource, TResult>(Func<TSource, TResult> selector)
+        [Template("{this}:min({selector}, {TResult})")]
+        public TResult Min<TSource, TResult>(Func<TSource, TResult> selector)
         {
             return default(TResult);
         }
 
+        [Template("{this}:min({selector}, System.Int)")]
         public extern int Min(Func<TElement, int> selector);
 
+        [Template("{this}:min({selector}, System.Int)")]
         public extern long Min(Func<TElement, long> selector);
 
+        [Template("{this}:min({selector}, System.Double)")]
         public extern float Min(Func<TElement, float> selector);
 
+        [Template("{this}:min({selector}, System.Double)")]
         public extern double Min(Func<TElement, double> selector);
 
+        [Template("{this}:min({selector}, System.Decimal)")]
         public extern decimal Min(Func<TElement, decimal> selector);
 
         public TElement MinBy(Func<TElement, int> selector)
