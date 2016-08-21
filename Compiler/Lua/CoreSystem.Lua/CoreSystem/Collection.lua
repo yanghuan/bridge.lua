@@ -134,8 +134,8 @@ function Collection.insertArray(t, index, v)
 end
 
 function Collection.removeArrayAll(t)
-    for i = #t, 1, -1 do
-        tremove(t, i)
+    for i = 1, #t do
+        t[i] = nil
     end
     changeVersion(t)
 end

@@ -172,32 +172,25 @@ namespace Bridge.Lua {
             return false;
         }
 
-        public static bool FixOpImplicit(ref string lineCode) {
-            const string kSign = " op_Implicit";
-            int pos = lineCode.IndexOf(kSign);
+        private static bool FixOpImplicitOrExplicit(ref string lineCode, string sign, string newSign) {
+            int pos = lineCode.IndexOf(sign);
             if(pos != -1) {
                 int prev = lineCode.LastIndexOf(' ', pos - 1);
                 if(prev != -1) {
                     string value = lineCode.Substring(prev + 1, pos - prev - 1);
-                    lineCode = lineCode.Replace(value + kSign, "implicit operator " + value);
+                    lineCode = lineCode.Replace(value + sign, newSign + value);
                     return true;
                 }
             }
             return false;
         }
 
+        public static bool FixOpImplicit(ref string lineCode) {
+            return FixOpImplicitOrExplicit(ref lineCode, " op_Implicit", "implicit operator ");
+        }
+
         public static bool FixOpExplicit(ref string lineCode) {
-            const string kSign = " op_Explicit";
-            int pos = lineCode.IndexOf(kSign);
-            if(pos != -1) {
-                int prev = lineCode.LastIndexOf(' ', pos - 1);
-                if(prev != -1) {
-                    string value = lineCode.Substring(prev + 1, pos - prev - 1);
-                    lineCode = lineCode.Replace(value + kSign, "explicit operator " + value);
-                    return true;
-                }
-            }
-            return false;
+            return FixOpImplicitOrExplicit(ref lineCode, " op_Explicit", "explicit operator ");
         }
     }
 }
