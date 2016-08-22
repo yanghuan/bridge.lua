@@ -134,18 +134,45 @@ function Collection.insertArray(t, index, v)
 end
 
 function Collection.removeArrayAll(t)
-    for i = 1, #t do
-        t[i] = nil
+    local size = #t
+    if size > 0 then
+        for i = 1, size do
+            t[i] = nil
+        end
+        changeVersion(t)
     end
-    changeVersion(t)
+end
+
+local function copyArray(t, index, array, arrayIndex, length)
+    checkIndexAndCount(t, index, length)
+    checkIndexAndCount(array, arrayIndex, length)
+    for i = 1, length do
+        array[arrayIndex + i] = t[index + 1]
+    end
+end 
+
+function Collection.copyArray(t, ...)
+    local len = select("#", ...)     
+    if len == 2 then
+        local array, length = ...
+        copyArray(t, 0, array, 0, length)
+    else 
+        copyArray(t, ...)
+    end
 end
 
 function Collection.removeArray(t, index, count)
     checkIndexAndCount(t, index, count)
-    for i = index + count, index + 1, -1 do
-        tremove(t, i)
+    if count > 0 then
+        local size = #t - count
+        if index < size then
+            copyArray(t, index + count, t, index, size - index)
+        end
+        for i = size + 1, size + count do
+            t[i] = nil
+        end
+        changeVersion(t)
     end
-    changeVersion(t)
 end
 
 function Collection.removeAtArray(t, index)
@@ -367,6 +394,8 @@ function Collection.reverseArray(t, index, count)
     local i, j = index + 1, index + count
     while i <= j do
         t[i], t[j] = t[j], t[i]
+        i = i + 1
+        j = j - 1
     end
     changeVersion(t)
 end

@@ -5,7 +5,7 @@ local Collection = System.Collection
 local unWrap = Collection.unWrap
 local checkIndex = Collection.checkIndex
 local checkIndexAndCount = Collection.checkIndexAndCount
-local copy = Collection.Copy
+local copyArray = Collection.copyArray
 
 local ArgumentNullException = System.ArgumentNullException
 local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
@@ -59,13 +59,10 @@ function List.copyTo(this, ...)
     local len = select("#", ...)
     if len == 1 then
         local array = ...
-        copy(this, 0, array, 0, #this)
-    elseif len == 2 then
-        local array, arrayIndex = ...
-        copy(this, 0, array, arrayIndex, #this)
+        copyArray(this, array, #this)
+    else
+        copyArray(this, ...)
     end
-    local index, array, arrayIndex, count = ...
-    copy(this, index, array, arrayIndex, count)
 end 
 
 List.exists = Collection.existsOfArray

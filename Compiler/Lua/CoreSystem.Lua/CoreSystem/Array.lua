@@ -45,6 +45,7 @@ Array.lastIndexOf = Collection.lastIndexOfArray
 Array.reverse = Collection.reverseArray
 Array.sort = Collection.sortArray
 Array.trueForAll = Collection.trueForAllOfArray
+Array.copy = Collection.copyArray
 
 System.define("System.Array", function(T) 
     local cls = { 
