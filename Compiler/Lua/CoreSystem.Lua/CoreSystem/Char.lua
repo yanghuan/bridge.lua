@@ -54,7 +54,7 @@ function Char.isLower(c, index)
     if index then
         c = c:get(index)
     end
-    return (c >= 0x0061 and c <= 0x007A) and (c >= 0x03AC and c <= 0x03CE)
+    return (c >= 97 and c <= 122) or (c >= 945 and c <= 969)
 end
 
 function Char.isNumber(c, index)
@@ -133,7 +133,7 @@ function Char.isUpper(c, index)
     if index then
         c = c:get(index)
     end
-    return (c >= 0x0041 and c <= 0x005A) or (c >= 0x0400 and c <= 0x042F)
+    return (c >= 65 and c <= 90) or (c >= 913 and c <= 937)
 end
 
 --https://msdn.microsoft.com/zh-cn/library/t809ektx(v=vs.110).aspx
@@ -174,15 +174,17 @@ function Char.tryParse(s)
 end
 
 function Char.toLower(c)
-    local s = string.char(c)
-    s = string.lower(s)
-    return string.byte(s)
+    if (c >= 65 and c <= 90) or (c >= 913 and c <= 937) then
+        return c + 32
+    end
+    return c
 end
 
 function Char.toUpper(c)
-    local s = string.char(c)
-    s = string.upper(s)
-    return string.byte(s)
+    if (c >= 97 and c <= 122) or (c >= 945 and c <= 969) then
+        return c - 32
+    end
+    return c
 end
 
 function Char.isHighSurrogate(c, index) 

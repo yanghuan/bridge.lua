@@ -41,6 +41,8 @@ list:add(123234)
 list:add(123)
 list:add(10)
 
+list:removeAll(function(i) return i >= 4 end)
+
 for _, i in System.each(list) do
     print(i)
 end
