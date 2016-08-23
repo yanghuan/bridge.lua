@@ -35,9 +35,24 @@ namespace Bridge.Translator.Lua
             this.EmitUsing(res, inner);
         }
 
+        private sealed class YieldSearchVisitor : DepthFirstAstVisitor {
+            public bool Found { get; private set; }
+
+            public override void VisitReturnStatement(ReturnStatement returnStatement) {
+                Found = true;
+            }
+        }
+
         private void EmitUsing(AstNode expression, IEnumerable<AstNode> inner) {
+            var visitor = new YieldSearchVisitor();
+            this.UsingStatement.EmbeddedStatement.AcceptVisitor(visitor);
+            bool hasRet = visitor.Found;
+
             VariableInitializer variableInitializer = expression as VariableInitializer;
             if(variableInitializer != null) {
+                if(hasRet) {
+                    this.WriteReturn(true);
+                }
                 this.Write("System.using");
                 this.WriteOpenParentheses();
                 variableInitializer.Initializer.AcceptVisitor(this.Emitter);
@@ -50,7 +65,9 @@ namespace Bridge.Translator.Lua
                 AssignmentExpression assignmentExpression = (AssignmentExpression)expression;
                 assignmentExpression.AcceptVisitor(this.Emitter);
                 this.WriteNewLine();
-
+                if(hasRet) {
+                    this.WriteReturn(true);
+                }
                 this.Write("System.using");
                 this.WriteOpenParentheses();
                 assignmentExpression.Left.AcceptVisitor(this.Emitter);
