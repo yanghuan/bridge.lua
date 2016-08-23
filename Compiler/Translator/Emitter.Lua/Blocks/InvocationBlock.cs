@@ -6,6 +6,7 @@ using ICSharpCode.NRefactory.TypeSystem;
 using System;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Bridge.Translator.Lua
 {
@@ -36,29 +37,24 @@ namespace Bridge.Translator.Lua
             Tuple<bool, bool, string> inlineInfo = this.Emitter.GetInlineCode(invocationExpression);
             var argsInfo = new ArgumentsInfo(this.Emitter, invocationExpression);
             var argsExpressions = argsInfo.ArgumentsExpressions;
+            var paramsArg = argsInfo.ParamsExpression;
 
             StringBuilder sb = new StringBuilder();
-            bool isFirst = true;
+            List<DirectionExpression> refArgs = new List<DirectionExpression>();
             foreach(var item in argsExpressions) {
                 DirectionExpression itemExp = item as DirectionExpression;
                 if(itemExp != null) {
                     if(itemExp.FieldDirection == FieldDirection.Out || itemExp.FieldDirection == FieldDirection.Ref) {
-                        string name = itemExp.Expression.ToString();
-                        string outName;
-                        if(this.Emitter.LocalsNamesMap.TryGetValue(name, out outName)) {
-                            name = outName;
-                        }
-                        if(isFirst) {
-                            isFirst = false;
-                        }
-                        else {
-                            sb.Append(", ");
-                        }
-                        sb.Append(name);
+                        refArgs.Add(itemExp);
                     }
                 }
             }
-
+            if(refArgs.Count > 0) {
+                this.PushWriter("{0}");
+                new ExpressionListBlock(this.Emitter, refArgs, paramsArg, invocationExpression).Emit();
+                string valuse =  this.PopWriter(true);
+                sb.Append(valuse);
+            }
             if(sb.Length > 0) {
                 var resolveResult = (CSharpInvocationResolveResult)this.Emitter.Resolver.ResolveNode(invocationExpression, this.Emitter);
                 if(resolveResult.Member.ReturnType.Kind != TypeKind.Void) {

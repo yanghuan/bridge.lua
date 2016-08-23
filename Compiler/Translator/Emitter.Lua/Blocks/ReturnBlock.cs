@@ -114,7 +114,7 @@ namespace Bridge.Translator.Lua
                     string refArgsString = VisitorMethodBlock.GetRefArgsString(this.Emitter, methodDeclaration);
                     if(refArgsString != null) {
                         if(!returnStatement.Expression.IsNull) {
-                            this.Write(", ");
+                            this.Write(",");
                         }
                         this.WriteSpace();
                         this.Write(refArgsString);
