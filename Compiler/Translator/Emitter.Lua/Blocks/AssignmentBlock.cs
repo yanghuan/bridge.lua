@@ -608,7 +608,9 @@ namespace Bridge.Translator.Lua
             }
             else
             {
+                this.WriteOpenParentheses();
                 assignmentExpression.Right.AcceptVisitor(this.Emitter);
+                this.WriteCloseParentheses();
             }
 
             if (charToString == 1)
