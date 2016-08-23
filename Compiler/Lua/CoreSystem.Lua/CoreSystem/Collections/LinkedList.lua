@@ -65,7 +65,7 @@ local function insertNodeToEmptyList(this, newNode)
     addCount(this, 1)
 end
 
-local function newNode(list, value)
+local function newLinkedListNode(list, value)
     return setmetatable({ list = list, item = value }, LinkedListNode)
 end
 
@@ -76,7 +76,7 @@ function LinkedList.addAfter(this, node, newNode)
         insertNodeBefore(this, node.next, newNode)
         newNode.list = this
     else
-        local result = newNode(node.list, newNode)
+        local result = newLinkedListNode(node.list, newNode)
         insertNodeBefore(this, node.next, result)
         return result
     end
@@ -92,7 +92,7 @@ function LinkedList.addBefore(this, node, newNode)
             this.head = newNode
         end
     else
-        local result = newNode(node.list, newNode)
+        local result = newLinkedListNode(node.list, newNode)
         insertNodeBefore(this, node, result)
         if node == this.head then
             this.head = result
@@ -112,7 +112,7 @@ function LinkedList.addFirst(this, node)
         end
         node.list = this
     else
-        local result = newNode(this, node)
+        local result = newLinkedListNode(this, node)
         if this.head == nil then
             insertNodeToEmptyList(this, result)
         else
@@ -133,7 +133,7 @@ function LinkedList.addLast(this, node)
         end
         node.list = this
     else
-        local result = newNode(this, node)
+        local result = newLinkedListNode(this, node)
         if this.head == nil then
             insertNodeToEmptyList(this, result)
         else
