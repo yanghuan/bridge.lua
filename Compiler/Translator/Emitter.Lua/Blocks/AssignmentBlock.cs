@@ -608,9 +608,14 @@ namespace Bridge.Translator.Lua
             }
             else
             {
-                this.WriteOpenParentheses();
+                bool isSpecialOperator = assignmentExpression.Operator != AssignmentOperatorType.Assign && assignmentExpression.Right is BinaryOperatorExpression;
+                if(isSpecialOperator) {
+                    this.WriteOpenParentheses();
+                }
                 assignmentExpression.Right.AcceptVisitor(this.Emitter);
-                this.WriteCloseParentheses();
+                if(isSpecialOperator) {
+                    this.WriteCloseParentheses();
+                }
             }
 
             if (charToString == 1)
