@@ -16,6 +16,10 @@ function Array.getLength(this)
     return #this
 end
 
+function Array.getCount(this)
+    return #this
+end
+
 function Array.getRank(this)
    return 1
 end

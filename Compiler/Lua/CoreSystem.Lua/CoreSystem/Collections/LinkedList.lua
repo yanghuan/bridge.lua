@@ -12,6 +12,26 @@ local EqualityComparer_1 = System.EqualityComparer_1
 local LinkedListNode = {}
 LinkedListNode.__index = LinkedListNode
 
+local function newLinkedListNode(list, value)
+    return setmetatable({ list = list, value = value }, LinkedListNode)
+end
+
+function LinkedListNode.getNex(this)
+    local next = this.next
+    if next == nil or next == this.list.head then
+        return nil
+    end
+    return next
+end
+
+function LinkedListNode.getPrevious(this)
+    local prev = this.prev
+    if prev == nil or prev == this.list.head then
+        return nil
+    end
+    return prev
+end
+
 local LinkedList = {}
 
 function LinkedList.__ctor__(this, ...)
@@ -63,10 +83,6 @@ local function insertNodeToEmptyList(this, newNode)
     this.head = newNode
     changeVersion(this)
     addCount(this, 1)
-end
-
-local function newLinkedListNode(list, value)
-    return setmetatable({ list = list, item = value }, LinkedListNode)
 end
 
 function LinkedList.addAfter(this, node, newNode)    
@@ -172,14 +188,14 @@ function LinkedList.find(this, value)
     if node ~= nil then
          if value ~= nil then
              repeat
-                 if equals(node.item, value) then
+                 if equals(node.value, value) then
                      return node
                  end
                  node = node.next
              until node == head
          else
             repeat 
-                if node.item == nil then
+                if node.value == nil then
                     return node
                 end
                 node = node.next
@@ -198,14 +214,14 @@ function LinkedList.findLast(this, value)
     if node ~= nil then
         if value ~= nil then
             repeat
-                if equals(node.item, value) then
+                if equals(node.value, value) then
                     return node
                 end
                 node = node.prev
             until node == head
         else
            repeat 
-               if node.item == nil then
+               if node.value == nil then
                    return node
                end
                node = node.prev

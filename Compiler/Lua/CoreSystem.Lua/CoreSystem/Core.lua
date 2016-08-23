@@ -245,15 +245,19 @@ end
 
 function System.using(t, f, ...)
     local dispose = t.dispose
+    local ret
     if dispose == nil or dispose == emptyFn then
-        f(t, ...)
+        ret = f(t, ...)
     else 
         local ok, err = pcall(f, t, ...)
         dispose(t)
         if not ok then
             throw(err)
+        else 
+            ret = err
         end
     end
+    return ret
 end
 
 function System.merge(t, f)

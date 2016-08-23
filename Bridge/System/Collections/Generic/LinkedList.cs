@@ -12,7 +12,6 @@ namespace System.Collections.Generic {
         }
 
         public int Count {
-            [Template("#{this}")]
             get {
                 return 0;
             }
@@ -95,8 +94,16 @@ namespace System.Collections.Generic {
     }
 
     public sealed class LinkedListNode<T> {
-        public LinkedListNode<T> Next { get; private set; }
-        public LinkedListNode<T> Previous { get; private set; }
+        public LinkedListNode<T> Next {
+            get { return null; }
+        }
+
+        public LinkedListNode<T> Previous {
+            get {
+                return null;
+            }
+        }
+
         public T Value { get; set; }
         public LinkedList<T> List { get; private set; }
     }

@@ -632,7 +632,7 @@ function LinkedListEnumerator.moveNext(this)
     if node == nil then
         return false
     end
-    this.current = node.item
+    this.current = node.value
     node = node.next
     if node == list.head then
         node = nil

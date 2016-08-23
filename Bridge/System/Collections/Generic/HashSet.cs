@@ -31,7 +31,6 @@ namespace System.Collections.Generic {
         }
 
         public int Count {
-            [Template("#{this}")]
             get {
                 return 0;
             }

@@ -8,7 +8,6 @@ namespace System.Collections.Generic
     {
         int Count
         {
-            [Template("#{this}")]
             get;
         }
 
