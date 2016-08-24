@@ -357,8 +357,10 @@ namespace Bridge.Translator.Lua
                                 else if (!isNative)
                                 {
                                     var overloads = OverloadsCollection.Create(this.Emitter, resolvedMethod);
-                                    string name = BridgeTypes.ToJsName(resolvedMethod.DeclaringType, this.Emitter) + "." + overloads.GetOverloadName();
-                                    var isIgnoreClass = resolvedMethod.DeclaringTypeDefinition != null && this.Emitter.Validator.IsIgnoreType(resolvedMethod.DeclaringTypeDefinition);
+                                    string name = overloads.GetOverloadName();
+                                    if(resolvedMethod.DeclaringType != TransformCtx.CurClass) {
+                                        name = BridgeTypes.ToJsName(resolvedMethod.DeclaringType, this.Emitter) + '.' + name;
+                                    }
 
                                     this.Write(name);
                                     this.WriteOpenParentheses();
@@ -366,6 +368,8 @@ namespace Bridge.Translator.Lua
                                     if(invocationExpression.Arguments.Count > 0) {
                                         this.WriteComma();
                                     }
+
+                                    var isIgnoreClass = resolvedMethod.DeclaringTypeDefinition != null && this.Emitter.Validator.IsIgnoreType(resolvedMethod.DeclaringTypeDefinition);
                                     new ExpressionListBlock(this.Emitter, argsExpressions, paramsArg, invocationExpression).Emit();
                                     if(!isIgnoreClass && argsInfo.HasTypeArguments) {
                                         this.WriteComma();
@@ -570,12 +574,6 @@ namespace Bridge.Translator.Lua
                 }
                 else
                 {
-                    var isIgnore = false;
-                    if (method != null && method.DeclaringTypeDefinition != null && this.Emitter.Validator.IsIgnoreType(method.DeclaringTypeDefinition))
-                    {
-                        isIgnore = true;
-                    }
-
                     this.WriteOpenParentheses();
                     if(method != null && !method.IsStatic && method.DeclaringType == TransformCtx.CurClass) {
                         MemberReferenceExpression targetMemberReferenceExpression = invocationExpression.Target as MemberReferenceExpression;
@@ -589,7 +587,11 @@ namespace Bridge.Translator.Lua
                             this.WriteComma();
                         }
                     }
-                    
+
+                    var isIgnore = false;
+                    if(method != null && method.DeclaringTypeDefinition != null && this.Emitter.Validator.IsIgnoreType(method.DeclaringTypeDefinition)) {
+                        isIgnore = true;
+                    }
                     new ExpressionListBlock(this.Emitter, argsExpressions, paramsArg, invocationExpression).Emit();
                     if(!isIgnore && argsInfo.HasTypeArguments) {
                         if(argsExpressions.Length > 0 || (!method.IsStatic && method.DeclaringType == TransformCtx.CurClass)) {
