@@ -290,7 +290,6 @@ namespace Bridge.Translator.Lua
         protected virtual void IntroduceTempVar(string name)
         {
             this.Emitter.TempVariables[name] = true;
-
             if (this.Emitter.IsAsync && !this.Emitter.AsyncVariables.Contains(name))
             {
                 this.Emitter.AsyncVariables.Add(name);
@@ -336,26 +335,46 @@ namespace Bridge.Translator.Lua
                 var newLine = this.Emitter.IsNewLine;
                 string temp = this.Emitter.Output.ToString(pos, this.Emitter.Output.Length - pos);
                 this.Emitter.Output.Length = pos;
-
                 this.Emitter.IsNewLine = true;
 
-                this.WriteVar(true);
+                List<string> assignments = new List<string>();
+                List<string> vars = new List<string>();
                 foreach(var localVar in this.Emitter.TempVariables) {
-                    this.EnsureComma(false);
-                    this.Write(localVar.Key);
-                    this.Emitter.Comma = true;
+                    string name = localVar.Key;
+                    if(name.IndexOf('=') != -1) {
+                        assignments.Add(name);
+                    }
+                    else {
+                        vars.Add(name);
+                    }
                 }
 
-                if (!skipIndent)
-                {
-                    this.Indent();
-                    this.WriteIndent();
+                if(vars.Count > 0) {
+                    this.WriteVar(true);
+                    foreach(string name in vars) {
+                        this.EnsureComma(false);
+                        this.Write(name);
+                        this.Emitter.Comma = true;
+                    }
+
+                    if(!skipIndent) {
+                        this.Indent();
+                        this.WriteIndent();
+                    }
+
+
+                    this.Emitter.Comma = false;
+                    this.WriteSemiColon();
+                    this.Outdent();
+                    this.WriteNewLine();
                 }
-             
-                this.Emitter.Comma = false;
-                this.WriteSemiColon();
-                this.Outdent();
-                this.WriteNewLine();
+
+                if(assignments.Count > 0) {
+                    foreach(string name in assignments) {
+                        this.Write("local ", name, " ");
+                    }
+                    this.WriteNewLine();
+                }
 
                 this.Emitter.Output.Append(temp);
                 this.Emitter.IsNewLine = newLine;

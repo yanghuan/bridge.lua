@@ -770,12 +770,10 @@ namespace Bridge.Translator.Lua {
                     }
                     else {
                         string name = OverloadsCollection.Create(this.Emitter, invocationResult.Member).GetOverloadName();
-                        if(isInvokeInCurClass) {
+                        if(isInvokeInCurClass && Emitter.LocalsNamesMap.ContainsKey(name)) {
                             string newName = this.GetUniqueName(name);
-                            if(newName != name) {
-                                this.IntroduceTempVar(newName + " = " + name);
-                                name = newName;
-                            }
+                            this.IntroduceTempVar(newName + " = " + name);
+                            name = newName;
                         }
                         this.Write(name);
                     }
