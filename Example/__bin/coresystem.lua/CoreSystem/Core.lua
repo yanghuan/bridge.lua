@@ -134,7 +134,7 @@ local function def(name, kind, cls, generic)
             end
             return t
         end
-        set(name, setmetatable({}, { __call = function(_, ...) return fn(...) end }))
+        set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end }))
         return fn
     end
 
@@ -245,24 +245,47 @@ end
 
 function System.using(t, f, ...)
     local dispose = t.dispose
+    local ret
     if dispose == nil or dispose == emptyFn then
-        f(t, ...)
+        ret = f(t, ...)
     else 
         local ok, err = pcall(f, t, ...)
         dispose(t)
         if not ok then
             throw(err)
+        else 
+            ret = err
         end
     end
-end
-
-function System.ternary(cond, T, F)
-    if cond then return T else return F end
+    return ret
 end
 
 function System.merge(t, f)
     f(t)
     return t
+end
+
+function System.CreateInstance(type, ...)
+    return type.c(...)
+end
+
+function System.getclass(className)
+    local scope = _G
+    local starInx = 1
+    while true do
+        local pos = className:find("%.", starInx) or 0
+        local name = className:sub(starInx, pos -1)
+        if pos ~= 0 then
+            local t = scope[name]
+            if t == nil then
+                return nil
+            end
+            scope = t
+        else
+            return scope[name]
+        end
+        starInx = pos + 1
+    end
 end
 
 function System.property(t, name, v)

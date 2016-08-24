@@ -1,6 +1,6 @@
 package.path = package.path .. ";D:/Project/Bridge.lua/Compiler/Lua/CoreSystem.Lua/?.lua"
 
-require("All");
+require("All")("");
 
 print("-----------------", "dateTime & timeSpan")
 
@@ -40,6 +40,8 @@ list:add(3)
 list:add(123234)
 list:add(123)
 list:add(10)
+
+list:removeAll(function(i) return i >= 4 end)
 
 for _, i in System.each(list) do
     print(i)
@@ -204,9 +206,11 @@ print(System.cast("huan", System.String))
 
 print("-----------------", "Console")
 
+--[[
 local v = System.Console.readLine()
 System.Console.writeLine(v)
 System.Console.writeLine("{0}---> {1}", "yes?", false)
+--]]
 
 print("------------------------------", "loadBattleLua")
 package.path = package.path .. ";D:/testlua/sample/battle/out/?.lua"

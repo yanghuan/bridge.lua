@@ -106,7 +106,7 @@ function Enumerable.select(source, selector, T)
     end)
 end
 
-function Enumerable.selectMany(source, collectionSelector, resultSelector, T)
+local function selectMany(source, collectionSelector, resultSelector, T)
     return createInternal(T, function() 
         local midEn
         local index = -1
@@ -128,6 +128,20 @@ function Enumerable.selectMany(source, collectionSelector, resultSelector, T)
             end
         end)
     end)
+end
+
+function Enumerable.selectMany(source, ...)
+    local function identityFn(s, x)
+        return x
+    end
+
+    local len = select("#", ...)
+    if len == 2 then
+        local collectionSelector, T = ...
+        return selectMany(source, collectionSelector, identityFn, T)
+    else
+        return selectMany(source, ...)
+    end
 end
 
 function Enumerable.take(source, count)
@@ -227,6 +241,9 @@ local IGrouping = System.Linq.IGrouping
 local Grouping = setmetatable({}, Enumerable)
 Grouping.__index = Grouping
 Grouping.getEnumerator = Collection.arrayEnumerator 
+Grouping.getKey = function(this)
+    return this.key
+end
 
 local function addToLookup(this, key, value)
     key = this.comparer.getHashCode(key)
@@ -767,7 +784,7 @@ end
 
 function Enumerable.contains(source, value, comparer)
     if source == nil then throw(ArgumentNullException("source")) end
-    local equals = getComparer(first, comparer).equals
+    local equals = getComparer(source, comparer).equals
     for _, v in each(source) do
         if equals(v, value) then
             return true

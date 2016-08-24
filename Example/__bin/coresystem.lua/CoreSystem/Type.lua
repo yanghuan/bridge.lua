@@ -2,7 +2,6 @@ local System = System
 local throw = System.throw
 local Int = System.Int
 local Double = System.Double
-local ArrayFromTable = System.ArrayFromTable
 local NullReferenceException = System.NullReferenceException
 local InvalidCastException = System.InvalidCastException
 
@@ -127,16 +126,23 @@ end
 
 Type.getIsInterface = getIsInterface
 
+local function getIsValueType(this)
+    return this.c.__kind__ == "S"
+end
+
+Type.getIsValueType = getIsValueType
+
 local function getInterfaces(this)
     local interfaces = this.interfaces
     if interfaces == nil then
+        interfaces = {}
         local interfacesCls = this.c.__interfaces__
         if interfacesCls ~= nil then
             for _, i in ipairs(interfacesCls) do
                 tinsert(interfaces, typeof(i))
             end
-            ArrayFromTable(interfaces, Type)
         end
+        this.interfaces = System.arrayFromTable(interfaces, Type)
     end
     return interfaces
 end
@@ -156,6 +162,7 @@ local function implementInterface(this, ifaceType)
         end
         t = getBaseType(t)
     end
+    return false
 end
 
 local function isAssignableFrom(this, c)
@@ -169,7 +176,7 @@ local function isAssignableFrom(this, c)
         return true
     end
     if getIsInterface(this) then
-        return implementInterface(this, c)
+        return implementInterface(c, this)
     end
     return false
 end 
@@ -190,24 +197,27 @@ end
 System.define("System.Type", Type)
 
 function is(obj, cls)
-    return isAssignableFrom(getType(obj), typeof(cls))
+    if obj ~= nil then 
+        return isAssignableFrom(typeof(cls), getType(obj))
+    end
+    return false
 end
 
 System.is = is
 
 function System.as(obj, cls)
-    if obj ~= nil and is(obj, cls) then
+    if is(obj, cls) then
         return obj
     end
     return nil
 end
 
-function System.cast(obj, type)
-    if obj ~= nil and not is(obj, type) then
-         throw(InvalidCastException(), 1)
+function System.cast(obj, cls)
+    if is(obj, cls) then
+        return obj
     end
-    return obj
+    if obj == nil and cls.__kind__ ~= "S" then
+        return nil
+    end
+    throw(InvalidCastException(), 1)
 end
-
-
-

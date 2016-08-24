@@ -1,35 +1,34 @@
-local originalRequire = require
-local baseDir = __CoreSystemDir__ or ""  
+return function(dir)
+    dir = dir and dir .. ".CoreSystem." or "CoreSystem."
+    local require = require
+    local load = function(module) return require(dir .. module) end
 
-local function require(class)
-    return originalRequire(baseDir .. "CoreSystem." .. class)
+    load("Core");
+    load("Interfaces")
+    load("Exception")
+    load("Double")
+    load("Int")
+    load("String");
+    load("Char")
+    load("Boolean")
+    load("Delegate")
+    load("Enum")
+    load("TimeSpan")
+    load("DateTime")
+    load("Object")
+    load("Type")
+    load("Collections.EqualityComparer")
+    load("Collection")
+    load("Collections.Interfaces")
+    load("Collections.List")
+    load("Collections.Dictionary")
+    load("Collections.Queue")
+    load("Collections.Stack")
+    load("Collections.HashSet")
+    load("Collections.LinkedList")
+    load("Collections.Linq")
+    load("Array")
+    load("Math")
+    load("Text.StringBuilder")
+    load("Console")
 end
-
-require("Core");
-require("Interfaces")
-require("Exception")
-require("Double")
-require("Int")
-require("String");
-require("Char")
-require("Boolean")
-require("Delegate")
-require("Enum")
-require("TimeSpan")
-require("DateTime")
-require("Object")
-require("Type")
-require("Collections.EqualityComparer")
-require("Collection")
-require("Collections.Interfaces")
-require("Collections.List")
-require("Collections.Dictionary")
-require("Collections.Queue")
-require("Collections.Stack")
-require("Collections.HashSet")
-require("Collections.LinkedList")
-require("Collections.Linq")
-require("Array")
-require("Math")
-require("Text.StringBuilder")
-require("Console")

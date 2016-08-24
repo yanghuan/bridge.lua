@@ -16,6 +16,10 @@ function Array.getLength(this)
     return #this
 end
 
+function Array.getCount(this)
+    return #this
+end
+
 function Array.getRank(this)
    return 1
 end
@@ -45,6 +49,7 @@ Array.lastIndexOf = Collection.lastIndexOfArray
 Array.reverse = Collection.reverseArray
 Array.sort = Collection.sortArray
 Array.trueForAll = Collection.trueForAllOfArray
+Array.copy = Collection.copyArray
 
 System.define("System.Array", function(T) 
     local cls = { 
@@ -54,7 +59,7 @@ System.define("System.Array", function(T)
     return cls
 end, Array)
 
-function System.ArrayFromTable(t, T)
+function System.arrayFromTable(t, T)
     return setmetatable(t, System.Array(T))
 end
 

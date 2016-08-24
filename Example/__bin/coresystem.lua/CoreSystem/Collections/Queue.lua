@@ -1,7 +1,10 @@
 local System = System
+local throw = System.throw
 local Collection = System.Collection
 local removeAtArray = Collection.removeAtArray
 local getArray = Collection.getArray
+
+local InvalidOperationException = System.InvalidOperationException
 
 local Queue = {}
 
@@ -24,12 +27,19 @@ Queue.contains = Collection.contains
 Queue.toArray = Collection.toArray
 Queue.trimExcess = System.emptyFn
 
-function Queue.dequeue(t)
-    return removeAtArray(t, 0)
+local function peek(t)
+    if #t == 0 then
+        throw(InvalidOperationException())
+    end
+    return getArray(t, 0)
 end
 
-function Queue.peek(t)
-    return getArray(t, 0)
+Queue.peek = peek
+
+function Queue.dequeue(t)
+    local v = peek(t)
+    removeAtArray(t, 0)
+    return v
 end
 
 System.define("System.Queue", function(T) 

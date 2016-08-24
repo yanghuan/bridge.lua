@@ -12,6 +12,26 @@ local EqualityComparer_1 = System.EqualityComparer_1
 local LinkedListNode = {}
 LinkedListNode.__index = LinkedListNode
 
+local function newLinkedListNode(list, value)
+    return setmetatable({ list = list, value = value }, LinkedListNode)
+end
+
+function LinkedListNode.getNex(this)
+    local next = this.next
+    if next == nil or next == this.list.head then
+        return nil
+    end
+    return next
+end
+
+function LinkedListNode.getPrevious(this)
+    local prev = this.prev
+    if prev == nil or prev == this.list.head then
+        return nil
+    end
+    return prev
+end
+
 local LinkedList = {}
 
 function LinkedList.__ctor__(this, ...)
@@ -65,10 +85,6 @@ local function insertNodeToEmptyList(this, newNode)
     addCount(this, 1)
 end
 
-local function newNode(list, value)
-    return setmetatable({ list = list, item = value }, LinkedListNode)
-end
-
 function LinkedList.addAfter(this, node, newNode)    
     vaildateNode(this, node)
     if getmetatable(newNode) == LinkedListNode then
@@ -76,7 +92,7 @@ function LinkedList.addAfter(this, node, newNode)
         insertNodeBefore(this, node.next, newNode)
         newNode.list = this
     else
-        local result = newNode(node.list, newNode)
+        local result = newLinkedListNode(node.list, newNode)
         insertNodeBefore(this, node.next, result)
         return result
     end
@@ -92,7 +108,7 @@ function LinkedList.addBefore(this, node, newNode)
             this.head = newNode
         end
     else
-        local result = newNode(node.list, newNode)
+        local result = newLinkedListNode(node.list, newNode)
         insertNodeBefore(this, node, result)
         if node == this.head then
             this.head = result
@@ -112,7 +128,7 @@ function LinkedList.addFirst(this, node)
         end
         node.list = this
     else
-        local result = newNode(this, node)
+        local result = newLinkedListNode(this, node)
         if this.head == nil then
             insertNodeToEmptyList(this, result)
         else
@@ -133,7 +149,7 @@ function LinkedList.addLast(this, node)
         end
         node.list = this
     else
-        local result = newNode(this, node)
+        local result = newLinkedListNode(this, node)
         if this.head == nil then
             insertNodeToEmptyList(this, result)
         else
@@ -172,14 +188,14 @@ function LinkedList.find(this, value)
     if node ~= nil then
          if value ~= nil then
              repeat
-                 if equals(node.item, value) then
+                 if equals(node.value, value) then
                      return node
                  end
                  node = node.next
              until node == head
          else
             repeat 
-                if node.item == nil then
+                if node.value == nil then
                     return node
                 end
                 node = node.next
@@ -198,14 +214,14 @@ function LinkedList.findLast(this, value)
     if node ~= nil then
         if value ~= nil then
             repeat
-                if equals(node.item, value) then
+                if equals(node.value, value) then
                     return node
                 end
                 node = node.prev
             until node == head
         else
            repeat 
-               if node.item == nil then
+               if node.value == nil then
                    return node
                end
                node = node.prev

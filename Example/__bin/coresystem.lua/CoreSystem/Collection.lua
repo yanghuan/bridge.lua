@@ -11,6 +11,9 @@ local tinsert = table.insert
 local tremove = table.remove
 local setmetatable = setmetatable
 local select = select
+local type = type
+local assert = assert
+local coroutine = coroutine
 
 local Collection = {}
 local null = {}
@@ -131,18 +134,45 @@ function Collection.insertArray(t, index, v)
 end
 
 function Collection.removeArrayAll(t)
-    for i = #t, 1, -1 do
-        tremove(t, i)
+    local size = #t
+    if size > 0 then
+        for i = 1, size do
+            t[i] = nil
+        end
+        changeVersion(t)
     end
-    changeVersion(t)
+end
+
+local function copyArray(t, index, array, arrayIndex, length)
+    checkIndexAndCount(t, index, length)
+    checkIndexAndCount(array, arrayIndex, length)
+    for i = 1, length do
+        array[arrayIndex + i] = t[index + 1]
+    end
+end 
+
+function Collection.copyArray(t, ...)
+    local len = select("#", ...)     
+    if len == 2 then
+        local array, length = ...
+        copyArray(t, 0, array, 0, length)
+    else 
+        copyArray(t, ...)
+    end
 end
 
 function Collection.removeArray(t, index, count)
     checkIndexAndCount(t, index, count)
-    for i = index + count, index + 1, -1 do
-        tremove(t, i)
+    if count > 0 then
+        local size = #t - count
+        if index < size then
+            copyArray(t, index + count, t, index, size - index)
+        end
+        for i = size + 1, size + count do
+            t[i] = nil
+        end
+        changeVersion(t)
     end
-    changeVersion(t)
 end
 
 function Collection.removeAtArray(t, index)
@@ -220,7 +250,7 @@ end
 
 Collection.findIndexOfArray = findIndexOfArray
 
-function Collection.existsOfArray(t, macth)
+function Collection.existsOfArray(t, match)
     return findIndexOfArray(t, match) ~= -1
 end
 
@@ -234,7 +264,7 @@ function Collection.findOfArray(t, match)
             return item
         end
     end
-    return this.__genericT__.__defaultVal__
+    return t.__genericT__.__defaultVal__
 end
 
 function Collection.findAllOfArray(t, match)
@@ -364,6 +394,8 @@ function Collection.reverseArray(t, index, count)
     local i, j = index + 1, index + count
     while i <= j do
         t[i], t[j] = t[j], t[i]
+        i = i + 1
+        j = j - 1
     end
     changeVersion(t)
 end
@@ -504,6 +536,10 @@ end
 
 Collection.isArrayLike = isArrayLike
 
+function Collection.isEnumerableLike(t)
+    return type(t) == "table" and t.getEnumerator ~= nil
+end
+
 local function eachFn(en)
     if en:moveNext() then
         return true, en:getCurrent()
@@ -543,7 +579,7 @@ function Collection.toArray(t)
             tinsert(array, wrap(v))
         end
      end
-     return System.ArrayFromTable(array, t.__genericT__)
+     return System.arrayFromTable(array, t.__genericT__)
 end
 
 local DictionaryEnumerator = {}
@@ -596,7 +632,7 @@ function LinkedListEnumerator.moveNext(this)
     if node == nil then
         return false
     end
-    this.current = node.item
+    this.current = node.value
     node = node.next
     if node == list.head then
         node = nil
@@ -650,8 +686,8 @@ function YieldEnumerator.getCurrent(this)
     return this.current
 end
 
-function Collection.yieldEnumerator(f)
-    return setmetatable({ co = coroutine.create(f) }, YieldEnumerator)
+function Collection.yieldEnumerator(f, T)
+    return setmetatable({ co = coroutine.create(f), __genericT__ = T }, YieldEnumerator)
 end
 
 Collection.yieldReturn = coroutine.yield
@@ -661,6 +697,7 @@ System.each = Collection.each
 System.ipairs = Collection.ipairs
 System.pairs = Collection.pairs
 System.isArrayLike = Collection.isArrayLike
+System.isEnumerableLike = Collection.isEnumerableLike
 System.yieldEnumerator = Collection.yieldEnumerator
 System.yieldReturn = Collection.yieldReturn 
 
