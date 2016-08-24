@@ -153,11 +153,13 @@ namespace Bridge.Translator.Lua
             else if(value == null) {
                 s = "nil";
             }
+            else if(value is RawString) {
+                s = value.ToString();
+            }
             else
             {
                 s = this.Emitter.ToJavaScript(value);
             }
-
             this.Emitter.Output.Append(s);
         }
 

@@ -6,6 +6,19 @@ using System.Text;
 using ICSharpCode.NRefactory.TypeSystem;
 
 namespace Bridge.Contract {
+    public sealed class RawString {
+        public string s_;
+
+        public RawString(string s) {
+            s_ = s;
+        }
+
+        public override string ToString() {
+            return s_;
+        }
+    }
+
+
     public static class TransformCtx {
         public const string DefaultString = "__defaultVal__";
         public const string DefaultInvoke = DefaultString + "()";

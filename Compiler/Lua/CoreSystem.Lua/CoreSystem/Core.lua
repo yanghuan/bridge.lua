@@ -154,6 +154,11 @@ local function def(name, kind, cls, generic)
     if kind == "C" or kind == "S" then
         cls.__index = cls 
         cls.__call = new
+        if kind == "C" then
+            cls.__defaultVal__ = emptyFn
+        else
+            assert(cls.__defaultVal__)
+        end
         local extends = cls.__inherits__
         if extends then
             if type(extends) == "function" then
@@ -177,14 +182,13 @@ local function def(name, kind, cls, generic)
         if cls.toString ~= nil and rawget(cls, "__tostring") == nil then
             cls.__tostring = cls.toString
         end
-        tinsert(class, cls);
-    end
-    if kind == "C" or kind == "I" then
+        tinsert(class, cls)
+    elseif kind == "I" then
         cls.__defaultVal__ = emptyFn
     elseif kind == "E" then
         cls.__defaultVal__ = defaultValOfZero
-    else 
-        assert(cls.__defaultVal__, name)
+    else
+        assert(false)
     end
     return cls
 end
