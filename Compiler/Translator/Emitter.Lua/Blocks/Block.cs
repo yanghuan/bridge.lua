@@ -2,6 +2,7 @@ using Bridge.Contract;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.TypeSystem;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Bridge.Translator.Lua
 {
@@ -204,11 +205,15 @@ namespace Bridge.Translator.Lua
             }
 
             this.PopLocals();
+            this.ClearLocalsNamesMap(prevNamesMap_);
         }
+
+        private Dictionary<string, string> prevNamesMap_;
 
         public void BeginEmitBlock()
         {
             this.PushLocals();
+            prevNamesMap_ = this.BuildLocalsNamesMap();
             this.BeginPosition = this.Emitter.Output.Length;
         }
     }

@@ -352,7 +352,7 @@ namespace Bridge.Translator.Lua {
 
                             if(!(targetrr is ThisResolveResult || targetrr is TypeResolveResult || targetrr is LocalResolveResult || isField)) {
                                 targetVar = this.GetTempVarName();
-
+                                this.WriteVar();
                                 this.Write(targetVar);
                                 this.Write(" = ");
                             }
@@ -552,8 +552,7 @@ namespace Bridge.Translator.Lua {
                                         }
                                     }
 
-                                    this.WriteDot();
-
+                                    this.WriteObjectColon();
                                     this.Write(Helpers.GetPropertyRef(member.Member, this.Emitter, false));
 
                                     if(proto) {
@@ -568,10 +567,10 @@ namespace Bridge.Translator.Lua {
                                     }
 
                                     if(this.Emitter.UnaryOperatorType == UnaryOperatorType.Increment || this.Emitter.UnaryOperatorType == UnaryOperatorType.PostIncrement) {
-                                        this.Write("+");
+                                        this.Write(" + ");
                                     }
                                     else {
-                                        this.Write("-");
+                                        this.Write(" - ");
                                     }
 
                                     this.Write("1");
