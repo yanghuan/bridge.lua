@@ -769,7 +769,15 @@ namespace Bridge.Translator.Lua {
                         this.Write(OverloadsCollection.Create(this.Emitter, expresssionMember.Member).GetOverloadName());
                     }
                     else {
-                        this.Write(OverloadsCollection.Create(this.Emitter, invocationResult.Member).GetOverloadName());
+                        string name = OverloadsCollection.Create(this.Emitter, invocationResult.Member).GetOverloadName();
+                        if(isInvokeInCurClass) {
+                            string newName = this.GetUniqueName(name);
+                            if(newName != name) {
+                                this.IntroduceTempVar(newName + " = " + name);
+                                name = newName;
+                            }
+                        }
+                        this.Write(name);
                     }
                 }
                 else if(member.Member is DefaultResolvedEvent) {

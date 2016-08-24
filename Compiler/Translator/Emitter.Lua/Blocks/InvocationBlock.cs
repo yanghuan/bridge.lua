@@ -361,6 +361,13 @@ namespace Bridge.Translator.Lua
                                     if(resolvedMethod.DeclaringType != TransformCtx.CurClass) {
                                         name = BridgeTypes.ToJsName(resolvedMethod.DeclaringType, this.Emitter) + '.' + name;
                                     }
+                                    else {
+                                        string newName = this.GetUniqueName(name);
+                                        if(newName != name) {
+                                            this.IntroduceTempVar(newName + " = " + name);
+                                            name = newName;
+                                        }
+                                    }
 
                                     this.Write(name);
                                     this.WriteOpenParentheses();
