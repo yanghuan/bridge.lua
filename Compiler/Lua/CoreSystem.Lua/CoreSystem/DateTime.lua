@@ -328,9 +328,13 @@ end
 DateTime.__tostring = DateTime.toString
 
 local new = System.new
-DateTime.minValue = new(DateTime, 0)
+local minValue = new(DateTime, 0)
+DateTime.minValue = minValue
 DateTime.maxValue = new(DateTime, 3155378975999999999)
-DateTime.__defaultVal__ = DateTime.minValue
+
+function DateTime.__defaultVal__()
+    return minValue
+end  
 
 System.defStc("System.DateTime", DateTime)
 DateTime.__inherits__ = { System.IComparable, System.IComparable_1(DateTime), System.IEquatable_1(DateTime) }

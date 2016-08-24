@@ -181,7 +181,7 @@ namespace Bridge.Translator
 
         public static string GetStructDefaultValue(IType type, IEmitter emitter)
         {
-            return BridgeTypes.ToJsName(type, emitter) + '.' + "__defaultVal__";
+            return BridgeTypes.ToJsName(type, emitter) + '.' +  TransformCtx.DefaultInvoke;
 
             /*
             if (type.IsKnownType(KnownTypeCode.DateTime))

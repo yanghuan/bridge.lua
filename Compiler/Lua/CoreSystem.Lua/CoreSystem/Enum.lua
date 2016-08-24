@@ -12,7 +12,7 @@ local Enum = {}
 Enum.compareTo = Int.compareTo
 Enum.equalsObj = Int.equalsObj
 Enum.getHashCode = Int.getHashCode
-Enum.__defaultVal__ = 0
+Enum.__defaultVal__ = Int.__defaultVal__
 
 function Enum.toString(this, cls)
     for k, v in pairs(cls) do

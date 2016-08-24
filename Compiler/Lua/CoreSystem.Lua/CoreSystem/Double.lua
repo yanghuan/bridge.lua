@@ -105,7 +105,9 @@ function Double.isInfinity(v)
     return v == posInf or v == negInf    
 end 
 
-Double.__defaultVal__ = 0.0
+function Double.__defaultVal__()
+   return 0.0
+end
 
 System.defStc("System.Double", Double)
 Double.__inherits__ = { System.IComparable, System.IFormattable, System.IComparable_1(Double), System.IEquatable_1(Double) }

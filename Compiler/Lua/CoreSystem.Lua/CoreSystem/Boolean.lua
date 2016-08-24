@@ -70,7 +70,9 @@ function Boolean.tryParse(s)
     return false, false
 end
 
-Boolean.__defaultVal__ = false
+function Boolean.__defaultVal__()
+    return false
+end
 
 System.defStc("System.Boolean", Boolean)
 Boolean.__inherits__ = { System.IComparable, System.IComparable_1(Boolean), System.IEquatable_1(Boolean) }

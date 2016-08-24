@@ -101,10 +101,10 @@ namespace Bridge.Translator.Lua
 
                     //this.EnsureComma();
                     this.EnsureNewLine();
-                    this.Write("getDefaultValue = function () return " + structName + CtorOpenCloseParentheses + " end");
+                    const string functionName = TransformCtx.DefaultString;
+                    this.Write(functionName, " = function () return " + structName + CtorOpenCloseParentheses + " end");
                     this.Emitter.Comma = true;
-
-                    TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() { Name = "getDefaultValue" });
+                    TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() { Name = functionName });
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +7,9 @@ using ICSharpCode.NRefactory.TypeSystem;
 
 namespace Bridge.Contract {
     public static class TransformCtx {
+        public const string DefaultString = "__defaultVal__";
+        public const string DefaultInvoke = DefaultString + "()";
+
         public static T GetOrDefault<K, T>(this IDictionary<K, T> dict, K key, T t = default(T)) {
             T v;
             if(dict.TryGetValue(key, out v)) {

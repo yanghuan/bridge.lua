@@ -118,7 +118,7 @@ function Dictionary.remove(this, key)
 end
 
 local function getValueDefault(this)
-    return this.__genericTValue__.__defaultVal__
+    return this.__genericTValue__.__defaultVal__()
 end
 
 function Dictionary.tryGetValue(this, key)

@@ -140,7 +140,8 @@ end
 TimeSpan.__tostring = TimeSpan.toString
 
 local new = System.new
-TimeSpan.zero = new(TimeSpan, 0)
+local zero = new(TimeSpan, 0)
+TimeSpan.zero = zero
 TimeSpan.maxValue = new(TimeSpan, 864e13)
 TimeSpan.minValue = new(TimeSpan, -864e13)
 
@@ -168,7 +169,9 @@ function TimeSpan.fromTicks(value)
     return TimeSpan(value)
 end
 
-TimeSpan.__defaultVal__ = TimeSpan.zero 
+function TimeSpan.__defaultVal__()
+    return zero
+end
 
 System.defStc("System.TimeSpan", TimeSpan)
 TimeSpan.__inherits__ = { System.IComparable, System.IComparable_1(TimeSpan), System.IEquatable_1(TimeSpan) }

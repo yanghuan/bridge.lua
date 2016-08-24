@@ -73,7 +73,9 @@ function Int.tryParse(s, _, min, max)
     return false, 0
 end
 
-Int.__defaultVal__ = 0
+function Int.__defaultVal__()
+    return 0
+end 
 
 System.defStc("System.Int", Int)
 Int.__inherits__ = { System.IComparable, System.IFormattable, System.IComparable_1(Int), System.IEquatable_1(Int) }

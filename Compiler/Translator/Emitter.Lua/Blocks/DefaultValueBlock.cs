@@ -21,14 +21,13 @@ namespace Bridge.Translator.Lua
         protected override void DoEmit()
         {
             var resolveResult = this.Emitter.Resolver.ResolveNode(this.DefaultValueExpression.Type, this.Emitter);
-
             if (!resolveResult.IsError && resolveResult.Type.IsReferenceType.HasValue && resolveResult.Type.IsReferenceType.Value)
             {
                 this.Write("nil");
             }
             else
             {
-                this.Write(BridgeTypes.ToJsName(DefaultValueExpression.Type, this.Emitter), '.', "__defaultVal__");
+                this.Write(BridgeTypes.ToJsName(DefaultValueExpression.Type, this.Emitter), '.', TransformCtx.DefaultInvoke);
                 //this.Write("Bridge.getDefaultValue(" + BridgeTypes.ToJsName(DefaultValueExpression.Type, this.Emitter) + ")");
             }
         }

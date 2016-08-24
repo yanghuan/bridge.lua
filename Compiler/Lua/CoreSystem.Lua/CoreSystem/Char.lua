@@ -9,6 +9,7 @@ Char.compareToObj = Int.compareToObj
 Char.equals = Int.equals
 Char.equalsObj = Int.equalsObj
 Char.getHashCode = Int.getHashCode
+Char.__defaultVal__ = Int.__defaultVal__
 
 function Char.isControl(c, index)
     if index then
@@ -207,8 +208,6 @@ function Char.isSurrogate(c, index)
     end
     return c >= 0xD800 and c <= 0xDFFF
 end
-
-Char.__defaultVal__ = 0
 
 System.defStc("System.Char", Char)
 Char.__inherits__ = { System.IComparable, System.IComparable_1(Char), System.IEquatable_1(Char) }

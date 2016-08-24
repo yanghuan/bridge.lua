@@ -592,7 +592,7 @@ end
 
 function Enumerable.firstOrDefault(source, ...)
     local ok, result = first(source, ...)
-    return ok and result or source.__genericT__.__defaultVal__
+    return ok and result or source.__genericT__.__defaultVal__()
 end
 
 local function last(source, ...)
@@ -634,7 +634,7 @@ end
 
 function Enumerable.lastOrDefault(source, ...)
     local ok, result = last(source, ...)
-    return ok and result or source.__genericT__.__defaultVal__
+    return ok and result or source.__genericT__.__defaultVal__()
 end
 
 local function single(source, ...)
@@ -677,7 +677,7 @@ end
 
 function Enumerable.singleOrDefault(source, ...)
     local ok, result = single(source, ...)
-    return ok and result or source.__genericT__.__defaultVal__
+    return ok and result or source.__genericT__.__defaultVal__()
 end
 
 local function elementAt(source, index)
@@ -699,7 +699,7 @@ end
 
 function Enumerable.elementAtOrDefault(source, index)
     local ok, result = elementAt(source, index)
-    return ok and result or source.__genericT__.__defaultVal__
+    return ok and result or source.__genericT__.__defaultVal__()
 end
 
 function Enumerable.range(start, count)
@@ -857,7 +857,7 @@ local function minOrMax(compareFn, source, ...)
         if selector == nil then throw(ArgumentNullException("selector")) end
     end
     local compare = Comparer_1(T).getDefault().compare
-    local value = T.__defaultVal__
+    local value = T.__defaultVal__()
     if value == nil  then
         for _, x in each(source) do
             if x ~= nil and (value == nil or compareFn(compare, x, value)) then

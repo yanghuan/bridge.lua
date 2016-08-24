@@ -15,8 +15,6 @@ namespace Bridge.Translator.Lua
             }
         }
 
-        public const string StructDefault = "__defaultVal__";
-
         public static string Ident(this string s) {
             return "__" + s + "__";
         }

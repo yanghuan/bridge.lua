@@ -92,6 +92,10 @@ local function getId()
     return id
 end
 
+local function defaultValOfZero()
+    return 0
+end
+
 local function genericId(id, ...) 
     for i = 1, select("#", ...) do
         local cls = select(i, ...)
@@ -174,6 +178,13 @@ local function def(name, kind, cls, generic)
             cls.__tostring = cls.toString
         end
         tinsert(class, cls);
+    end
+    if kind == "C" or kind == "I" then
+        cls.__defaultVal__ = emptyFn
+    elseif kind == "E" then
+        cls.__defaultVal__ = defaultValOfZero
+    else 
+        assert(cls.__defaultVal__, name)
     end
     return cls
 end
@@ -334,13 +345,6 @@ function System.init(namelist)
         if staticCtor then
             staticCtor(cls)
             cls.__staticCtor__ = nil
-        end
-        if cls.__kind__ == "S" then
-            local getDefaultValue = cls.getDefaultValue
-            if getDefaultValue then
-                assert(cls.__defaultVal__ == nil)
-                cls.__defaultVal__ = getDefaultValue()
-            end
         end
     end
     modules = {}
