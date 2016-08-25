@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -531,14 +531,18 @@ namespace Bridge.Lua {
         };
 
         private bool IsAttributeEnable(CustomAttribute attribute) {
-            if(!IsEnableType(attribute.AttributeType.Resolve())) {
+            TypeDefinition typeDefinition = attribute.AttributeType.Resolve();
+            if(typeDefinition == null) {
+                return false;
+            }
+
+            if(!IsEnableType(typeDefinition)) {
                 return false;
             }
 
             if(filterAttributes.Contains(attribute.AttributeType.FullName)) {
                 return false;
             }
-
             return true;
         }
 
