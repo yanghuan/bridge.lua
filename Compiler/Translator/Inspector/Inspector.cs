@@ -115,7 +115,9 @@ namespace Bridge.Translator
 
             var resolveResult = resolver.ResolveNode(type, null);
             if(resolveResult.Type.Kind == TypeKind.TypeParameter) {
-                return new RawString(type.ToString()  + '.' + TransformCtx.DefaultInvoke);
+                if(resolveResult.Type.IsReferenceType == null || resolveResult.Type.IsReferenceType == false) {
+                    return new RawString(type.ToString() + '.' + TransformCtx.DefaultInvoke);
+                }
             }
 
             if(!resolveResult.IsError && NullableType.IsNullable(resolveResult.Type))
