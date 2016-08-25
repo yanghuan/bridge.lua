@@ -1,51 +1,49 @@
 local System = System
 local emptyFn  = System.emptyFn
 
-local IEnumerable = { __inherits__ = { System.IEnumerable } } 
+local IEnumerable = System.defInf("System.IEnumerable")
+local IEnumerator = System.defInf("System.IEnumerator")
 
-System.defInf('System.IEnumerable')
-System.defInf('System.IEnumerator')
-System.defInf('System.IEqualityComparer')
-System.defInf('System.ICollection', IEnumerable)
+System.defInf("System.ICollection", {
+    __inherits__ = { IEnumerable }
+})
 
-System.defInf('System.IEnumerator_1', function(T) 
-    return IEnumerable
+System.defInf("System.IEnumerator_1", function(T) 
+    return {
+        __inherits__ = { IEnumerator }
+    }
 end)
 
-System.defInf('System.IEnumerable_1', function(T) 
-    return IEnumerable
+local IEnumerable_1 = System.defInf("System.IEnumerable_1", function(T) 
+    return {
+        __inherits__ = { IEnumerable }
+    }
 end)
 
-System.defInf('System.ICollection_1', function(T) 
+local ICollection_1 = System.defInf("System.ICollection_1", function(T) 
     return { 
-    __inherits__ = { System.IEnumerable_1(T) } 
+        __inherits__ = { IEnumerable_1(T) } 
     }
 end)
 
-System.defInf('System.IEqualityComparer_1', emptyFn)
-
---[[
 System.defInf('System.IDictionary_2', function(TKey, TValue) 
     return {
-        __inherits__ = { System.IEnumerable_1(System.KeyValuePair_2(TKey, TValue)) }
+        __inherits__ = IEnumerable
     }
 end)
---]]
 
-System.defInf('System.IDictionary_2', function(TKey, TValue) 
-    return IEnumerable
-end)
-
-System.defInf('System.IList_1', function(T) 
+System.defInf("System.IList_1", function(T) 
     return {
-        __inherits__ = { System.ICollection_1(T) }
+        __inherits__ = { ICollection_1(T) }
     }
 end)
 
-System.defInf('System.IComparer_1', emptyFn)
-
-System.defInf('System.ISet_1', function(T) 
+System.defInf("System.ISet_1", function(T) 
     return {
-        __inherits__ = { System.ICollection_1(T) }
+        __inherits__ = { ICollection_1(T) }
     }
 end)
+
+System.defInf("System.IComparer_1", emptyFn)
+System.defInf("System.IEqualityComparer")
+System.defInf("System.IEqualityComparer_1", emptyFn)

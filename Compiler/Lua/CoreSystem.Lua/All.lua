@@ -1,8 +1,8 @@
 return function(dir)
-    dir = dir and dir .. ".CoreSystem." or "CoreSystem."
+    dir = (dir and #dir > 0) and (dir .. ".CoreSystem.") or "CoreSystem."
     local require = require
     local load = function(module) return require(dir .. module) end
-
+    
     load("Core");
     load("Interfaces")
     load("Exception")

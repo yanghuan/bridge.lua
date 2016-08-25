@@ -86,6 +86,7 @@ local function set(className, cls)
         end
         starInx = pos + 1
     end
+    return cls
 end
 
 local function getId()
@@ -139,8 +140,7 @@ local function def(name, kind, cls, generic)
             end
             return t
         end
-        set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end }))
-        return fn
+        return set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end }))
     end
 
     cls = cls or {}
@@ -195,15 +195,15 @@ local function def(name, kind, cls, generic)
 end
 
 local function defCls(name, cls, genericSuper)
-    def(name, "C", cls, genericSuper) 
+    return def(name, "C", cls, genericSuper) 
 end
 
 local function defInf(name, cls)
-    def(name, "I", cls)
+    return def(name, "I", cls)
 end
 
 local function defStc(name, cls, genericSuper)
-    def(name, "S", cls, genericSuper)
+    return def(name, "S", cls, genericSuper)
 end
 
 System = {
