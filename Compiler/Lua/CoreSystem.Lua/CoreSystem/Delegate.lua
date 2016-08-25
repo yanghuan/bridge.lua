@@ -164,6 +164,9 @@ local function equals(fn1, fn2)
     return equalsSingle(fn1, fn2)
 end
 
+multicast.__eq = equals
+memberMethod.__eq = equals
+
 function Delegate.equalsObj(this, obj)
     if this == nil then
         throw(System.NullReferenceException())
@@ -181,7 +184,5 @@ function Delegate.equalsObj(this, obj)
     return false
 end
 
-Delegate.__eq = equals
 System.fn = Delegate
-
 System.define("System.Delegate", Delegate);
