@@ -580,7 +580,7 @@ namespace Bridge.Translator.Lua
                 else
                 {
                     this.WriteOpenParentheses();
-                    if(method != null && !method.IsStatic && method.DeclaringType == TransformCtx.CurClass) {
+                    if(method != null && !method.IsStatic && method.IsInternalMember()) {
                         MemberReferenceExpression targetMemberReferenceExpression = invocationExpression.Target as MemberReferenceExpression;
                         if(targetMemberReferenceExpression != null) {
                             targetMemberReferenceExpression.Target.AcceptVisitor(this.Emitter);

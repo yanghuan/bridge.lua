@@ -38,6 +38,14 @@ namespace Bridge.Translator.Lua
             return noPrev && noNext;
         }
 
+        private static bool IsOverridable(IMember member) {
+            return member.IsOverridable && !((DefaultResolvedTypeDefinition)member.DeclaringType).IsSealed;
+        }
+
+        public static bool IsInternalMember(this IMember member) {
+            return member.DeclaringType == TransformCtx.CurClass && !IsOverridable(member);
+        }
+
         public static IEnumerable<T[]> Cut<T>(this IList<T> list, int cellCount) {
             int index = 0;
             while(index < list.Count) {

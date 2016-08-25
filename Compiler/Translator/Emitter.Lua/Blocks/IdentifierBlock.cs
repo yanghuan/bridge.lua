@@ -371,7 +371,7 @@ namespace Bridge.Translator.Lua
                     {
                         this.Write(Helpers.GetPropertyRef(memberResult.Member, this.Emitter));
                         this.WriteOpenParentheses();
-                        if(!memberResult.Member.IsStatic && memberResult.Member.DeclaringType == TransformCtx.CurClass) {
+                        if(!memberResult.Member.IsStatic && memberResult.Member.IsInternalMember()) {
                             this.WriteThis();
                         }
                         this.WriteCloseParentheses();
@@ -553,7 +553,7 @@ namespace Bridge.Translator.Lua
             {
                 switch(memberResult.Member.SymbolKind) {
                     case SymbolKind.Method: {
-                            if(memberResult.Member.DeclaringType != TransformCtx.CurClass) {
+                            if(!memberResult.Member.IsInternalMember()) {
                                 this.WriteThis();
                                 if(this.IdentifierExpression.Role == Roles.TargetExpression) {
                                     this.WriteObjectColon();
@@ -570,7 +570,7 @@ namespace Bridge.Translator.Lua
                                 this.WriteDot();
                             }
                             else {
-                                if(memberResult.Member.DeclaringType != TransformCtx.CurClass) {
+                                if(!memberResult.Member.IsInternalMember()) {
                                     this.WriteThis();
                                     this.WriteObjectColon();
                                 }
