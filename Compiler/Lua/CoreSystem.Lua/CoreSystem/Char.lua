@@ -9,7 +9,7 @@ Char.compareToObj = Int.compareToObj
 Char.equals = Int.equals
 Char.equalsObj = Int.equalsObj
 Char.getHashCode = Int.getHashCode
-Char.__defaultVal__ = Int.__defaultVal__
+Char.__default__ = Int.__default__
 
 function Char.isControl(c, index)
     if index then

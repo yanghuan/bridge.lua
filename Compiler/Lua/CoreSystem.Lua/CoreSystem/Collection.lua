@@ -117,7 +117,7 @@ function Collection.buildArray(t, size, ...)
         tinsert(t, wrap(v))
     end
     if len < size then
-        local default = t.__genericT__.__defaultVal__()
+        local default = t.__genericT__.__default__()
         if default == nil then
             default = null
         end
@@ -264,7 +264,7 @@ function Collection.findOfArray(t, match)
             return item
         end
     end
-    return t.__genericT__.__defaultVal__()
+    return t.__genericT__.__default__()
 end
 
 function Collection.findAllOfArray(t, match)
@@ -291,7 +291,7 @@ function Collection.findLastOfArray(t, match)
             return item
         end
     end
-    return t.__genericT__.__defaultVal__()
+    return t.__genericT__.__default__()
 end
 
 function Collection.findLastIndexOfArray(t, ...)

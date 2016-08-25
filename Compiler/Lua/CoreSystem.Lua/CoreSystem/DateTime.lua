@@ -332,7 +332,7 @@ local minValue = new(DateTime, 0)
 DateTime.minValue = minValue
 DateTime.maxValue = new(DateTime, 3155378975999999999)
 
-function DateTime.__defaultVal__()
+function DateTime.__default__()
     return minValue
 end  
 

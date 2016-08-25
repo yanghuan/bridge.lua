@@ -73,7 +73,7 @@ function Int.tryParse(s, _, min, max)
     return false, 0
 end
 
-function Int.__defaultVal__()
+function Int.__default__()
     return 0
 end 
 

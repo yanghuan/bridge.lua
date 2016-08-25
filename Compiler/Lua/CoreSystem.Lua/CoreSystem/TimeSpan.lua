@@ -169,7 +169,7 @@ function TimeSpan.fromTicks(value)
     return TimeSpan(value)
 end
 
-function TimeSpan.__defaultVal__()
+function TimeSpan.__default__()
     return zero
 end
 

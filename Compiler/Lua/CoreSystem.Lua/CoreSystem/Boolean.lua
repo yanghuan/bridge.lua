@@ -70,7 +70,7 @@ function Boolean.tryParse(s)
     return false, false
 end
 
-function Boolean.__defaultVal__()
+function Boolean.__default__()
     return false
 end
 

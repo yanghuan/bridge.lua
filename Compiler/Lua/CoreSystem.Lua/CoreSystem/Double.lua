@@ -105,7 +105,7 @@ function Double.isInfinity(v)
     return v == posInf or v == negInf    
 end 
 
-function Double.__defaultVal__()
+function Double.__default__()
    return 0.0
 end
 

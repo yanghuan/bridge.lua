@@ -9,6 +9,7 @@ local type = type
 local ipairs = ipairs
 local assert = assert
 local tinsert = table.insert
+local rawget = rawget
 
 local emptyFn = function() end
 local genericCache = {}
@@ -155,9 +156,9 @@ local function def(name, kind, cls, generic)
         cls.__index = cls 
         cls.__call = new
         if kind == "C" then
-            cls.__defaultVal__ = emptyFn
+            cls.__default__ = emptyFn
         else
-            assert(cls.__defaultVal__)
+            assert(cls.__default__)
         end
         local extends = cls.__inherits__
         if extends then
@@ -184,9 +185,9 @@ local function def(name, kind, cls, generic)
         end
         tinsert(class, cls)
     elseif kind == "I" then
-        cls.__defaultVal__ = emptyFn
+        cls.__default__ = emptyFn
     elseif kind == "E" then
-        cls.__defaultVal__ = defaultValOfZero
+        cls.__default__ = defaultValOfZero
     else
         assert(false)
     end

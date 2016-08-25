@@ -20,7 +20,7 @@ namespace Bridge.Contract {
 
 
     public static class TransformCtx {
-        public const string DefaultString = "__defaultVal__";
+        public const string DefaultString = "__default__";
         public const string DefaultInvoke = DefaultString + "()";
 
         public static T GetOrDefault<K, T>(this IDictionary<K, T> dict, K key, T t = default(T)) {
