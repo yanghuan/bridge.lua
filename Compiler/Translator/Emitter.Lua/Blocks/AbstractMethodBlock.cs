@@ -70,5 +70,19 @@ namespace Bridge.Translator.Lua
                 this.Write(p.Name.Replace(Bridge.Translator.Emitter.FIX_ARGUMENT_NAME, ""));
             }
         }
+
+        private int beginPosition_;
+
+        protected void MarkTempVars() {
+            beginPosition_ = this.Emitter.Output.Length;
+        }
+
+        protected void EmitTempVars() {
+            if(beginPosition_ == -1) {
+                throw new System.NotSupportedException();
+            }
+            this.EmitTempVars(beginPosition_);
+            beginPosition_ = -1;
+        }
     }
 }

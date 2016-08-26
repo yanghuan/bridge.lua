@@ -34,6 +34,14 @@ namespace Bridge.Translator.Lua
 
         protected override void DoEmit()
         {
+            this.Write(LuaHelper.Root + ".yieldReturn");
+            this.WriteOpenParentheses();
+            this.YieldReturnStatement.Expression.AcceptVisitor(this.Emitter);
+            this.WriteCloseParentheses();
+            this.WriteSemiColon();
+            this.WriteNewLine();
+
+            /*
             if (this.YieldReturnStatement != null)
             {
                 this.Write(LuaHelper.Root + ".yieldReturn");
@@ -56,7 +64,7 @@ namespace Bridge.Translator.Lua
                 {
                     new BreakBlock(this.Emitter, this.YieldBreakStatement).Emit();
                 }
-            }
+            }*/
         }
 
         public static bool HasYield(AstNode node)
@@ -80,7 +88,12 @@ namespace Bridge.Translator.Lua
         {
             block.EndFunctionBlock();
             block.WriteComma();
-            block.Write(BridgeTypes.ToJsName(returnType.TypeArguments[0], block.Emitter));
+            if(returnType.TypeArguments.Count > 0) {
+                block.Write(BridgeTypes.ToJsName(returnType.TypeArguments[0], block.Emitter));
+            }
+            else {
+                block.Write("System.Object");
+            }
             block.WriteCloseParentheses();
             block.WriteNewLine();
         }

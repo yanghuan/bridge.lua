@@ -177,7 +177,9 @@ namespace Bridge.Translator.Lua
             }
             else
             {
+                MarkTempVars();
                 body.AcceptVisitor(this.Emitter);
+                EmitTempVars();
             }
 
             if (isSimpleLambda)

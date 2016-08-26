@@ -117,15 +117,32 @@ namespace Bridge.Translator.Lua
                 else
                 {
                     this.BeginFunctionBlock();
+                    bool isYieldExists = YieldBlock.HasYield(methodDeclaration.Body);
+                    if(isYieldExists) {
+                        YieldBlock.EmitYield(this, null);
+                    }
+                    else {
+                        this.ConvertParamsToReferences(methodDeclaration.Parameters);
+                    }
+
+                    MarkTempVars();
                     methodDeclaration.Body.AcceptVisitor(this.Emitter);
-                    PrimitiveType returnType = methodDeclaration.ReturnType as PrimitiveType;
-                    if(returnType != null) {
-                        if(returnType.KnownTypeCode == ICSharpCode.NRefactory.TypeSystem.KnownTypeCode.Void) {
-                            string refArgsString = GetRefArgsString(this.Emitter, methodDeclaration);
-                            if(refArgsString != null) {
-                                this.WriteReturn(true);
-                                this.Write(refArgsString);
-                                this.WriteNewLine();
+                    EmitTempVars();
+
+                    if(isYieldExists) {
+                        var returnResolveResult = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
+                        YieldBlock.EmitYieldReturn(this, returnResolveResult.Type);
+                    }
+                    else {
+                        PrimitiveType returnType = methodDeclaration.ReturnType as PrimitiveType;
+                        if(returnType != null) {
+                            if(returnType.KnownTypeCode == ICSharpCode.NRefactory.TypeSystem.KnownTypeCode.Void) {
+                                string refArgsString = GetRefArgsString(this.Emitter, methodDeclaration);
+                                if(refArgsString != null) {
+                                    this.WriteReturn(true);
+                                    this.Write(refArgsString);
+                                    this.WriteNewLine();
+                                }
                             }
                         }
                     }

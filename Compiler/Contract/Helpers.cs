@@ -560,11 +560,9 @@ namespace Bridge.Contract
 
         public static string GetPropertyRef(IMember property, IEmitter emitter, bool isSetter = false, bool noOverload = false, bool ignoreInterface = false)
         {
-            if (property.DeclaringTypeDefinition != null &&
-                emitter.Validator.IsIgnoreType(property.DeclaringTypeDefinition))
+            if (property.DeclaringTypeDefinition != null && emitter.Validator.IsIgnoreType(property.DeclaringTypeDefinition))
             {
                 var attrName = emitter.GetEntityNameFromAttr(property, isSetter);
-
                 if (!string.IsNullOrEmpty(attrName))
                 {
                     return attrName;

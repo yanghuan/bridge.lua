@@ -1,4 +1,4 @@
-﻿using Bridge.Contract;
+using Bridge.Contract;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace Bridge.Translator.Lua
@@ -73,7 +73,9 @@ namespace Bridge.Translator.Lua
             var script = this.Emitter.GetScript(operatorDeclaration);
             if (script == null)
             {
+                MarkTempVars();
                 operatorDeclaration.Body.AcceptVisitor(this.Emitter);
+                EmitTempVars();
             }
             else
             {

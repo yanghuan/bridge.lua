@@ -1,4 +1,4 @@
-﻿using Bridge.Contract;
+using Bridge.Contract;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Semantics;
 using System.Linq;
@@ -83,10 +83,11 @@ namespace Bridge.Translator.Lua
                 this.BeginFunctionBlock();
 
                 var script = this.Emitter.GetScript(accessor);
-
                 if (script == null)
                 {
+                    MarkTempVars();
                     accessor.Body.AcceptVisitor(this.Emitter);
+                    EmitTempVars();
                 }
                 else
                 {

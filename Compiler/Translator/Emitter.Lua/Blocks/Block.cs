@@ -13,67 +13,9 @@ namespace Bridge.Translator.Lua
         {
             this.Emitter = emitter;
             this.BlockStatement = blockStatement;
-
-            if (this.Emitter.IgnoreBlock == blockStatement)
-            {
-                this.AsyncNoBraces = true;
-            }
-
-            if (this.Emitter.NoBraceBlock == blockStatement)
-            {
-                this.NoBraces = true;
-            }
         }
 
-        public BlockStatement BlockStatement
-        {
-            get;
-            set;
-        }
-
-        protected bool AddEndBlock
-        {
-            get;
-            set;
-        }
-
-        public bool AsyncNoBraces
-        {
-            get;
-            set;
-        }
-
-        public bool NoBraces
-        {
-            get;
-            set;
-        }
-
-        public int BeginPosition
-        {
-            get;
-            set;
-        }
-
-        public bool IsMethodBlock
-        {
-            get;
-            set;
-        }
-
-        public bool IsYield
-        {
-            get;
-            set;
-        }
-
-        public IType ReturnType
-        {
-            get;
-            set;
-        }
-
-        private IType OldReturnType
+        private BlockStatement BlockStatement
         {
             get;
             set;
@@ -87,134 +29,37 @@ namespace Bridge.Translator.Lua
         public void EmitBlock()
         {
             this.BeginEmitBlock();
+            bool isBlockStatement = this.BlockStatement.Parent is BlockStatement;
+            if(isBlockStatement) {
+                this.BeginDoBlock();
+            }
             this.DoEmitBlock();
+            if(isBlockStatement) {
+                this.EndCodeBlock();
+                this.WriteNewLine();
+            }
             this.EndEmitBlock();
         }
 
         public void DoEmitBlock()
         {
-            if (this.BlockStatement.Parent is MethodDeclaration)
-            {
-                this.IsMethodBlock = true;
-                var methodDeclaration = (MethodDeclaration)this.BlockStatement.Parent;
-                if (!methodDeclaration.ReturnType.IsNull)
-                {
-                    var rr = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
-                    this.ReturnType = rr.Type;
-                }
-                this.ConvertParamsToReferences(methodDeclaration.Parameters);
-            }
-            else if (this.BlockStatement.Parent is AnonymousMethodExpression)
-            {
-                this.IsMethodBlock = true;
-                var methodDeclaration = (AnonymousMethodExpression)this.BlockStatement.Parent;
-                var rr = this.Emitter.Resolver.ResolveNode(methodDeclaration, this.Emitter);
-                this.ReturnType = rr.Type;
-                this.ConvertParamsToReferences(methodDeclaration.Parameters);
-            }
-            else if (this.BlockStatement.Parent is LambdaExpression)
-            {
-                this.IsMethodBlock = true;
-                var methodDeclaration = (LambdaExpression)this.BlockStatement.Parent;
-                var rr = this.Emitter.Resolver.ResolveNode(methodDeclaration, this.Emitter);
-                this.ReturnType = rr.Type;
-                this.ConvertParamsToReferences(methodDeclaration.Parameters);
-            }
-            else if (this.BlockStatement.Parent is ConstructorDeclaration)
-            {
-                this.IsMethodBlock = true;
-                this.ConvertParamsToReferences(((ConstructorDeclaration)this.BlockStatement.Parent).Parameters);
-            }
-            else if (this.BlockStatement.Parent is OperatorDeclaration)
-            {
-                this.IsMethodBlock = true;
-                this.ConvertParamsToReferences(((OperatorDeclaration)this.BlockStatement.Parent).Parameters);
-            }
-            else if (this.BlockStatement.Parent is Accessor)
-            {
-                this.IsMethodBlock = true;
-                var role = this.BlockStatement.Parent.Role.ToString();
-
-                if (role == "Setter")
-                {
-                    this.ConvertParamsToReferences(new ParameterDeclaration[] { new ParameterDeclaration { Name = "value" } });
-                }
-                else if (role == "Getter")
-                {
-                    var methodDeclaration = (Accessor)this.BlockStatement.Parent;
-                    if (!methodDeclaration.ReturnType.IsNull)
-                    {
-                        var rr = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
-                        this.ReturnType = rr.Type;
-                    }
-                }
-            }
-
-            if (this.IsMethodBlock && YieldBlock.HasYield(this.BlockStatement))
-            {
-                this.IsYield = true;
-                YieldBlock.EmitYield(this, this.ReturnType);
-            }
-
-            if (this.IsMethodBlock)
-            {
-                this.OldReturnType = this.Emitter.ReturnType;
-                this.Emitter.ReturnType = this.ReturnType;
-            }
-
-            if (this.Emitter.BeforeBlock != null)
-            {
-                this.Emitter.BeforeBlock();
-                this.Emitter.BeforeBlock = null;
-            }
-
             foreach(var statement in this.BlockStatement.Children) {
-                bool isBlockStatement = statement is BlockStatement;
-                if(isBlockStatement) {
-                    this.BeginDoBlock();
-                }
                 statement.AcceptVisitor(this.Emitter);
-                if(isBlockStatement) {
-                    this.EndCodeBlock();
-                    this.WriteNewLine();
-                }
             }
-        }
-
-        public void EndEmitBlock()
-        {
-            if (this.IsYield)
-            {
-                YieldBlock.EmitYieldReturn(this, this.ReturnType);
-            }
-
-            if (this.IsMethodBlock)
-            {
-                this.Emitter.ReturnType = this.OldReturnType;
-            }
-
-            if (this.AddEndBlock)
-            {
-                this.WriteNewLine();
-                this.EndBlock();
-            }
-
-            if (this.IsMethodBlock && !this.Emitter.IsAsync)
-            {
-                this.EmitTempVars(this.BeginPosition);
-            }
-
-            this.PopLocals();
-            this.ClearLocalsNamesMap(prevNamesMap_);
         }
 
         private Dictionary<string, string> prevNamesMap_;
+
+        public void EndEmitBlock()
+        {
+            this.PopLocals();
+            this.ClearLocalsNamesMap(prevNamesMap_);
+        }
 
         public void BeginEmitBlock()
         {
             this.PushLocals();
             prevNamesMap_ = this.BuildLocalsNamesMap();
-            this.BeginPosition = this.Emitter.Output.Length;
         }
     }
 }

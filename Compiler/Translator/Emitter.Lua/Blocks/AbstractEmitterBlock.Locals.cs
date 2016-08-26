@@ -96,50 +96,6 @@ namespace Bridge.Translator.Lua
                 var vName = this.AddLocal(item.Name, item.Type, name);
                 this.Emitter.LocalsMap[item.Name] = vName;
             }
-
-            /*
-            declarations.ToList().ForEach(item =>
-            {
-                var name = this.Emitter.GetEntityName(item);
-                var vName = this.AddLocal(item.Name, item.Type, name);
-                this.Emitter.LocalsMap[item.Name] = vName;
-
-                if(item.ParameterModifier == ParameterModifier.Out || item.ParameterModifier == ParameterModifier.Ref) {
-                    this.Emitter.LocalsMap[item.Name] = vName + ".v";
-                }
-                else {
-                    if(item.Parent != null) {
-                        DefaultParameter parameter = GetDefaultParameter(item);
-                        if(parameter.IsParams) {
-                            this.Emitter.LocalsMap[item.Name] = "arg";
-                        }
-                        else {
-                            this.Emitter.LocalsMap[item.Name] = vName;
-                        }
-                    }
-                    else {
-                        this.Emitter.LocalsMap[item.Name] = vName;
-                    }
-                }
-            });
-
-            var visitor = new ReferenceArgumentVisitor();
-            statement.AcceptVisitor(visitor);
-
-            foreach (var expr in visitor.DirectionExpression)
-            {
-                var rr = this.Emitter.Resolver.ResolveNode(expr, this.Emitter);
-
-                if (rr is LocalResolveResult && expr is IdentifierExpression)
-                {
-                    var ie = (IdentifierExpression)expr;
-                    this.Emitter.LocalsMap[ie.Identifier] = ie.Identifier + ".v";
-                }
-                else
-                {
-                    throw new EmitterException(expr, "Only local variables can be passed by reference");
-                }
-            }*/
         }
 
         public string AddLocal(string name, AstType type, string valueName = null)
@@ -254,11 +210,9 @@ namespace Bridge.Translator.Lua
                 if (p != null)
                 {
                     var rr = this.Emitter.Resolver.ResolveNode(p, this.Emitter) as MemberResolveResult;
-
                     if (rr != null)
                     {
                         var method = rr.Member as DefaultResolvedMethod;
-
                         if (method != null)
                         {
                             foreach (var prm in method.Parameters)
