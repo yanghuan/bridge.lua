@@ -1,8 +1,10 @@
-using Bridge.Contract;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.Semantics;
 using System.Collections.Generic;
 using System.Linq;
+
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Semantics;
+
+using Bridge.Contract;
 
 namespace Bridge.Translator.Lua
 {
@@ -98,7 +100,6 @@ namespace Bridge.Translator.Lua
                 {
                     var configBlock = new FieldBlock(this.Emitter, this.TypeInfo, true, false);
                     configBlock.Emit();
-
                     if (configBlock.Injectors.Count > 0)
                     {
                         injectors = configBlock.Injectors.Concat(injectors);
@@ -142,19 +143,14 @@ namespace Bridge.Translator.Lua
 
         protected virtual void EmitInitMembers()
         {
-            var injectors = this.GetInjectors();
-            IEnumerable<string> fieldsInjectors = null;
-
             var fieldBlock = new FieldBlock(this.Emitter, this.TypeInfo, false, true);
             fieldBlock.Emit();
-
-            fieldsInjectors = fieldBlock.Injectors;
-
-            if (fieldBlock.WasEmitted)
-            {
+            if(fieldBlock.WasEmitted) {
                 this.Emitter.Comma = true;
             }
 
+            var injectors = this.GetInjectors();
+            IEnumerable<string> fieldsInjectors = fieldBlock.Injectors;
             if (!this.TypeInfo.InstanceConfig.HasConfigMembers && !injectors.Any() && !fieldsInjectors.Any())
             {
                 return;
@@ -164,12 +160,10 @@ namespace Bridge.Translator.Lua
             {
                 var configBlock = new FieldBlock(this.Emitter, this.TypeInfo, false, false);
                 configBlock.Emit();
-
                 if (configBlock.Injectors.Count > 0)
                 {
                     injectors = configBlock.Injectors.Concat(injectors);
                 }
-
                 if (configBlock.WasEmitted)
                 {
                     this.Emitter.Comma = true;
@@ -264,14 +258,8 @@ namespace Bridge.Translator.Lua
         {
             this.EmitInitMembers();
 
-            if (!this.TypeInfo.HasInstantiable || this.Emitter.Plugins.HasConstructorInjectors(this))
-            {
-                return;
-            }
-
             var baseType = this.Emitter.GetBaseTypeDefinition();
             var typeDef = this.Emitter.GetTypeDefinition();
-
             if (typeDef.IsValueType || this.TypeInfo.Ctors.Count == 0)
             {
                 this.TypeInfo.Ctors.Add(new ConstructorDeclaration
@@ -363,36 +351,64 @@ namespace Bridge.Translator.Lua
                 this.ClearLocalsMap(prevMap);
                 this.ClearLocalsNamesMap(prevNamesMap);
             }
+
             this.Indent();
             string ctors = this.PopWriter(true);
-            TransformCtx.CurClassOtherMethods.Add(ctors);
-
-            if(this.TypeInfo.Ctors.Count > 0) {
-                this.EnsureComma();
-                this.Write("ctor".Ident());
-                this.WriteEqualsSign();
-
-                if(this.TypeInfo.Ctors.Count > 1) {
-                    this.WriteOpenBrace();
-                    this.Indent();
-                    this.WriteNewLine();
-                }
-
-                foreach(var info in ctorInfos) {
-                    if(info != ctorInfos.First()) {
-                        this.WriteComma(true);
-                    }
-                    this.Write(info.CtorName);
-                }
-
-                if(this.TypeInfo.Ctors.Count > 1) {
-                    this.Outdent();
-                    this.WriteNewLine();
-                    this.WriteCloseBrace();
-                }
-
-                this.Emitter.Comma = true;
+            bool isSingleAndEmpty = IsSingleAndEmptyCtors(ctors);
+            if(isSingleAndEmpty) {
+                var names = TransformCtx.CurClassOtherMethodNames;
+                names.RemoveAt(names.Count - 1);
             }
+            else {
+                TransformCtx.CurClassOtherMethods.Add(ctors);
+                if(this.TypeInfo.Ctors.Count > 0) {
+                    this.EnsureComma();
+                    this.Write("ctor".Ident());
+                    this.WriteEqualsSign();
+
+                    if(this.TypeInfo.Ctors.Count > 1) {
+                        this.WriteOpenBrace();
+                        this.Indent();
+                        this.WriteNewLine();
+                    }
+
+                    foreach(var info in ctorInfos) {
+                        if(info != ctorInfos.First()) {
+                            this.WriteComma(true);
+                        }
+                        this.Write(info.CtorName);
+                    }
+
+                    if(this.TypeInfo.Ctors.Count > 1) {
+                        this.Outdent();
+                        this.WriteNewLine();
+                        this.WriteCloseBrace();
+                    }
+
+                    this.Emitter.Comma = true;
+                }
+            }
+        }
+
+        private static readonly int EndStringLength = "end".Length;
+
+        private bool IsSingleAndEmptyCtors(string ctors) {
+            if(TypeInfo.Ctors.Count != 1) {
+                return false;
+            }
+
+            int pos = ctors.IndexOf(')');
+            if(pos == -1) {
+                throw new System.Exception();
+            }
+
+            int skipCount = pos + 1;
+            bool isEmpty = ctors.Skip(skipCount).Take(ctors.Length - skipCount - EndStringLength).All(i => char.IsWhiteSpace(i));
+            if(isEmpty) {
+                return true;
+            }
+
+            return false;
         }
 
         protected virtual void EmitBaseConstructor(ConstructorDeclaration ctor, string ctorName)

@@ -1,11 +1,12 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
-using Bridge.Contract;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Semantics;
 using ICSharpCode.NRefactory.TypeSystem;
-using System.Collections.Generic;
+
+using Bridge.Contract;
 
 namespace Bridge.Translator.Lua
 {
@@ -179,7 +180,7 @@ namespace Bridge.Translator.Lua
                     {
                         if (isNullable)
                         {
-                            value = "nil";
+                            value = LuaHelper.Nil;
                         }
                         else
                         {
@@ -199,19 +200,12 @@ namespace Bridge.Translator.Lua
                     continue;
                 }
 
-                this.EnsureComma();
-                XmlToJsDoc.EmitComment(this, member.Entity);
-                this.Write(member.GetName(this.Emitter));
-                this.WriteEqualsSign();
-
-                if (constValue is AstType)
-                {
-                    if (isNullable)
-                    {
-                        this.Write("nil");
+                PushWriter("{0}");
+                if(constValue is AstType) {
+                    if(isNullable) {
+                        this.Write(LuaHelper.Nil);
                     }
-                    else
-                    {
+                    else {
                         AstType astType = (AstType)constValue;
                         var rr = Emitter.Resolver.ResolveNode(astType, Emitter);
                         var def = Inspector.GetDefaultFieldValue(rr.Type);
@@ -223,12 +217,19 @@ namespace Bridge.Translator.Lua
                         }
                     }
                 }
-                else
-                {
+                else {
                     member.Initializer.AcceptVisitor(this.Emitter);
                 }
 
-                this.Emitter.Comma = true;
+                string fieldValue = PopWriter(true);
+                if(fieldValue != LuaHelper.Nil) {
+                    this.EnsureComma();
+                    XmlToJsDoc.EmitComment(this, member.Entity);
+                    this.Write(member.GetName(this.Emitter));
+                    this.WriteEqualsSign();
+                    this.Write(fieldValue);
+                    this.Emitter.Comma = true;
+                }
             }
 
             if (hasProperties && objectName != null)

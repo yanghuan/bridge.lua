@@ -1,12 +1,14 @@
-using Bridge.Contract;
-using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.Semantics;
-using ICSharpCode.NRefactory.TypeSystem;
-using Object.Net.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.Semantics;
+using ICSharpCode.NRefactory.TypeSystem;
+
+using Object.Net.Utilities;
+using Bridge.Contract;
 
 namespace Bridge.Translator.Lua
 {
@@ -27,17 +29,12 @@ namespace Bridge.Translator.Lua
             set;
         }
 
-        public bool IsGeneric
-        {
+        public bool IsGeneric {
             get;
             set;
         }
 
-        public int StartPosition
-        {
-            get;
-            set;
-        }
+        private int fieldAreaStartPostion_;
 
         private void WriteMethodNames(IList<TransformCtx.MethodInfo> names) {
             const int kCellCount = 8;
@@ -110,10 +107,9 @@ namespace Bridge.Translator.Lua
             TransformCtx.CurClassOtherMethods.Clear();
         }
 
-        protected virtual void EmitClassHeader()
+        private void EmitClassHeader()
         {
             var beforeDefineMethods = this.GetBeforeDefineMethods();
-
             if (beforeDefineMethods.Any())
             {
                 foreach (var method in beforeDefineMethods)
@@ -126,13 +122,8 @@ namespace Bridge.Translator.Lua
             }
 
             var topDefineMethods = this.GetTopDefineMethods();
-
-            if (topDefineMethods.Any())
-            {
-                foreach (var method in topDefineMethods)
-                {
-                    this.Emitter.EmitterOutput.TopOutput.Append(method);
-                }
+            foreach(var method in topDefineMethods) {
+                this.Emitter.EmitterOutput.TopOutput.Append(method);
             }
 
             string typeName, namespaceName;
@@ -187,11 +178,9 @@ namespace Bridge.Translator.Lua
             this.WriteOpenParentheses();
             this.WriteCloseParentheses();
             this.BeginFunctionBlock();
-            this.StartPosition = this.Emitter.Output.Length;
-
             this.IsGeneric = typeDef.GenericParameters.Count > 0;
             if(this.IsGeneric) {
-                this.Write("return ");
+                this.WriteReturn(true);
                 this.WriteFunction();
                 this.WriteOpenParentheses();
 
@@ -222,21 +211,17 @@ namespace Bridge.Translator.Lua
                 }
             }
 
-            this.Write("return ");
+            this.WriteReturn(true);
             this.BeginBlock();
+            fieldAreaStartPostion_ = this.Emitter.Output.Length;
             string extend = this.Emitter.GetTypeHierarchy();
 
             if(extend.IsNotEmpty() && !this.TypeInfo.IsEnum) {
-                var bridgeType = this.Emitter.BridgeTypes.Get(this.Emitter.TypeInfo);
-
                 string inherits = "inherits".Ident();
-                if(this.TypeInfo.InstanceMethods.Any(m => m.Value.Any(subm => this.Emitter.GetEntityName(subm) == inherits)) ||
-                    this.TypeInfo.InstanceConfig.Fields.Any(m => m.GetName(this.Emitter) == inherits)) {
-                    throw new System.NotSupportedException();
-                }
-
                 this.Write(inherits);
                 this.WriteEqualsSign();
+
+                var bridgeType = this.Emitter.BridgeTypes.Get(this.Emitter.TypeInfo);
                 if(Helpers.IsTypeArgInSubclass(bridgeType.TypeDefinition, bridgeType.TypeDefinition, this.Emitter, false)) {
                     this.WriteFunction();
                     this.WriteOpenCloseParentheses(true);
@@ -249,7 +234,6 @@ namespace Bridge.Translator.Lua
                 else {
                     this.Write(extend);
                 }
-
                 this.Emitter.Comma = true;
             }
 
@@ -285,52 +269,44 @@ namespace Bridge.Translator.Lua
 
         protected virtual void EmitInstantiableBlock(bool isConstructor)
         {
-            /*
-            if (this.TypeInfo.IsEnum)
-            {
-                this.EnsureComma();
-                this.Emitter.Comma = true;
-
-                if (this.Emitter.GetTypeDefinition(this.TypeInfo.Type)
-                        .CustomAttributes.Any(attr => attr.AttributeType.FullName == "System.FlagsAttribute"))
-                {
-                    this.EnsureComma();
-                    this.Write("$flags: true");
-                    this.Emitter.Comma = true;
-                }
-            }*/
-
             var ctorBlock = new ConstructorBlock(this.Emitter, this.TypeInfo, false);
-            if (this.TypeInfo.HasInstantiable || this.Emitter.Plugins.HasConstructorInjectors(ctorBlock) || this.TypeInfo.ClassType == ClassType.Struct)
-            {
-                if(isConstructor) {
-                    this.EnsureComma();
-                    ctorBlock.Emit();
-                }
-                else {
-                    this.PushWriter("{0}");
-                    new MethodBlock(this.Emitter, this.TypeInfo, false).Emit();
-                    string methods = this.PopWriter(true);
-                    methods_.Append(methods);
-                }
+            if(isConstructor) {
+                ctorBlock.Emit();
             }
-            else
-            {
-                //this.Emitter.Comma = false;
+            else {
+                this.PushWriter("{0}");
+                new MethodBlock(this.Emitter, this.TypeInfo, false).Emit();
+                string methods = this.PopWriter(true);
+                methods_.Append(methods);
             }
         }
 
-        protected virtual void EmitClassEnd()
+        private bool IsFiledAreaEmpty {
+            get {
+                var output = this.Emitter.Output;
+                bool isEmpty = true;
+                for(int i = fieldAreaStartPostion_; i < output.Length; ++i) {
+                    if(!char.IsWhiteSpace(output[i])) {
+                        isEmpty = false;
+                    }
+                }
+                return isEmpty;
+            }
+        }
+
+        private void EmitClassEnd()
         {
-            this.WriteNewLine();
+            if(!IsFiledAreaEmpty) {
+                this.WriteNewLine();
+            }
             this.EndBlock();
 
+            /*
             var classStr = this.Emitter.Output.ToString().Substring(this.StartPosition);
-
             if (Regex.IsMatch(classStr, "^\\s*,\\s*\\{\\s*\\}\\s*$", RegexOptions.Multiline))
             {
                 this.Emitter.Output.Remove(this.StartPosition, this.Emitter.Output.Length - this.StartPosition);
-            }
+            }*/
 
             if (this.IsGeneric)
             {
@@ -348,15 +324,8 @@ namespace Bridge.Translator.Lua
             }
 
             var bottomDefineMethods = this.GetBottomDefineMethods();
-
-            if (bottomDefineMethods.Any())
-            {
-                //this.Emitter.EmitterOutput.BottomOutput.Append('\n');
-                foreach (var method in bottomDefineMethods)
-                {
-                    //this.Emitter.EmitterOutput.BottomOutput.Append('\n');
-                    this.Emitter.EmitterOutput.BottomOutput.Append(method);
-                }
+            foreach(var method in bottomDefineMethods) {
+                this.Emitter.EmitterOutput.BottomOutput.Append(method);
             }
 
             this.WriteNewLine();

@@ -9,11 +9,8 @@ using ICSharpCode.NRefactory.TypeSystem;
 namespace Bridge.Translator.Lua
 {
     public static class LuaHelper {
-        public static string Root {
-            get {
-                return Emitter.ROOT;
-            }
-        }
+        public const string Root = Emitter.ROOT;
+        public const string Nil = "nil";
 
         public static string Ident(this string s) {
             return "__" + s + "__";

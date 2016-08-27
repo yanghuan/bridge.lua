@@ -46,7 +46,7 @@ local function try(try, catch, finally)
     if not ok then
         if catch then
             if type(err) == "string" then
-                err = new(System.Exception, err)
+                err = System.Exception(err)
             end
             local fine, result = pcall(catch, err)
             if not fine then
@@ -142,7 +142,6 @@ local function def(name, kind, cls, generic)
         end
         return set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end }))
     end
-
     cls = cls or {}
     if name ~= nil then
         set(name, cls)
@@ -155,11 +154,6 @@ local function def(name, kind, cls, generic)
     if kind == "C" or kind == "S" then
         cls.__index = cls 
         cls.__call = new
-        if kind == "C" then
-            cls.__default__ = emptyFn
-        else
-            assert(cls.__default__)
-        end
         local extends = cls.__inherits__
         if extends then
             if type(extends) == "function" then
@@ -177,8 +171,14 @@ local function def(name, kind, cls, generic)
             end
         end    
         local super = getmetatable(cls)
-        if not super then
+        if super == nil then
             setmetatable(cls, newmetatable)
+        end
+        if cls.__default__ == nil then
+            cls.__default__ = emptyFn
+        end
+        if cls.__ctor__ == nil then
+            cls.__ctor__ = emptyFn
         end
         if cls.toString ~= nil and rawget(cls, "__tostring") == nil then
             cls.__tostring = cls.toString
