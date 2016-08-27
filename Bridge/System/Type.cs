@@ -6,17 +6,41 @@ namespace System {
     public class Type {
         public static extern Type GetTypeFromHandle(RuntimeTypeHandle typeHandle);
 
-        public string Name { get; }
+        public string Name {
+            get {
+                return null;
+            }
+        }
 
-        public string FullName { get; }
+        public string FullName {
+            get {
+                return null;
+            }
+        }
 
-        public string Namespace { get; }
+        public string Namespace {
+            get {
+                return null;
+            }
+        }
 
-        public bool IsGenericType { get; }
+        public bool IsGenericType {
+            get {
+                return false;
+            }
+        }
 
-        public bool IsInterface { get; }
+        public bool IsInterface {
+            get {
+                return false;
+            }
+        }
 
-        public Type BaseType { get; }
+        public Type BaseType {
+            get {
+                return null;
+            }
+        }
 
         public bool IsSubclassOf(Type c) {
             return false;

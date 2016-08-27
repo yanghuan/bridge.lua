@@ -22,7 +22,11 @@ namespace System.Diagnostics {
 
         public StackTrace(Exception e, int skipFrames, bool fNeedFileInfo) { }
 
-        public virtual int FrameCount { get; }
+        public virtual int FrameCount {
+            get {
+                return 0;
+            }
+        }
 
         public virtual StackFrame GetFrame(int index) {
             return null;

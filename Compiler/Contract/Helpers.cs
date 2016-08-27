@@ -371,38 +371,26 @@ namespace Bridge.Contract
         public static bool IsAutoProperty(PropertyDeclaration propertyDeclaration, IProperty propertyMember)
         {
             return propertyDeclaration.Getter.Body.IsNull && propertyDeclaration.Setter.Body.IsNull;
-            /*
-            // auto properties don't have bodies
-            return (propertyDeclaration.CanGet && !propertyDeclaration.Getter.HasBody) ||
-                   (propertyDeclaration.CanSet && !propertyDeclaration.Setter.HasBody);*/
         }
 
-        private static bool InnerIsAutoPropertyOfDefinition(PropertyDefinition propDef) {
-            if(propDef.GetMethod == null || propDef.SetMethod == null) {
-                return false;
-            }
-
-            if(propDef.GetMethod.CustomAttributes.Any(a => a.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")) {
-                return true;
-            }
-
+        private static bool IsAutoPropertyOfDefinitionInternal(PropertyDefinition propDef) {
             var typeDef = propDef.DeclaringType;
-            return typeDef.Fields.Any(f => !f.IsPublic /*&& !f.IsStatic*/ && f.Name.Contains("BackingField") && f.Name.Contains("<" + propDef.Name + ">"));
+            return typeDef.Fields.Any(f => !f.IsPublic && f.Name.Contains("<" + propDef.Name + ">"));
         }
 
-        private static Dictionary<PropertyDefinition, bool> cacheOfIsAutoPropertyOfDefinition = new Dictionary<PropertyDefinition, bool>();
+        private static Dictionary<PropertyDefinition, bool> isFieldPropertyOfDefinitions_ = new Dictionary<PropertyDefinition, bool>();
 
         public static bool IsAutoPropertyOfDefinition(PropertyDefinition propDef) {
             bool isAuto;
-            if(!cacheOfIsAutoPropertyOfDefinition.TryGetValue(propDef, out isAuto)) {
-                isAuto = InnerIsAutoPropertyOfDefinition(propDef);
-                cacheOfIsAutoPropertyOfDefinition.Add(propDef, isAuto);
+            if(!isFieldPropertyOfDefinitions_.TryGetValue(propDef, out isAuto)) {
+                isAuto = IsAutoPropertyOfDefinitionInternal(propDef);
+                isFieldPropertyOfDefinitions_.Add(propDef, isAuto);
             }
             return isAuto;
         }
 
         public static void SetCacheOfAutoPropertyOfDefinition(PropertyDefinition propertyDefinition) {
-            cacheOfIsAutoPropertyOfDefinition[propertyDefinition] = false;
+            isFieldPropertyOfDefinitions_[propertyDefinition] = false;
         }
 
         public static bool IsFieldProperty(PropertyDeclaration propertyDeclaration, IMember propertyMember, IAssemblyInfo assemblyInfo)
@@ -421,16 +409,15 @@ namespace Bridge.Contract
             return isAuto || assemblyInfo.AutoPropertyToField;
         }
 
-        public static bool IsFieldProperty(IMember propertyMember, IEmitter emitter)
-        {
-            if (propertyMember.ImplementedInterfaceMembers.Count > 0)
-            {
+        private static Dictionary<IMember, bool> isFieldPropertyOfMembers_ = new Dictionary<IMember, bool>();
+
+        private static bool IsFieldPropertyInternal(IMember propertyMember, IEmitter emitter) {
+            if(propertyMember.ImplementedInterfaceMembers.Count > 0) {
                 return false;
             }
 
             bool isAuto = propertyMember.Attributes.Any(a => a.AttributeType.FullName == "Bridge.FieldPropertyAttribute");
-            if (!isAuto && emitter.AssemblyInfo.AutoPropertyToField)
-            {
+            if(!isAuto && emitter.AssemblyInfo.AutoPropertyToField) {
                 var typeDef = emitter.GetTypeDefinition(propertyMember.DeclaringType);
                 var propDef = typeDef.Properties.FirstOrDefault(p => p.Name == propertyMember.Name);
                 return Helpers.IsAutoPropertyOfDefinition(propDef);
@@ -438,17 +425,19 @@ namespace Bridge.Contract
             return isAuto;
         }
 
-        public static bool IsFieldProperty(IMemberDefinition property, IEmitter emitter)
-        {
-            bool isAuto = property.CustomAttributes.Any(a => a.AttributeType.FullName == "Bridge.FieldPropertyAttribute");
-            if (!isAuto && emitter.AssemblyInfo.AutoPropertyToField)
-            {
-                return Helpers.IsAutoPropertyOfDefinition((PropertyDefinition)property);
+        public static bool IsFieldProperty(IMember propertyMember, IEmitter emitter) {
+            propertyMember = propertyMember.MemberDefinition;
+            bool isFieldProperty;
+            if(!isFieldPropertyOfMembers_.TryGetValue(propertyMember, out isFieldProperty)) {
+                isFieldProperty = IsFieldPropertyInternal(propertyMember, emitter);
+                isFieldPropertyOfMembers_.Add(propertyMember, isFieldProperty);
             }
-            return isAuto;
+            return isFieldProperty;
         }
 
-        public static bool IsFieldProperty(PropertyDeclaration property, IEmitter emitter)
+        private static Dictionary<PropertyDeclaration, bool> isFieldPropertyOfDeclarations_ = new Dictionary<PropertyDeclaration, bool>();
+
+        private static bool IsFieldPropertyInternal(PropertyDeclaration property, IEmitter emitter)
         {
             ResolveResult resolveResult = emitter.Resolver.ResolveNode(property, emitter) as MemberResolveResult;
             if (resolveResult != null && ((MemberResolveResult)resolveResult).Member != null)
@@ -482,6 +471,15 @@ namespace Bridge.Contract
             var typeDef = emitter.GetTypeDefinition();
             var propDef = typeDef.Properties.FirstOrDefault(p => p.Name == property.Name);
             return Helpers.IsAutoPropertyOfDefinition(propDef);
+        }
+
+        public static bool IsFieldProperty(PropertyDeclaration property, IEmitter emitter) {
+            bool isFieldProperty;
+            if(!isFieldPropertyOfDeclarations_.TryGetValue(property, out isFieldProperty)) {
+                isFieldProperty = IsFieldPropertyInternal(property, emitter);
+                isFieldPropertyOfDeclarations_.Add(property, isFieldProperty);
+            }
+            return isFieldProperty;
         }
 
         public static string GetEventRef(CustomEventDeclaration property, IEmitter emitter, bool remove = false, bool noOverload = false, bool ignoreInterface = false)
