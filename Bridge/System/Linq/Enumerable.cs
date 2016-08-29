@@ -982,7 +982,7 @@ namespace System.Linq
         /// first or second is null.
         /// </exception>
         /// <remarks>Bridge.NET has no mapping for this in JavaScript.</remarks>
-        [Template("Bridge.Linq({first}).concat({second})")]
+        [Template("Bridge.Linq({first}):concat({second})")]
         public static EnumerableInstance<TSource> Concat<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
             return default(EnumerableInstance<TSource>);
@@ -1287,7 +1287,7 @@ namespace System.Linq
         /// first or second is null.
         /// </exception>
         /// <remarks>Bridge.NET has no mapping for this in JavaScript.</remarks>
-        [Template("Bridge.Linq({first}).except({second})")]
+        [Template("Bridge.Linq({first}):except({second})")]
         public static EnumerableInstance<TSource> Except<TSource>(this IEnumerable<TSource> first,
             IEnumerable<TSource> second)
         {
@@ -1320,7 +1320,7 @@ namespace System.Linq
         /// first or second is null.
         /// </exception>
         /// <remarks>Bridge.NET has no mapping for this in JavaScript.</remarks>
-        [Template("Bridge.Linq({first}).except({second}, {comparer})")]
+        [Template("Bridge.Linq({first}):except({second}, {comparer})")]
         public static EnumerableInstance<TSource> Except<TSource>(this IEnumerable<TSource> first,
             IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
         {
@@ -1771,7 +1771,7 @@ namespace System.Linq
         /// outer or inner or outerKeySelector or innerKeySelector or resultSelector
         /// is null.
         /// </exception>
-        [Template("Bridge.Linq({outer}).groupJoin({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector})")]
+        [Template("Bridge.Linq({outer}):groupJoin({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector})")]
         public static EnumerableInstance<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
             Func<TOuter, IEnumerable<TInner>, TResult> resultSelector)
@@ -1823,7 +1823,7 @@ namespace System.Linq
         /// outer or inner or outerKeySelector or innerKeySelector or resultSelector
         /// is null.
         /// </exception>
-        [Template("Bridge.Linq({outer}).groupJoin({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector}, {comparer})")]
+        [Template("Bridge.Linq({outer}):groupJoin({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector}, {comparer})")]
         public static EnumerableInstance<TResult> GroupJoin<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
             Func<TOuter, IEnumerable<TInner>, TResult> resultSelector, IEqualityComparer<TKey> comparer)
@@ -1853,7 +1853,7 @@ namespace System.Linq
         /// <exception cref="System.ArgumentNullException">
         /// first or second is null.
         /// </exception>
-        [Template("Bridge.Linq({first}).intersect({second})")]
+        [Template("Bridge.Linq({first}):intersect({second})")]
         public static EnumerableInstance<TSource> Intersect<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
             return default(EnumerableInstance<TSource>);
@@ -1884,7 +1884,7 @@ namespace System.Linq
         /// <exception cref="System.ArgumentNullException">
         /// first or second is null.
         /// </exception>
-        [Template("Bridge.Linq({first}).intersect({second}, {comparer})")]
+        [Template("Bridge.Linq({first}):intersect({second}, {comparer})")]
         public static EnumerableInstance<TSource> Intersect<TSource>(this IEnumerable<TSource> first,
             IEnumerable<TSource> second, IEqualityComparer<TSource> comparer)
         {
@@ -1930,7 +1930,7 @@ namespace System.Linq
         /// outer or inner or outerKeySelector or innerKeySelector or resultSelector
         /// is null.
         /// </exception>
-        [Template("Bridge.Linq({this}).join({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector})")]
+        [Template("Bridge.Linq({this}):join({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector})")]
         public static EnumerableInstance<TResult> Join<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
             Func<TOuter, TInner, TResult> resultSelector)
@@ -1980,7 +1980,7 @@ namespace System.Linq
         /// outer or inner or outerKeySelector or innerKeySelector or resultSelector
         /// is null.
         /// </exception>
-        [Template("Bridge.Linq({this}).join({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector}, {comparer})")]
+        [Template("Bridge.Linq({this}):join({inner}, {outerKeySelector}, {innerKeySelector}, {resultSelector}, {comparer})")]
         public static EnumerableInstance<TResult> Join<TOuter, TInner, TKey, TResult>(this IEnumerable<TOuter> outer,
             IEnumerable<TInner> inner, Func<TOuter, TKey> outerKeySelector, Func<TInner, TKey> innerKeySelector,
             Func<TOuter, TInner, TResult> resultSelector, IEqualityComparer<TKey> comparer)
@@ -4084,7 +4084,7 @@ namespace System.Linq
         /// <exception cref="System.ArgumentNullException">
         /// first or second is null.
         /// </exception>
-        [Template("Bridge.Linq({first}).sequenceEqual({second})")]
+        [Template("Bridge.Linq({first}):sequenceEqual({second})")]
         public static bool SequenceEqual<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
             return default(bool);
@@ -4113,7 +4113,7 @@ namespace System.Linq
         /// <exception cref="System.ArgumentNullException">
         /// first or second is null.
         /// </exception>
-        [Template("Bridge.Linq({first}).sequenceEqual({second}, {comparer})")]
+        [Template("Bridge.Linq({first}):sequenceEqual({second}, {comparer})")]
         public static bool SequenceEqual<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second,
             IEqualityComparer<TSource> comparer)
         {
@@ -5560,7 +5560,7 @@ namespace System.Linq
         /// <exception cref="System.ArgumentNullException">
         /// first or second is null.
         /// </exception>
-        [Template("Bridge.Linq({first}).union({second})")]
+        [Template("Bridge.Linq({first}):union({second})")]
         public static EnumerableInstance<TSource> Union<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second)
         {
             return default(EnumerableInstance<TSource>);
@@ -5590,7 +5590,7 @@ namespace System.Linq
         /// <exception cref="System.ArgumentNullException">
         /// first or second is null.
         /// </exception>
-        [Template("Bridge.Linq({first}).union({second}, {comparer})")]
+        [Template("Bridge.Linq({first}):union({second}, {comparer})")]
         public static EnumerableInstance<TSource> Union<TSource>(this IEnumerable<TSource> first, IEnumerable<TSource> second,
             IEqualityComparer<TSource> comparer)
         {
