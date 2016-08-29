@@ -13,6 +13,7 @@ local Comparer_1 = System.Comparer_1
 
 local select = select
 local tinser = table.insert
+local getmetatable = getmetatable
 
 local Enumerable = {}
 Enumerable.__index = Enumerable
@@ -70,6 +71,9 @@ end
 
 local function from(_, source)
     if source == nil then throw(ArgumentNullException("source")) end
+    if getmetatable(source) == Enumerable then
+        return source
+    end
     return create(source, function() 
         return IEnumerator(source, sampleNext)
     end)
@@ -78,6 +82,7 @@ end
 System.Linq = setmetatable({}, { __call = from })
 
 function Enumerable.where(source, predicate)
+    if predicate == nil then throw(ArgumentNullException("predicate")) end
     return create(source, function() 
         local index = -1
         return IEnumerator(source, function(en)
@@ -94,6 +99,7 @@ function Enumerable.where(source, predicate)
 end
 
 function Enumerable.select(source, selector, T)
+    if selector == nil then throw(ArgumentNullException("selector")) end
     return createInternal(T, function()
         local index = -1
         return IEnumerator(source, function(en) 
@@ -107,6 +113,8 @@ function Enumerable.select(source, selector, T)
 end
 
 local function selectMany(source, collectionSelector, resultSelector, T)
+    if collectionSelector == nil then throw(ArgumentNullException("collectionSelector")) end
+    if resultSelector == nil then throw(ArgumentNullException("resultSelector")) end
     return createInternal(T, function() 
         local midEn
         local index = -1
@@ -159,6 +167,7 @@ function Enumerable.take(source, count)
 end
 
 function Enumerable.takeWhile(source, predicate)
+    if predicate == nil then throw(ArgumentNullException("predicate")) end
     return create(source, function()
         local index = -1
         return IEnumerator(source, function(en)
@@ -190,6 +199,7 @@ function Enumerable.skip(source, count)
 end
 
 function Enumerable.skipWhile(source, predicate)
+    if predicate == nil then throw(ArgumentNullException("predicate")) end
     return create(source, function()
         local index = -1
         local isSkipEnd = false
@@ -265,7 +275,6 @@ local function createLookup(source, keySelector, elementSelector, comparer, TKey
 end
 
 local function groupBy(source, keySelector, elementSelector, comparer, TKey, TElement)
-    if source == nil then throw(ArgumentNullException("source")) end
     if keySelector == nil then throw(ArgumentNullException("keySelector")) end
     if elementSelector == nil then throw(ArgumentNullException("elementSelector")) end
     return createInternal(IGrouping, function()
@@ -294,7 +303,6 @@ function Enumerable.groupBy(source, ...)
 end
 
 local function groupBySelect(source, keySelector, elementSelector, resultSelector, comparer, TKey, TElement, TResult)
-    if source == nil then throw(ArgumentNullException("source")) end
     if keySelector == nil then throw(ArgumentNullException("keySelector")) end
     if elementSelector == nil then throw(ArgumentNullException("elementSelector")) end
     if resultSelector == nil then throw(ArgumentNullException("resultSelector")) end
@@ -327,7 +335,6 @@ function Enumerable.groupBySelect(source, ...)
 end
 
 function Enumerable.concat(first, second)
-    if first == nil then throw(ArgumentNullException("first")) end
     if second == nil then throw(ArgumentNullException("second")) end
     return create(first, function()
         local secondEn
@@ -347,7 +354,6 @@ function Enumerable.concat(first, second)
 end
 
 function Enumerable.zip(first, second, resultSelector, TResult) 
-    if first == nil then throw(ArgumentNullException("first")) end
     if second == nil then throw(ArgumentNullException("second")) end
     if resultSelector == nil then throw(ArgumentNullException("resultSelector")) end
     return createInternal(TResult, function()
@@ -402,6 +408,7 @@ function Enumerable.distinct(source, comparer)
 end
 
 function Enumerable.union(first, second, comparer)
+    if second == nil then throw(ArgumentNullException("second")) end
     return create(first, function()
         local set = {}
         local getHashCode = getComparer(first, comparer).getHashCode
@@ -428,6 +435,7 @@ function Enumerable.union(first, second, comparer)
 end
 
 function Enumerable.intersect(first, second, comparer)
+    if second == nil then throw(ArgumentNullException("second")) end
     return create(source, function()
         local set = {}
         local getHashCode = getComparer(first, comparer).getHashCode
@@ -449,6 +457,7 @@ function Enumerable.intersect(first, second, comparer)
 end
 
 function Enumerable.except(first, second, comparer)
+    if second == nil then throw(ArgumentNullException("second")) end
     return create(first, function()
         local set = {}
         local getHashCode = getComparer(first, comparer).getHashCode
@@ -490,6 +499,7 @@ function Enumerable.reverse(source)
 end
 
 function Enumerable.sequenceEqual(first, second, comparer)
+    if second == nil then throw(ArgumentNullException("second")) end
     local equals = getComparer(first, comparer).equals
     local e1 = first:getEnumerator()
     local e2 = second:getEnumerator()
@@ -511,7 +521,6 @@ function Enumerable.toList(source)
 end
 
 local function toDictionary(source, keySelector, elementSelector, comparer, TKey, TValue)
-    if source == nil then throw(ArgumentNullException("source")) end
     if keySelector == nil then throw(ArgumentNullException("keySelector")) end
     if elementSelector == nil then throw(ArgumentNullException("elementSelector")) end
     local dict = System.Dictionary(TKey, TValue)(comparer)
@@ -538,7 +547,6 @@ function Enumerable.toDictionary(source, ...)
 end
 
 local function toLookup(source, keySelector, elementSelector, comparer, TKey, TElement )
-    if source == nil then throw(ArgumentNullException("source")) end
     if keySelector == nil then throw(ArgumentNullException("keySelector")) end
     if elementSelector == nil then throw(ArgumentNullException("elementSelector")) end
     return createLookup(source, keySelector, elementSelector, comparer, TKey, TElement)
@@ -561,7 +569,6 @@ function Enumerable.toLookup(source, ...)
 end
 
 local function first(source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then  
         local en = source:getEnumerator()
@@ -596,7 +603,6 @@ function Enumerable.firstOrDefault(source, ...)
 end
 
 local function last(source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local en = source:getEnumerator()
@@ -638,7 +644,6 @@ function Enumerable.lastOrDefault(source, ...)
 end
 
 local function single(source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local en = source:getEnumerator()
@@ -681,7 +686,6 @@ function Enumerable.singleOrDefault(source, ...)
 end
 
 local function elementAt(source, index)
-    if source == nil then throw(ArgumentNullException("source")) end
     if index < 0 then return false end
     local en = source:getEnumerator()
     while true do
@@ -731,7 +735,6 @@ function Enumerable.repeat_(element, count, T)
 end
 
 function Enumerable.any(source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local en = source:getEnumerator()
@@ -749,7 +752,6 @@ function Enumerable.any(source, ...)
 end
 
 function Enumerable.all(source, predicate)
-    if source == nil then throw(ArgumentNullException("source")) end
     if predicate == nil then throw(ArgumentNullException("predicate")) end
     for _, v in each(source) do
         if not predicate(v) then
@@ -760,7 +762,6 @@ function Enumerable.all(source, predicate)
 end
 
 function Enumerable.count(source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local count = 0
@@ -783,7 +784,6 @@ function Enumerable.count(source, ...)
 end
 
 function Enumerable.contains(source, value, comparer)
-    if source == nil then throw(ArgumentNullException("source")) end
     local equals = getComparer(source, comparer).equals
     for _, v in each(source) do
         if equals(v, value) then
@@ -794,7 +794,6 @@ function Enumerable.contains(source, value, comparer)
 end
 
 function Enumerable.aggregate(source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...);
     if len == 1 then
         local func = ...
@@ -827,7 +826,6 @@ function Enumerable.aggregate(source, ...)
 end
 
 function Enumerable.sum(source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local sum = 0
@@ -847,7 +845,6 @@ function Enumerable.sum(source, ...)
 end
 
 local function minOrMax(compareFn, source, ...)
-    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     local selector, T 
     if len == 0 then
