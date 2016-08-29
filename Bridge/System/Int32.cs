@@ -61,7 +61,7 @@ namespace System
             return null;
         }
 
-        [Template("Bridge.Int.compareTo({this}, {other})")]
+        [Template("{this} - {other}")]
         public int CompareTo(int other)
         {
             return 0;

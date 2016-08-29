@@ -34,7 +34,7 @@ namespace System
             return null;
         }
 
-        [Template("System.Char.compareTo({this, {other}})")]
+        [Template("{this} - {other}")]
         public int CompareTo(char other)
         {
             return 0;

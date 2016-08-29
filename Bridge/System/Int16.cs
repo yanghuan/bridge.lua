@@ -60,7 +60,7 @@ namespace System
             return null;
         }
 
-        [Template("Bridge.Int.compareTo({this}, {other})")]
+        [Template("{this} - {other}")]
         public int CompareTo(short other)
         {
             return 0;
