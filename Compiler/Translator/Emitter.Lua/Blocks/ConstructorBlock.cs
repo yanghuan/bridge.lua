@@ -254,161 +254,135 @@ namespace Bridge.Translator.Lua
             }
         }
 
-        protected virtual void EmitCtorForInstantiableClass()
-        {
+        private void EmitCtorForInstantiableClass() {
             this.EmitInitMembers();
 
             var baseType = this.Emitter.GetBaseTypeDefinition();
             var typeDef = this.Emitter.GetTypeDefinition();
-            if (typeDef.IsValueType || this.TypeInfo.Ctors.Count == 0)
-            {
-                this.TypeInfo.Ctors.Add(new ConstructorDeclaration
-                {
+            if(typeDef.IsValueType) {
+                this.TypeInfo.Ctors.Add(new ConstructorDeclaration {
                     Modifiers = Modifiers.Public,
                     Body = new BlockStatement()
                 });
             }
-
-            var ctorInfos = this.TypeInfo.Ctors.Select(i => new CtorInfo(i, GetCtorName(i))).ToList();
-            ctorInfos.Sort((x, y) => {
-                return x.ConstructorName.CompareTo(y.ConstructorName);
-            });
-
-            this.PushWriter("{0}");
-            this.Outdent();
-            foreach(var info in ctorInfos) {
-                var ctor = info.ConstructorDeclaration;
-                var ctorName = info.ConstructorName;
-                TransformCtx.CurClassOtherMethodNames.Add(new TransformCtx.MethodInfo() { Name = info.CtorName, IsCtor = true });
-                if(info != ctorInfos.First()) 
-                {
-                    this.WriteNewLine();
+            else {
+                if(TypeInfo.Ctors.Count == 0 && isInitExists_) {
+                    this.TypeInfo.Ctors.Add(new ConstructorDeclaration {
+                        Modifiers = Modifiers.Public,
+                        Body = new BlockStatement()
+                    });
                 }
-                this.ResetLocals();
-                var prevMap = this.BuildLocalsMap();
-                var prevNamesMap = this.BuildLocalsNamesMap();
-                this.AddLocals(ctor.Parameters, ctor.Body);
+            }
 
-                XmlToJsDoc.EmitComment(this, ctor);
-                this.Write(info.CtorName);
-                this.WriteEqualsSign();
-                this.WriteFunction();
+            if(TypeInfo.Ctors.Count > 0) {
+                var ctorInfos = this.TypeInfo.Ctors.Select(i => new CtorInfo(i, GetCtorName(i))).ToList();
+                ctorInfos.Sort((x, y) => x.ConstructorName.CompareTo(y.ConstructorName));
 
-                this.EmitMethodParameters(ctor.Parameters, ctor);
-
-                this.WriteSpace();
-                this.BeginFunctionBlock();
-
-                var requireNewLine = false;
-                if(baseType != null && (!this.Emitter.Validator.IsIgnoreType(baseType) || this.Emitter.Validator.IsBridgeClass(baseType)) ||
-                    (ctor.Initializer != null && ctor.Initializer.ConstructorInitializerType == ConstructorInitializerType.This)) {
-                    if(requireNewLine) {
+                this.PushWriter("{0}");
+                this.Outdent();
+                foreach(var info in ctorInfos) {
+                    var ctor = info.ConstructorDeclaration;
+                    var ctorName = info.ConstructorName;
+                    TransformCtx.CurClassOtherMethodNames.Add(new TransformCtx.MethodInfo() { Name = info.CtorName, IsCtor = true });
+                    if(info != ctorInfos.First()) {
                         this.WriteNewLine();
                     }
-                    this.EmitBaseConstructor(ctor, ctorName);
-                    requireNewLine = true;
-                }
-                else {
-                    if(isInitExists_) {
-                        this.Write("__init__(this)");
-                        requireNewLine = true;
-                    }
-                }
+                    this.ResetLocals();
+                    var prevMap = this.BuildLocalsMap();
+                    var prevNamesMap = this.BuildLocalsNamesMap();
+                    this.AddLocals(ctor.Parameters, ctor.Body);
 
-                var script = this.Emitter.GetScript(ctor);
-                if(script == null) {
-                    if(ctor.Body.HasChildren) {
-                        var beginPosition = this.Emitter.Output.Length;
+                    XmlToJsDoc.EmitComment(this, ctor);
+                    this.Write(info.CtorName);
+                    this.WriteEqualsSign();
+                    this.WriteFunction();
+
+                    this.EmitMethodParameters(ctor.Parameters, ctor);
+
+                    this.WriteSpace();
+                    this.BeginFunctionBlock();
+
+                    var requireNewLine = false;
+                    if(baseType != null && (!this.Emitter.Validator.IsIgnoreType(baseType) || this.Emitter.Validator.IsBridgeClass(baseType)) ||
+                        (ctor.Initializer != null && ctor.Initializer.ConstructorInitializerType == ConstructorInitializerType.This)) {
                         if(requireNewLine) {
                             this.WriteNewLine();
                         }
+                        this.EmitBaseConstructor(ctor, ctorName);
+                        requireNewLine = true;
+                    }
+                    else {
+                        if(isInitExists_) {
+                            this.Write("__init__(this)");
+                            requireNewLine = true;
+                        }
+                    }
 
-                        this.ConvertParamsToReferences(ctor.Parameters);
-                        ctor.Body.AcceptChildren(this.Emitter);
+                    var script = this.Emitter.GetScript(ctor);
+                    if(script == null) {
+                        if(ctor.Body.HasChildren) {
+                            var beginPosition = this.Emitter.Output.Length;
+                            if(requireNewLine) {
+                                this.WriteNewLine();
+                            }
 
-                        if(!this.Emitter.IsAsync) {
-                            this.EmitTempVars(beginPosition, true);
+                            this.ConvertParamsToReferences(ctor.Parameters);
+                            ctor.Body.AcceptChildren(this.Emitter);
+
+                            if(!this.Emitter.IsAsync) {
+                                this.EmitTempVars(beginPosition, true);
+                            }
+                        }
+                        else {
+                            if(requireNewLine) {
+                                this.WriteNewLine();
+                            }
                         }
                     }
                     else {
                         if(requireNewLine) {
                             this.WriteNewLine();
                         }
-                    }
-                }
-                else {
-                    if(requireNewLine) {
-                        this.WriteNewLine();
-                    }
 
-                    foreach(var line in script) {
-                        this.Write(line);
-                        this.WriteNewLine();
-                    }
-                }
-
-                this.EndFunctionBlock();
-                this.ClearLocalsMap(prevMap);
-                this.ClearLocalsNamesMap(prevNamesMap);
-            }
-
-            this.Indent();
-            string ctors = this.PopWriter(true);
-            bool isSingleAndEmpty = IsSingleAndEmptyCtors(ctors);
-            if(isSingleAndEmpty) {
-                var names = TransformCtx.CurClassOtherMethodNames;
-                names.RemoveAt(names.Count - 1);
-            }
-            else {
-                TransformCtx.CurClassOtherMethods.Add(ctors);
-                if(this.TypeInfo.Ctors.Count > 0) {
-                    this.EnsureComma();
-                    this.Write("ctor".Ident());
-                    this.WriteEqualsSign();
-
-                    if(this.TypeInfo.Ctors.Count > 1) {
-                        this.WriteOpenBrace();
-                        this.Indent();
-                        this.WriteNewLine();
-                    }
-
-                    foreach(var info in ctorInfos) {
-                        if(info != ctorInfos.First()) {
-                            this.WriteComma(true);
+                        foreach(var line in script) {
+                            this.Write(line);
+                            this.WriteNewLine();
                         }
-                        this.Write(info.CtorName);
                     }
 
-                    if(this.TypeInfo.Ctors.Count > 1) {
-                        this.Outdent();
-                        this.WriteNewLine();
-                        this.WriteCloseBrace();
-                    }
-
-                    this.Emitter.Comma = true;
+                    this.EndFunctionBlock();
+                    this.ClearLocalsMap(prevMap);
+                    this.ClearLocalsNamesMap(prevNamesMap);
                 }
+
+                this.Indent();
+                string ctors = this.PopWriter(true);
+                TransformCtx.CurClassOtherMethods.Add(ctors);
+
+                this.EnsureComma();
+                this.Write("ctor".Ident());
+                this.WriteEqualsSign();
+
+                if(this.TypeInfo.Ctors.Count > 1) {
+                    this.WriteOpenBrace();
+                    this.Indent();
+                    this.WriteNewLine();
+                }
+
+                foreach(var info in ctorInfos) {
+                    if(info != ctorInfos.First()) {
+                        this.WriteComma(true);
+                    }
+                    this.Write(info.CtorName);
+                }
+
+                if(this.TypeInfo.Ctors.Count > 1) {
+                    this.Outdent();
+                    this.WriteNewLine();
+                    this.WriteCloseBrace();
+                }
+                this.Emitter.Comma = true;
             }
-        }
-
-        private static readonly int EndStringLength = "end".Length;
-
-        private bool IsSingleAndEmptyCtors(string ctors) {
-            if(TypeInfo.Ctors.Count != 1) {
-                return false;
-            }
-
-            int pos = ctors.IndexOf(')');
-            if(pos == -1) {
-                throw new System.Exception();
-            }
-
-            int skipCount = pos + 1;
-            bool isEmpty = ctors.Skip(skipCount).Take(ctors.Length - skipCount - EndStringLength).All(i => char.IsWhiteSpace(i));
-            if(isEmpty) {
-                return true;
-            }
-
-            return false;
         }
 
         protected virtual void EmitBaseConstructor(ConstructorDeclaration ctor, string ctorName)

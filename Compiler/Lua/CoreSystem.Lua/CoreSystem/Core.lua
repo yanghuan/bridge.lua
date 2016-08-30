@@ -9,6 +9,7 @@ local type = type
 local ipairs = ipairs
 local assert = assert
 local tinsert = table.insert
+local tremove = table.remove
 local rawget = rawget
 
 local emptyFn = function() end
@@ -163,11 +164,15 @@ local function def(name, kind, cls, generic)
             if base.__kind__ == "C" then
                 cls.__base__ = base
                 setmetatable(cls, base)
-                table.remove(extends, 1)
+                tremove(extends, 1)
                 if #extends > 0 then
                     cls.__interfaces__ = extends
                 end
                 cls.__inherits__ = nil
+                if cls.__ctor__ == nil then
+                    local baseCtor = base.__ctor__
+                    cls.__ctor__ = type(baseCtor) == "table" and baseCtor[1] or baseCtor
+                end 
             end
         end    
         local super = getmetatable(cls)
