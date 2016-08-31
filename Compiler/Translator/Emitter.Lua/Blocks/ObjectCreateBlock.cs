@@ -163,10 +163,11 @@ namespace Bridge.Translator.Lua
                     this.WriteComma();
                     this.WriteFunction();
                     this.WriteOpenParentheses();
-                    this.Write("t");
+                    string varName = LuaHelper.MergeVar;
+                    CheckConflictName(ref varName);
+                    this.Write(varName);
                     this.WriteCloseParentheses();
                     this.BeginFunctionBlock();
-
                     bool needComma = false;
 
                     /*
@@ -202,8 +203,7 @@ namespace Bridge.Translator.Lua
                         else if (item is ArrayInitializerExpression)
                         {
                             var arrayInitializer = (ArrayInitializerExpression)item;
-
-                            this.Write("t:add");
+                            this.Write(varName, ":add");
                             this.WriteOpenParentheses();
 
                             foreach(var el in arrayInitializer.Elements) {

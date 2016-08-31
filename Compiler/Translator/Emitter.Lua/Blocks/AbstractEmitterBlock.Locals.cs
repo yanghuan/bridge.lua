@@ -11,6 +11,7 @@ namespace Bridge.Translator.Lua
     public static class LuaHelper {
         public const string Root = Emitter.ROOT;
         public const string Nil = "nil";
+        public const string MergeVar = "t";
 
         public static string Ident(this string s) {
             return "__" + s + "__";
@@ -129,32 +130,33 @@ namespace Bridge.Translator.Lua
         protected virtual string GetUniqueName(string name)
         {
             int index = 1;
-
             if (this.Emitter.LocalsNamesMap.ContainsKey(name))
             {
                 var value = this.Emitter.LocalsNamesMap[name];
                 if (value.Length > name.Length)
                 {
                     var suffix = value.Substring(name.Length);
-
                     int subindex;
                     bool isNumeric = int.TryParse(suffix, out subindex);
-
                     if (isNumeric)
                     {
                         index = subindex + 1;
                     }
                 }
             }
-
             string tempName = name + index;
-
             while (this.Emitter.LocalsNamesMap.ContainsValue(tempName))
             {
                 tempName = name + ++index;
             }
-
             return tempName;
+        }
+
+        protected void CheckConflictName(ref string name) {
+            var namesMap = this.Emitter.LocalsNamesMap;
+            if(namesMap != null && namesMap.ContainsKey(name)) {
+                name = this.GetUniqueName(name);
+            }
         }
 
         public virtual Dictionary<string, string> BuildLocalsMap()

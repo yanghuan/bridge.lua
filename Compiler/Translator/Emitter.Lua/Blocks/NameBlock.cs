@@ -58,7 +58,9 @@ namespace Bridge.Translator.Lua
             bool isSetProperty = false;
             if (resolveResult != null && resolveResult is MemberResolveResult)
             {
-                this.Write("t");
+                string varName = LuaHelper.MergeVar;
+                CheckConflictName(ref varName);
+                this.Write(varName);
                 var member = ((MemberResolveResult)resolveResult).Member;
                 var preserveCase = !this.Emitter.IsNativeMember(member.FullName) ? this.Emitter.AssemblyInfo.PreserveMemberCase : false;
                 name = this.Emitter.GetEntityName(member, preserveCase);
