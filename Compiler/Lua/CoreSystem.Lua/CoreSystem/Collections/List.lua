@@ -48,7 +48,7 @@ List.setItem = setArray
 List.add = Collection.pushArray
 
 function List.addRange(this, collection)
-    this:insertRange(0, collection)
+    this:insertRange(#this, collection)
 end
 
 List.binarySearch = Collection.binarySearchArray
