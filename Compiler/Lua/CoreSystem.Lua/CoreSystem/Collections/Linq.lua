@@ -857,6 +857,7 @@ local function minOrMax(compareFn, source, ...)
     local value = T.__default__()
     if value == nil  then
         for _, x in each(source) do
+            x = selector(x)
             if x ~= nil and (value == nil or compareFn(compare, x, value)) then
                 value = x
             end 
@@ -865,6 +866,7 @@ local function minOrMax(compareFn, source, ...)
     else
         local hasValue = false
         for _, x in each(source) do
+            x = selector(x)
             if hasValue then
                 if compareFn(compare, x, value) then
                     value = x
