@@ -21,12 +21,19 @@ Stack.clear = Collection.removeArrayAll
 Stack.push = Collection.pushArray
 Stack.contains = Collection.contains
 
-function Stack.pop(this)
-    return removeAtArray(t, #this -1)
+local function peek(t)
+    if #t == 0 then
+        throw(InvalidOperationException())
+    end
+    return getArray(t, #this - 1)
 end
 
-function Stack.peek(this)
-    return getArray(t, #this - 1)
+Stack.peek = peek
+
+function Stack.pop(this)
+    local v = peek(this)
+    removeAtArray(t, #this -1)
+    return v
 end
 
 System.define("System.Stack", function(T) 
