@@ -11,6 +11,7 @@ local assert = assert
 local tinsert = table.insert
 local tremove = table.remove
 local rawget = rawget
+local floor = math.floor
 
 local emptyFn = function() end
 local genericCache = {}
@@ -233,7 +234,7 @@ System.sr = bit.rshift
 System.srr = bit.arshift
 
 local function trunc(num) 
-    return num > 0 and math.floor(num) or math.ceil(num)
+    return num > 0 and floor(num) or floor(-num)
 end
 
 System.trunc = trunc
