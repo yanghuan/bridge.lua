@@ -48,7 +48,6 @@ namespace Bridge.Lua {
             cp.TreatWarningsAsErrors = false;
             cp.TempFiles.KeepFiles = true;
             cp.OutputAssembly = Path.Combine(outDirectory, kWrapDllName);
-            cp.ReferencedAssemblies.Add(bridgeDllPath);
 
             CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerResults cr = provider.CompileAssemblyFromSource(cp, units.Select(i => i.Compile()).ToArray());
