@@ -237,7 +237,7 @@ function String.format(format, ...)
         local v = ...
         if System.isArrayLike(v) then
             return format:gsub("{(%d)}", function(n) 
-                local v = v:get(n)
+                local v = v:get(n + 0)   -- make n to number
                 if v == nil then
                     throw(FormatException())
                 end
