@@ -111,7 +111,6 @@ namespace Bridge.Lua {
             cp.GenerateInMemory = false;
             cp.TreatWarningsAsErrors = false;
             cp.OutputAssembly = Path.Combine(tempDirectory_, kOutDllName);
-            cp.ReferencedAssemblies.Add(bridgeDllPath_);
             if(libs != null) {
                 foreach(string lib in libs) {
                     cp.ReferencedAssemblies.Add(lib);
