@@ -279,8 +279,8 @@ namespace Bridge.Translator
 
                 var requireNewLine = false;
 
-                if (baseType != null && (!this.Emitter.Validator.IsIgnoreType(baseType) || this.Emitter.Validator.IsBridgeClass(baseType)) ||
-                    (ctor.Initializer != null && ctor.Initializer.ConstructorInitializerType == ConstructorInitializerType.This))
+                if (baseType != null && !this.Emitter.Validator.IsIgnoreType(baseType) 
+                    || (ctor.Initializer != null && ctor.Initializer.ConstructorInitializerType == ConstructorInitializerType.This))
                 {
                     if (requireNewLine)
                     {

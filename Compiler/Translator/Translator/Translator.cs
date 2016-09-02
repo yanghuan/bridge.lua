@@ -16,7 +16,8 @@ namespace Bridge.Translator
         public const string BridgeResourcesList = "Bridge.Resources.list";
         private static readonly Encoding OutputEncoding = System.Text.Encoding.UTF8;
         private static readonly string[] MinifierCodeSettingsInternalFileNames = new string[] { "bridge.js", "bridge.min.js", "bridge.collections.js", "bridge.collections.min.js" };
-        protected string[] searchPaths_;
+        public string[] SearchPaths;
+        public string[] XmlMetaFiles;
 
         private static readonly CodeSettings MinifierCodeSettingsSafe = new CodeSettings
         {
@@ -123,9 +124,7 @@ namespace Bridge.Translator
                 catch (Exception exc)
                 {
                     var message = "Error: Unable to run beforeBuild event command: " + exc.Message + "\nStack trace:\n" + exc.StackTrace;
-
                     logger.Error("Exception occurred. Message: " + message);
-
                     throw new Bridge.Translator.Exception(message);
                 }
             }
@@ -138,6 +137,8 @@ namespace Bridge.Translator
 
             resolver.CanFreeze = true;
             var emitter = this.CreateEmitter(resolver);
+            XmlMetaMaker.Load(XmlMetaFiles, emitter);
+
             emitter.Translator = this;
             emitter.AssemblyInfo = this.AssemblyInfo;
             emitter.References = references;
@@ -342,11 +343,6 @@ namespace Bridge.Translator
             string name = value.Substring(path.Length);
             return path.Replace('-', '_') + name;
         }
-
-        /*
-        protected virtual Emitter CreateEmitter(IMemberResolver resolver) {
-            return new Emitter(this.TypeDefinitions, this.BridgeTypes, this.Types, this.Validator, resolver, this.TypeInfoDefinitions);
-        }*/
 
         protected virtual Lua.Emitter CreateEmitter(IMemberResolver resolver)
         {

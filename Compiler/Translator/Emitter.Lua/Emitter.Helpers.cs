@@ -521,14 +521,14 @@ namespace Bridge.Translator.Lua
 
         public virtual string GetInline(IEntity entity)
         {
-            string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".TemplateAttribute";
-
             if (entity.SymbolKind == SymbolKind.Property)
             {
                 var prop = (IProperty)entity;
-                entity = this.IsAssignment ? prop.Setter : prop.Getter;
+                bool isGetOrSet = !this.IsAssignment;
+                return XmlMetaMaker.GetPropertyInline(prop, isGetOrSet);
             }
 
+            string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".TemplateAttribute";
             if (entity != null)
             {
                 var attr = entity.Attributes.FirstOrDefault(a =>
@@ -541,18 +541,6 @@ namespace Bridge.Translator.Lua
                 return code;
             }
 
-            return null;
-        }
-
-        public static string GetConstructorIndex(IEntity entity) {
-            string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".ConstructorIndexAttribute";
-            if(entity != null) {
-                var attr = entity.Attributes.FirstOrDefault(a => {
-                    return a.AttributeType.FullName == attrName;
-                });
-
-                return attr != null ? attr.PositionalArguments.First().ConstantValue.ToString() : null;
-            }
             return null;
         }
 

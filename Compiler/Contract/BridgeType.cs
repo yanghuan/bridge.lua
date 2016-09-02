@@ -91,6 +91,10 @@ namespace Bridge.Contract
             return typesOfKey_[key];
         }
 
+        public BridgeType GetOrDefault(string key) {
+            return typesOfKey_.GetOrDefault(key);
+        }
+
         public void Add(string key, BridgeType type) {
             typesOfKey_.Add(key, type);
         }
@@ -247,7 +251,7 @@ namespace Bridge.Contract
             }
 
             BridgeType bridgeType = emitter.BridgeTypes.Get(type, true);
-            var name = excludens ? "" : type.Namespace;
+            var name = excludens ? "" : XmlMetaMaker.GetNamespace(type.Namespace);
 
             var hasTypeDef = bridgeType != null && bridgeType.TypeDefinition != null;
             if (hasTypeDef)
@@ -429,7 +433,6 @@ namespace Bridge.Contract
                 replacements.Add("+", ".");
                 replacements.Add("[", "");
                 replacements.Add("]", "");
-
                 BridgeTypes.convRegex = new Regex("(\\" + String.Join("|\\", replacements.Keys.ToArray()) + ")", RegexOptions.Compiled | RegexOptions.Singleline);
             }
 

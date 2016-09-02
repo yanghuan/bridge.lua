@@ -137,19 +137,11 @@ namespace Bridge.Translator.Lua
                         this.Write(customCtor);
                     }
 
-                    if (!isTypeParam && !this.Emitter.Validator.IsIgnoreType(type) && type.Methods.Count(m => m.IsConstructor && !m.IsStatic) > (type.IsValueType ? 0 : 1))
-                    {
-                        string name = OverloadsCollection.Create(this.Emitter, ((InvocationResolveResult)this.Emitter.Resolver.ResolveNode(objectCreateExpression, this.Emitter)).Member).GetOverloadName();
-                        int index = ConstructorBlock.GetCtorIndex(name);
-                        this.Write(index);
-                        this.WriteComma();
-                    }
-
-                    if(invocationResolveResult != null) {
-                        string index = Bridge.Translator.Lua.Emitter.GetConstructorIndex(invocationResolveResult.Member);
-                        if(index != null) {
+                    if (!isTypeParam && !this.Emitter.Validator.IsIgnoreType(type))  {
+                        if(!XmlMetaMaker.IsSingleCtor(type) && type.Methods.Count(m => m.IsConstructor && !m.IsStatic) > (type.IsValueType ? 0 : 1)) {
+                            string name = OverloadsCollection.Create(this.Emitter, ((InvocationResolveResult)this.Emitter.Resolver.ResolveNode(objectCreateExpression, this.Emitter)).Member).GetOverloadName();
+                            int index = ConstructorBlock.GetCtorIndex(name);
                             this.Write(index);
-                            this.WriteSpace();
                             this.WriteComma();
                         }
                     }

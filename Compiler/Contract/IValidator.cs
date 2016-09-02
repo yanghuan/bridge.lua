@@ -58,8 +58,6 @@ namespace Bridge.Contract
 
         bool IsIgnoreType(IEntity enity, bool ignoreLiteral = false);
 
-        bool IsBridgeClass(Mono.Cecil.TypeDefinition type);
-
         bool IsInlineMethod(Mono.Cecil.MethodDefinition method);
 
         bool IsNameEnum(ICSharpCode.NRefactory.TypeSystem.Implementation.DefaultResolvedTypeDefinition type);

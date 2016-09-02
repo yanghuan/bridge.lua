@@ -82,11 +82,6 @@ namespace Bridge.Translator
             return BaseTypeFullNames.Contains(name);
         }
 
-        public virtual bool IsBridgeClass(TypeDefinition type)
-        {
-            return false;
-        }
-
         public virtual bool IsIgnoreType(ICSharpCode.NRefactory.TypeSystem.ITypeDefinition typeDefinition, bool ignoreLiteral = false)
         {
             string name = typeDefinition.FullName;
@@ -222,44 +217,11 @@ namespace Bridge.Translator
 
         public virtual string GetCustomTypeName(TypeDefinition type, IEmitter emitter)
         {
-            var name = this.GetAttributeValue(type.CustomAttributes, Translator.Bridge_ASSEMBLY + ".NameAttribute");
-
+            string name = XmlMetaMaker.GetCustomName(type);
             if (!string.IsNullOrEmpty(name))
             {
-                FixBridgePrefix(ref name);
                 return name;
             }
-
-            var nsAtrr = this.GetAttribute(type.CustomAttributes, Translator.Bridge_ASSEMBLY + ".NamespaceAttribute");
-            if (nsAtrr != null && nsAtrr.ConstructorArguments.Count > 0)
-            {
-                var arg = nsAtrr.ConstructorArguments[0];
-                name = "";
-                if (arg.Value is string)
-                {
-                    name = arg.Value.ToString();
-                }
-
-                if (arg.Value is bool && ((bool) arg.Value))
-                {
-                    return null;
-                }
-
-                if (type.IsNested)
-                {
-                    name = (string.IsNullOrEmpty(name) ? "" : (name + ".")) + BridgeTypes.GetParentNames(type);
-                }
-
-                name = (string.IsNullOrEmpty(name) ? "" : (name + ".")) + BridgeTypes.ConvertName(type.Name);
-                FixBridgePrefix(ref name);
-                return name;
-            }
-
-            if (this.HasAttribute(type.CustomAttributes, Translator.Bridge_ASSEMBLY + ".ObjectLiteralAttribute"))
-            {
-                return "Object";
-            }
-
             return null;
         }
 

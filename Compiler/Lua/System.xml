@@ -1,6 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?> 
 <assembly>
-    <namespace name="System.Collections.Generic">
-        <class name="List_1" FullName="System.List" IsSingleCtor="true" />
+    <namespace name="System">
+        <class name="Byte" Name="System.Int" />
+        <class name="Int16" Name="System.Int" />
+        <class name="Int32" Name="System.Int" />
+        <class name="Int64" Name="System.Int" />
+        <class name="SByte" Name="System.Int" />
+        <class name="UInt16" Name="System.Int" />
+        <class name="UInt32" Name="System.Int" />
+        <class name="UInt64" Name="System.Int" />
+        <class name="Single" Name="System.Double" />
+        <class name="Exception" IsSingleCtor="true" />
+        <class name="ArgumentException" IsSingleCtor="true" />
+        <class name="ArgumentNullException" IsSingleCtor="true" />
+        <class name="ArgumentOutOfRangeException" IsSingleCtor="true" />
+        <class name="ArithmeticException" IsSingleCtor="true" />
+        <class name="DivideByZeroException" IsSingleCtor="true" />
+        <class name="OverflowException" IsSingleCtor="true" />
+        <class name="FormatException" IsSingleCtor="true" />
+        <class name="InvalidCastException" IsSingleCtor="true" />
+        <class name="InvalidOperationException" IsSingleCtor="true" />
+        <class name="NotImplementedException" IsSingleCtor="true" />
+        <class name="NotSupportedException" IsSingleCtor="true" />
+        <class name="NullReferenceException" IsSingleCtor="true" />
+        <class name="RankException" IsSingleCtor="true" />
+        <class name="Array">
+            <property name="Length">
+                <get Template="#{this}" />
+            </property>
+        </class>
+        <class name="String">
+            <property name="Length">
+                <get Template="#{this}" />
+            </property>
+        </class>
+    </namespace>
+    <namespace name="System.Collections.Generic" Name="System">
+        <class name="List^1" Name="System.List" IsSingleCtor="true" >
+            <property name="Count">
+                <get Template="#{this}" />
+             </property>
+        </class>
+        <class name="Dictionary^2" Name="System.Dictionary" IsSingleCtor="true" />
+        <class name="Queue^1" Name="System.Queue" IsSingleCtor="true" >
+            <property name="Count">
+                <get Template="#{this}" />
+            </property>
+        </class>
+        <class name="Stack^1" Name="System.Stack" IsSingleCtor="true" >
+            <property name="Count">
+                <get Template="#{this}" />
+            </property>
+        </class>
+        <class name="LinkedList^1" Name="System.LinkedList" IsSingleCtor="true" />
+        <class name="HashSet^1" Name="System.HashSet" IsSingleCtor="true" />
+        <class name="KeyNotFoundException" Name="System.KeyNotFoundException" IsSingleCtor="true" />
+    </namespace>
+    <namespace name="System.Linq">
+        <class name="Enumerable" Name="System.Linq" />
+    </namespace>    
+    <namespace name="System.Diagnostics.Contracts">
+        <class name="Contract">
+            <method name="Assert" return="void">
+            </method>
+        </class>
     </namespace>
 </assembly>

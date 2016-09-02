@@ -134,11 +134,11 @@ namespace Bridge.Lua {
         private sealed class LuaTranslater : Bridge.Translator.Translator {
             private string output_;
 
-            public LuaTranslater(string folder, string output, string dll, string bridgeDllPath, string[] searchPaths) : base(folder, null, true, dll) {
+            public LuaTranslater(string folder, string output, string dll, string bridgeDllPath) : base(folder, null, true, dll) {
                 output_ = output;
                 this.BridgeLocation = bridgeDllPath;
                 this.Log = new Logger("LuaTranslater", true, new ConsoleLoggerWriter());
-                this.searchPaths_ = searchPaths;
+
                 TransformCtx.GetEntityName = GetEntityName;
             }
 
@@ -160,7 +160,9 @@ namespace Bridge.Lua {
 
         private void ToLua(string outDllPath) {
             string bridgeDllPath = Utility.Move(tempDirectory_, bridgeDllPath_);
-            var translator = new LuaTranslater(folder_, output_, outDllPath, bridgeDllPath, GetSearchPaths());
+            var translator = new LuaTranslater(folder_, output_, outDllPath, bridgeDllPath);
+            translator.SearchPaths = GetSearchPaths();
+            translator.XmlMetaFiles = new string[] { "System.xml" };
             translator.Translate();
             Save(translator);
         }

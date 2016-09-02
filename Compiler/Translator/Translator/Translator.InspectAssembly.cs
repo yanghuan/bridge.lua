@@ -5,18 +5,29 @@ using Mono.Cecil;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Bridge.Translator
 {
     public partial class Translator
     {
         private string GetAssemblyPath(string assemblyName) {
-            foreach(string dir in searchPaths_) {
+            if(SearchPaths != null) {
+                foreach(string dir in SearchPaths) {
+                    string path = Path.Combine(dir, assemblyName + ".dll");
+                    if(File.Exists(path)) {
+                        return path;
+                    }
+                }
+            }
+            else {
+                string dir = RuntimeEnvironment.GetRuntimeDirectory();
                 string path = Path.Combine(dir, assemblyName + ".dll");
                 if(File.Exists(path)) {
                     return path;
                 }
             }
+
             throw new System.Exception("not found assembly " + assemblyName);
         }
 
