@@ -398,7 +398,7 @@ namespace Bridge.Contract
         {
             var originalMember = member;
 
-            while (member != null && member.IsOverride && !this.IsTemplateOverride(member))
+            while (member != null && member.IsOverride && member.IsAbstract && !this.IsTemplateOverride(member))
             {
                 member = InheritanceHelper.GetBaseMember(member);
             }
@@ -923,6 +923,8 @@ namespace Bridge.Contract
                 }
             }
 
+            //TODO 暂时注释掉,以后完成
+            /*
             if (definition.ImplementedInterfaceMembers.Count > 0)
             {
                 foreach (var iMember in definition.ImplementedInterfaceMembers)
@@ -933,7 +935,7 @@ namespace Bridge.Contract
                         throw new Exception(string.Format(message, definition.ToString(), definition.DeclaringType.ToString(), iMember.DeclaringType.ToString()));
                     }
                 }
-            }
+            }*/
 
             return name;
         }

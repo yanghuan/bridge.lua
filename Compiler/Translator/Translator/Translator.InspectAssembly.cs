@@ -10,8 +10,27 @@ namespace Bridge.Translator
 {
     public partial class Translator
     {
+        private string GetAssemblyPath(string assemblyName) {
+            foreach(string dir in searchPaths_) {
+                string path = Path.Combine(dir, assemblyName + ".dll");
+                if(File.Exists(path)) {
+                    return path;
+                }
+            }
+            throw new System.Exception("not found assembly " + assemblyName);
+        }
+
         protected virtual AssemblyDefinition LoadAssembly(string location, List<AssemblyDefinition> references)
         {
+            var assemblyDefinition = AssemblyDefinition.ReadAssembly(location);
+            foreach(AssemblyNameReference r in assemblyDefinition.MainModule.AssemblyReferences) {
+                string path = GetAssemblyPath(r.Name);
+                AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly(path);
+                references.Add(assembly);
+            }
+            return assemblyDefinition;
+
+            /*
             var assemblyDefinition = AssemblyDefinition.ReadAssembly(location);
             string name;
             string path;
@@ -20,36 +39,51 @@ namespace Bridge.Translator
             foreach (AssemblyNameReference r in assemblyDefinition.MainModule.AssemblyReferences)
             {
                 name = r.Name;
-
-                if (r.Name == "mscorlib" || r.Name == "System.Core")
-                {
-                    continue;
-                }
-
-                path = Path.Combine(Path.GetDirectoryName(location), name) + ".dll";
+                path = GetAssemblyPath(name);
                 reference = this.LoadAssembly(path, references);
-
                 if (!references.Any(a => a.Name.Name == reference.Name.Name))
                 {
                     references.Add(reference);
                 }
             }
-
-            return assemblyDefinition;
+            return assemblyDefinition;*/
         }
 
-        protected virtual void ReadTypes(AssemblyDefinition assembly)
+        protected virtual void ReadTypes(AssemblyDefinition assembly, bool isCodeAssembly)
         {
-            this.AddNestedTypes(assembly.MainModule.Types);
+            this.AddNestedTypes(assembly.MainModule.Types, isCodeAssembly);
         }
 
-        protected virtual void AddNestedTypes(IEnumerable<TypeDefinition> types)
+        public bool IsEnableType(TypeDefinition type) {
+            if(!type.IsPublic && !type.IsNestedPublic) {
+                return false;
+            }
+
+            string name = type.Name;
+            if(name == "<Module>") {
+                return false;
+            }
+
+            if(type.CustomAttributes.Any(i => i.AttributeType.FullName == "System.Runtime.CompilerServices.CompilerGeneratedAttribute")) {
+                return false;
+            }
+
+            return true;
+        }
+
+        protected virtual void AddNestedTypes(IEnumerable<TypeDefinition> types, bool isCodeAssembly)
         {
             foreach (TypeDefinition type in types)
             {
                 if (type.FullName.Contains("<"))
                 {
                     continue;
+                }
+
+                if(!isCodeAssembly) {
+                    if(!IsEnableType(type)) {
+                        continue;
+                    }
                 }
 
                 string key = BridgeTypes.GetTypeDefinitionKey(type);
@@ -67,7 +101,7 @@ namespace Bridge.Translator
                 if (type.HasNestedTypes)
                 {
                     Translator.InheritAttributes(type);
-                    this.AddNestedTypes(type.NestedTypes);
+                    this.AddNestedTypes(type.NestedTypes, isCodeAssembly);
                 }
             }
         }
@@ -114,14 +148,10 @@ namespace Bridge.Translator
             this.BridgeTypes = new BridgeTypes();
             this.AssemblyDefinition = assembly;
 
-            if (assembly.Name.Name != Translator.Bridge_ASSEMBLY)
-            {
-                this.ReadTypes(assembly);
-            }
-
+            this.ReadTypes(assembly, true);
             foreach (var item in references)
             {
-                this.ReadTypes(item);
+                this.ReadTypes(item, false);
             }
 
             if (!this.FolderMode)

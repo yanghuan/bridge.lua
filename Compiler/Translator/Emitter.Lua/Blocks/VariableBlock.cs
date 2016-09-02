@@ -95,8 +95,7 @@ namespace Bridge.Translator.Lua
                     }
                     else
                     {
-                        throw new System.Exception("not reach!!");
-                        /*
+                        //throw new System.Exception("not reach!!");
                         string name = BridgeTypes.ToJsName(this.VariableDeclarationStatement.Type, this.Emitter);
                         var resolve = this.Emitter.Resolver.ResolveNode(variable, this.Emitter);
                         if(resolve.Type.Kind == ICSharpCode.NRefactory.TypeSystem.TypeKind.Struct) {
@@ -104,7 +103,7 @@ namespace Bridge.Translator.Lua
                         }
                         else {
                             this.Write(name, "()");
-                        }*/
+                        }
                     }
                     this.Emitter.ReplaceAwaiterByVar = oldValue;
                 }

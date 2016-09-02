@@ -33,6 +33,7 @@ Options
                     string lib = cmds.GetArgument("-l", true);
                     string libWhite = cmds.GetArgument("-lw", true);
                     string libBlack = cmds.GetArgument("-lb", true);
+
                     Worker w = new Worker(folder, output, bridge, lib, libWhite, libBlack);
                     w.Do();
                     Console.WriteLine("all operator success");

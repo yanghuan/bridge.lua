@@ -45,12 +45,36 @@ namespace Bridge.Translator
             this.CheckModuleDependenies(type, translator);
         }
 
+        private static readonly HashSet<string> BaseTypeFullNames = new HashSet<string>() {
+            "System.Object",
+            "System.String",
+            "System.Boolean",
+            "System.Char",
+            "System.Byte",
+            "System.SByte",
+            "System.Enum",
+            "System.Array",
+            "System.Int16",
+            "System.Int32",
+            "System.Int64",
+            "System.UInt16",
+            "System.UInt32",
+            "System.UInt64",
+            "System.Single",
+            "System.Double",
+        };
+
         public virtual bool IsIgnoreType(ICustomAttributeProvider type, bool ignoreLiteral = false)
         {
+            TypeDefinition definition = (TypeDefinition)type;
+            string name = definition.FullName;
+            if(BaseTypeFullNames.Contains(name)) {
+                return true;
+            }
+
             string ignoreAttr = Translator.Bridge_ASSEMBLY + ".IgnoreAttribute";
             string externalAttr = Translator.Bridge_ASSEMBLY + ".ExternalAttribute";
             string objectLiteralAttr = Translator.Bridge_ASSEMBLY + ".ObjectLiteralAttribute";
-
             return this.HasAttribute(type.CustomAttributes, ignoreAttr) || this.HasAttribute(type.CustomAttributes, externalAttr) || (!ignoreLiteral && this.HasAttribute(type.CustomAttributes, objectLiteralAttr));
         }
 
@@ -74,7 +98,6 @@ namespace Bridge.Translator
                     return true;
                 }
             }
-
             return false;
         }
 
