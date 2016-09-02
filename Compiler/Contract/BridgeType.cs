@@ -242,6 +242,10 @@ namespace Bridge.Contract
                 return BridgeTypes.ToJsName(NullableType.GetUnderlyingType(type), emitter);
             }
 
+            if(type.Kind == TypeKind.Delegate) {
+                return "System.Delegate";
+            }
+
             BridgeType bridgeType = emitter.BridgeTypes.Get(type, true);
             var name = excludens ? "" : type.Namespace;
 

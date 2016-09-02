@@ -62,52 +62,35 @@ namespace Bridge.Translator
             "System.UInt64",
             "System.Single",
             "System.Double",
+            "System.ValueType",
+            "System.TimeSpan",
+            "System.DateTime",
+            "System.Delegate",
+            "System.MulticastDelegate",
         };
 
         public virtual bool IsIgnoreType(ICustomAttributeProvider type, bool ignoreLiteral = false)
         {
             TypeDefinition definition = (TypeDefinition)type;
             string name = definition.FullName;
-            if(BaseTypeFullNames.Contains(name)) {
-                return true;
-            }
-
-            string ignoreAttr = Translator.Bridge_ASSEMBLY + ".IgnoreAttribute";
-            string externalAttr = Translator.Bridge_ASSEMBLY + ".ExternalAttribute";
-            string objectLiteralAttr = Translator.Bridge_ASSEMBLY + ".ObjectLiteralAttribute";
-            return this.HasAttribute(type.CustomAttributes, ignoreAttr) || this.HasAttribute(type.CustomAttributes, externalAttr) || (!ignoreLiteral && this.HasAttribute(type.CustomAttributes, objectLiteralAttr));
+            return BaseTypeFullNames.Contains(name);
         }
 
         public virtual bool IsIgnoreType(IEntity enity, bool ignoreLiteral = false)
         {
-            string ignoreAttr = Translator.Bridge_ASSEMBLY + ".IgnoreAttribute";
-            string externalAttr = Translator.Bridge_ASSEMBLY + ".ExternalAttribute";
-            string objectLiteralAttr = Translator.Bridge_ASSEMBLY + ".ObjectLiteralAttribute";
-
-            return this.HasAttribute(enity.Attributes, ignoreAttr)
-                   || this.HasAttribute(enity.Attributes, externalAttr)
-                   || (!ignoreLiteral && this.HasAttribute(enity.Attributes, objectLiteralAttr));
+            string name = enity.FullName;
+            return BaseTypeFullNames.Contains(name);
         }
 
         public virtual bool IsBridgeClass(TypeDefinition type)
         {
-            foreach (var i in type.Interfaces)
-            {
-                if (i.FullName == "Bridge.IBridgeClass")
-                {
-                    return true;
-                }
-            }
             return false;
         }
 
         public virtual bool IsIgnoreType(ICSharpCode.NRefactory.TypeSystem.ITypeDefinition typeDefinition, bool ignoreLiteral = false)
         {
-            string ignoreAttr = Translator.Bridge_ASSEMBLY + ".IgnoreAttribute";
-            string externalAttr = Translator.Bridge_ASSEMBLY + ".ExternalAttribute";
-            string objectLiteralAttr = Translator.Bridge_ASSEMBLY + ".ObjectLiteralAttribute";
-
-            return typeDefinition.Attributes.Any(attr => attr.Constructor != null && ((attr.Constructor.DeclaringType.FullName == ignoreAttr) || (attr.Constructor.DeclaringType.FullName == externalAttr) || (!ignoreLiteral && attr.Constructor.DeclaringType.FullName == objectLiteralAttr)));
+            string name = typeDefinition.FullName;
+            return BaseTypeFullNames.Contains(name);
         }
 
         public virtual int EnumEmitMode(DefaultResolvedTypeDefinition type)

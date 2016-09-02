@@ -203,7 +203,10 @@ namespace Bridge.Contract
 
         public static bool IsIgnoreGeneric(IType type, IEmitter emitter)
         {
-            return emitter.Validator.HasAttribute(type.GetDefinition().Attributes, "Bridge.IgnoreGenericAttribute");
+            if(type.Kind == TypeKind.Delegate) {
+                return true;
+            }
+            return false;
         }
 
         public static bool IsIgnoreCast(AstType astType, IEmitter emitter)
@@ -214,7 +217,6 @@ namespace Bridge.Contract
             }
 
             var typeDef = emitter.BridgeTypes.ToType(astType).GetDefinition();
-
             if (typeDef == null)
             {
                 return false;
@@ -225,13 +227,12 @@ namespace Bridge.Contract
                 return true;
             }
 
-            return emitter.Validator.HasAttribute(typeDef.Attributes, "Bridge.IgnoreCastAttribute");
+            return false;
         }
 
         public static bool IsIntegerType(IType type, IMemberResolver resolver)
         {
             type = type.IsKnownType(KnownTypeCode.NullableOfT) ? ((ParameterizedType)type).TypeArguments[0] : type;
-
             return type.Equals(resolver.Compilation.FindType(KnownTypeCode.Byte))
                 || type.Equals(resolver.Compilation.FindType(KnownTypeCode.SByte))
                 || type.Equals(resolver.Compilation.FindType(KnownTypeCode.Char))
