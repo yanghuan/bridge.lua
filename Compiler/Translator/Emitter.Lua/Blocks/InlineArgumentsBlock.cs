@@ -38,7 +38,7 @@ namespace Bridge.Translator.Lua
             this.EmitInlineExpressionList(this.ArgumentsInfo, this.InlineCode);
         }
 
-        private static Regex _formatArg = new Regex(@"\{(\*?)(.+)(\:(\w+))?\}");
+        private static Regex _formatArg = new Regex(@"(,?\s*)\{(\*?)([\w|^]+)(\:(\w+))?\}");
 
         protected virtual IList<Expression> GetExpressionsByKey(IEnumerable<NamedParamExpression> expressions, string key)
         {
@@ -47,14 +47,14 @@ namespace Bridge.Translator.Lua
                 return new List<Expression>();
             }
 
-            if(key == "*") {
-                return expressions.Select(i => i.Expression).ToList();
-            }
-
             if (Regex.IsMatch(key, "^\\d+$"))
             {
                 var list = new List<Expression>();
-                list.Add(expressions.Skip(int.Parse(key)).First().Expression);
+                int index = int.Parse(key);
+                var e = expressions.ElementAtOrDefault(index);
+                if(e != null) {
+                    list.Add(e.Expression);
+                }
                 return list;
             }
 
@@ -63,11 +63,21 @@ namespace Bridge.Translator.Lua
 
         protected virtual AstType GetAstTypeByKey(IEnumerable<TypeParamExpression> types, string key)
         {
+            if(key[0] == '^') {
+                int index = int.Parse(key.Substring(1));
+                var e = types.ElementAtOrDefault(index);
+                return e != null ? e.AstType : null;
+            }
             return types.Where(e => e.Name == key && e.AstType != null).Select(e => e.AstType).FirstOrDefault();
         }
 
         protected virtual IType GetITypeByKey(IEnumerable<TypeParamExpression> types, string key)
         {
+            if(key[0] == '^') {
+                int index = int.Parse(key.Substring(1));
+                var e = types.ElementAtOrDefault(index);
+                return e != null ? e.IType : null;
+            }
             return types.Where(e => e.Name == key && e.IType != null).Select(e => e.IType).FirstOrDefault();
         }
 
@@ -77,8 +87,9 @@ namespace Bridge.Translator.Lua
             inline = _formatArg.Replace(inline, delegate(Match m)
             {
                 int count = emitter.Writers.Count;
-                string key = m.Groups[2].Value;
-                string modifier = m.Groups[1].Success ? m.Groups[4].Value : null;
+                string separate = m.Groups[1].Value;
+                string key = m.Groups[3].Value;
+                string modifier = m.Groups[2].Success ? m.Groups[5].Value : null;
 
                 StringBuilder oldSb = emitter.Output;
                 emitter.Output = new StringBuilder();
@@ -131,14 +142,14 @@ namespace Bridge.Translator.Lua
             IEnumerable<TypeParamExpression> typeParams = argsInfo.TypeArguments;
 
             this.Write("");
-
             inline = _formatArg.Replace(inline, delegate(Match m)
             {
                 int count = this.Emitter.Writers.Count;
-                string key = m.Groups[2].Value;
-                bool isRaw = m.Groups[1].Success && m.Groups[1].Value == "*";
+                string separate = m.Groups[1].Value;
+                string key = m.Groups[3].Value;
+                bool isRaw = m.Groups[2].Success && m.Groups[2].Value == "*";
                 bool ignoreArray = isRaw || argsInfo.ParamsExpression == null;
-                string modifier = m.Groups[1].Success ? m.Groups[4].Value : null;
+                string modifier = m.Groups[2].Success ? m.Groups[5].Value : null;
                 string paramsName = null;
                 if (argsInfo.ResolveResult != null)
                 {
@@ -232,7 +243,6 @@ namespace Bridge.Translator.Lua
                     else if (typeParams != null)
                     {
                         var type = this.GetAstTypeByKey(typeParams, key);
-
                         if (type != null)
                         {
                             type.AcceptVisitor(this.Emitter);
@@ -240,7 +250,6 @@ namespace Bridge.Translator.Lua
                         else
                         {
                             var iType = this.GetITypeByKey(typeParams, key);
-
                             if (iType != null)
                             {
                                 new CastBlock(this.Emitter, iType).Emit();
@@ -256,7 +265,9 @@ namespace Bridge.Translator.Lua
 
                 string replacement = this.Emitter.Output.ToString();
                 this.Emitter.Output = oldSb;
-
+                if(!string.IsNullOrEmpty(replacement)) {
+                    replacement = separate + replacement;
+                }
                 return replacement;
             });
 
