@@ -61,8 +61,7 @@
     </namespace>    
     <namespace name="System.Diagnostics.Contracts">
         <class name="Contract">
-            <method name="Assert" return="void">
-            </method>
+            <method name="Assert" Template="assert({condition})" />
         </class>
     </namespace>
 </assembly>

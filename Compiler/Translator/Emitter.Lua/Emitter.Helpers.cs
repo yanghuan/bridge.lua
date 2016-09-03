@@ -155,11 +155,9 @@ namespace Bridge.Translator.Lua
                 member = memberResolveResult.Member;
             }
 
-
-            bool isInlineMethod = this.IsInlineMethod(member);
-            var inlineCode = isInlineMethod ? null : this.GetInline(member);
+            var inlineCode = this.GetInline(member);
+            bool isInlineMethod = inlineCode != null;
             var isStatic = member.IsStatic;
-
             return new Tuple<bool, bool, string>(isStatic, isInlineMethod, inlineCode);
         }
 
@@ -521,11 +519,16 @@ namespace Bridge.Translator.Lua
 
         public virtual string GetInline(IEntity entity)
         {
-            if (entity.SymbolKind == SymbolKind.Property)
-            {
-                var prop = (IProperty)entity;
-                bool isGetOrSet = !this.IsAssignment;
-                return XmlMetaMaker.GetPropertyInline(prop, isGetOrSet);
+            switch(entity.SymbolKind) {
+                case SymbolKind.Property: {
+                        IProperty property = (IProperty)entity;
+                        bool isGetOrSet = !this.IsAssignment;
+                        return XmlMetaMaker.GetPropertyInline(property, isGetOrSet);
+                    }
+                case SymbolKind.Method: {
+                        IMethod method = (IMethod)entity;
+                        return XmlMetaMaker.GetMethodInline(method);
+                    }
             }
 
             string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".TemplateAttribute";
@@ -542,23 +545,6 @@ namespace Bridge.Translator.Lua
             }
 
             return null;
-        }
-
-        protected virtual bool IsInlineMethod(IEntity entity)
-        {
-            string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".TemplateAttribute";
-
-            if (entity != null)
-            {
-                var attr = entity.Attributes.FirstOrDefault(a =>
-                {
-                    return a.AttributeType.FullName == attrName;
-                });
-
-                return attr != null && attr.PositionalArguments.Count == 0;
-            }
-
-            return false;
         }
 
         protected virtual IEnumerable<string> GetScriptArguments(ICSharpCode.NRefactory.CSharp.Attribute attr)

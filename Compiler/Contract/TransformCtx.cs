@@ -65,6 +65,26 @@ namespace Bridge.Contract {
             public TemplateModel get;
         }
 
+        public sealed class Argument {
+            [XmlAttribute]
+            public string name;
+        }
+
+        public sealed class MethodModel {
+            [XmlAttribute]
+            public string name;
+            [XmlAttribute]
+            public string Template;
+            [XmlElement("arg")]
+            public Argument[] Args;
+
+            public bool IsMatchAll {
+                get {
+                    return Args == null;
+                }
+            }
+        }
+
         public sealed class ClassModel {
             [XmlAttribute]
             public string name;
@@ -74,6 +94,8 @@ namespace Bridge.Contract {
             public bool IsSingleCtor;
             [XmlElement("property")]
             public PropertyModel[] Propertys;
+            [XmlElement("method")]
+            public MethodModel[] Methods;
         }
 
         public sealed class NamespaceModel {
@@ -98,6 +120,7 @@ namespace Bridge.Contract {
                 TypeDefinition = typeDefinition;
                 model_ = model;
                 Property();
+                Method();
             }
 
             public string Name {
@@ -121,6 +144,23 @@ namespace Bridge.Contract {
                     }
                 }
             }
+
+            private void Method() {
+                if(model_.Methods != null) {
+                    foreach(var methodModel in model_.Methods) {
+                        if(methodModel.IsMatchAll) {
+                            var methods = TypeDefinition.Methods.Where(i => i.Name == methodModel.name);
+                            foreach(MethodDefinition methodDefinition in methods) {
+                                MethodMateInfo info = new MethodMateInfo(methodDefinition, methodModel);
+                                XmlMetaMaker.AddMethod(info);
+                            }
+                        }
+                        else {
+                            throw new System.NotSupportedException();
+                        }                        
+                    }
+                }
+            }
         }
 
         public sealed class PropertyMataInfo {
@@ -138,11 +178,28 @@ namespace Bridge.Contract {
             }
         }
 
+        public sealed class MethodMateInfo {
+            private XmlMetaModel.MethodModel model_;
+            public MethodDefinition MethodDefinition { get; private set; }
+
+            public MethodMateInfo(MethodDefinition methodDefinition, XmlMetaModel.MethodModel model) {
+                MethodDefinition = methodDefinition;
+                model_ = model;
+            }
+
+            public string Template {
+                get {
+                    return model_.Template;
+                }
+            }
+        }
+
+        private static IEmitter emitter_;
+        private static Dictionary<string, string> namespaceMaps_ = new Dictionary<string, string>();
         private static Dictionary<TypeDefinition, TypeMetaInfo> types_ = new Dictionary<TypeDefinition, TypeMetaInfo>();
         private static Dictionary<PropertyDefinition, PropertyMataInfo> propertys_ = new Dictionary<PropertyDefinition, PropertyMataInfo>();
-        private static Dictionary<string, string> namespaceMaps_ = new Dictionary<string, string>();
-        private static IEmitter emitter_;
-
+        private static Dictionary<MethodDefinition, MethodMateInfo> methods_ = new Dictionary<MethodDefinition, MethodMateInfo>();
+      
         public static void Load(IEnumerable<string> files, IEmitter emitter) {
             foreach(string file in files) {
                 XmlSerializer xmlSeliz = new XmlSerializer(typeof(XmlMetaModel));
@@ -227,11 +284,52 @@ namespace Bridge.Contract {
             PropertyDefinition propertyDefinition = type.TypeDefinition.Properties.First(i => i.Name == property.Name);
             var info = propertys_.GetOrDefault(propertyDefinition);
             return info != null ? info.GetTemplate(isGet) : null;
-
         }
 
         public static string GetNamespace(string name) {
             return namespaceMaps_.GetOrDefault(name, name);
+        }
+
+        private static void AddMethod(MethodMateInfo info) {
+            if(methods_.ContainsKey(info.MethodDefinition)) {
+                throw new ArgumentException(info.MethodDefinition.FullName + " is already has");
+            }
+            methods_.Add(info.MethodDefinition, info);
+        }
+
+        private static bool IsMatch(MethodDefinition methodDefinition, IMethod method) {
+            if(methodDefinition.Name != method.Name) {
+                return false;
+            }
+
+            if(methodDefinition.Parameters.Count != method.Parameters.Count) {
+                return false;
+            }
+
+            int index = 0;
+            foreach(var parameterDefinition in methodDefinition.Parameters) {
+                var parameter = method.Parameters[index];
+                if(parameter.Name != parameterDefinition.Name) {
+                    return false;
+                }
+                if(parameterDefinition.ParameterType.FullName != parameter.Type.FullName) {
+                    return false;
+                }
+                ++index;
+            }
+            return true;
+        }
+
+        private static MethodDefinition GetMethodDefinition(IMethod method) {
+            var type = emitter_.BridgeTypes.Get(method.MemberDefinition.DeclaringType);
+            MethodDefinition methodDefinition = type.TypeDefinition.Methods.First(i => IsMatch(i, method));
+            return methodDefinition;
+        }
+
+        public static string GetMethodInline(IMethod method) {
+            MethodDefinition methodDefinition = GetMethodDefinition(method);
+            var info = methods_.GetOrDefault(methodDefinition);
+            return info != null ? info.Template : null;
         }
     }
 }
