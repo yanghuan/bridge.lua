@@ -7,6 +7,7 @@ using System.IO;
 using ICSharpCode.NRefactory.TypeSystem;
 using System.Xml.Serialization;
 using Mono.Cecil;
+using ICSharpCode.NRefactory.TypeSystem.Implementation;
 
 namespace Bridge.Contract {
     public sealed class RawString {
@@ -65,9 +66,9 @@ namespace Bridge.Contract {
             public TemplateModel get;
         }
 
-        public sealed class Argument {
+        public sealed class ArgumentModel {
             [XmlAttribute]
-            public string name;
+            public string type;
         }
 
         public sealed class MethodModel {
@@ -76,7 +77,7 @@ namespace Bridge.Contract {
             [XmlAttribute]
             public string Template;
             [XmlElement("arg")]
-            public Argument[] Args;
+            public ArgumentModel[] Args;
 
             public bool IsMatchAll {
                 get {
@@ -145,6 +146,42 @@ namespace Bridge.Contract {
                 }
             }
 
+            private bool IsMethodParameterSame(TypeReference typeReference, XmlMetaModel.ArgumentModel argument) {
+                if(typeReference.IsGenericParameter) {
+                    return typeReference.Name == argument.type;
+                }
+                else if(typeReference.IsGenericInstance) {
+                    throw new NotSupportedException();
+                }
+                else if(typeReference.IsNested) {
+                    return typeReference.FullName.Replace("/", ".") == argument.type;
+                }
+                else {
+                    return typeReference.FullName == argument.type;
+                }
+            }
+
+            private bool IsMethodMatch(MethodDefinition methodDefinition, XmlMetaModel.MethodModel model) {
+                if(methodDefinition.Name != model.name) {
+                    return false;
+                }
+
+                if(methodDefinition.Parameters.Count != model.Args.Length) {
+                    return false;
+                }
+
+                int index = 0;
+                foreach(var parameter in methodDefinition.Parameters) {
+                    var parameterModel = model.Args[index];
+                    if(!IsMethodParameterSame(parameter.ParameterType, parameterModel)) {
+                        return false;
+                    }
+                    ++index;
+                }
+
+                return true;
+            }
+
             private void Method() {
                 if(model_.Methods != null) {
                     foreach(var methodModel in model_.Methods) {
@@ -156,7 +193,12 @@ namespace Bridge.Contract {
                             }
                         }
                         else {
-                            throw new System.NotSupportedException();
+                            MethodDefinition methodDefinition = TypeDefinition.Methods.FirstOrDefault(i => IsMethodMatch(i, methodModel));
+                            if(methodDefinition == null) {
+                                throw new ArgumentException(methodModel + " is not found match");
+                            }
+                            MethodMateInfo info = new MethodMateInfo(methodDefinition, methodModel);
+                            XmlMetaMaker.AddMethod(info);
                         }                        
                     }
                 }
@@ -280,6 +322,9 @@ namespace Bridge.Contract {
         }
 
         public static string GetPropertyInline(IProperty property, bool isGet) {
+            if(!property.IsPublic) {
+                return null;
+            }
             var type = emitter_.BridgeTypes.Get(property.MemberDefinition.DeclaringType);
             PropertyDefinition propertyDefinition = type.TypeDefinition.Properties.First(i => i.Name == property.Name);
             var info = propertys_.GetOrDefault(propertyDefinition);
@@ -297,6 +342,40 @@ namespace Bridge.Contract {
             methods_.Add(info.MethodDefinition, info);
         }
 
+        public static string ToCorrectTypeName(string keyName) {
+            return BridgeTypes.ConvertName(keyName);
+        }
+
+        private static bool IsSame(TypeReference typeReference, IType type) {
+            if(typeReference.IsGenericParameter) {
+                if(type.Kind == TypeKind.TypeParameter) {
+                    return typeReference.Name == type.Name;
+                }
+            }
+            else if(typeReference.IsGenericInstance) {
+                GenericInstanceType genericInstanceType = (GenericInstanceType)typeReference;
+                if(genericInstanceType.GenericArguments.Count == type.TypeParameterCount) {
+                    int index = 0;
+                    foreach(var genericArgument in genericInstanceType.GenericArguments) {
+                        var typeArgument = type.TypeArguments[index];
+                        if(!IsSame(genericArgument, typeArgument)) {
+                            return false;
+                        }
+                        ++index;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            else if(typeReference.IsNested) {
+                return typeReference.FullName.Replace("/", ".") == type.FullName;
+            }
+            else {
+                return typeReference.FullName == type.FullName;
+            }
+            return false;
+        }
+
         private static bool IsMatch(MethodDefinition methodDefinition, IMethod method) {
             if(methodDefinition.Name != method.Name) {
                 return false;
@@ -312,7 +391,7 @@ namespace Bridge.Contract {
                 if(parameter.Name != parameterDefinition.Name) {
                     return false;
                 }
-                if(parameterDefinition.ParameterType.FullName != parameter.Type.FullName) {
+                if(!IsSame(parameterDefinition.ParameterType, parameter.Type)) {
                     return false;
                 }
                 ++index;
@@ -320,16 +399,31 @@ namespace Bridge.Contract {
             return true;
         }
 
+        private static Dictionary<IMethod, MethodDefinition> methodDefinitionMaps_ = new Dictionary<IMethod, MethodDefinition>();
+
         private static MethodDefinition GetMethodDefinition(IMethod method) {
-            var type = emitter_.BridgeTypes.Get(method.MemberDefinition.DeclaringType);
-            MethodDefinition methodDefinition = type.TypeDefinition.Methods.First(i => IsMatch(i, method));
+            method = (IMethod)method.MemberDefinition;
+
+            MethodDefinition methodDefinition;
+            if(!methodDefinitionMaps_.TryGetValue(method, out methodDefinition)) {
+                var type = emitter_.BridgeTypes.Get(method.DeclaringType);
+                methodDefinition = type.TypeDefinition.Methods.FirstOrDefault(i => IsMatch(i, method));
+                methodDefinitionMaps_.Add(method, methodDefinition);
+            }
+
             return methodDefinition;
         }
 
         public static string GetMethodInline(IMethod method) {
+            if(!method.IsPublic) {
+                return null;
+            }
             MethodDefinition methodDefinition = GetMethodDefinition(method);
-            var info = methods_.GetOrDefault(methodDefinition);
-            return info != null ? info.Template : null;
+            if(methodDefinition != null) {
+                var info = methods_.GetOrDefault(methodDefinition);
+                return info != null ? info.Template : null;
+            }
+            return null;
         }
     }
 }

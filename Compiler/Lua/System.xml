@@ -3,7 +3,15 @@
     <namespace name="System">
         <class name="Byte" Name="System.Int" />
         <class name="Int16" Name="System.Int" />
-        <class name="Int32" Name="System.Int" />
+        <class name="Int32" Name="System.Int" >
+            <method name="ToString" Template="tostring({this})" />
+            <method name="CompareTo" Template="{this} - {0}" >
+                <arg type="System.Int32" />        
+            </method>
+            <method name="CompareTo" Template="System.Int.compareToObj({this, {0}})" >
+                <arg type="System.Object" />
+            </method>
+        </class>
         <class name="Int64" Name="System.Int" />
         <class name="SByte" Name="System.Int" />
         <class name="UInt16" Name="System.Int" />
@@ -24,7 +32,7 @@
         <class name="NotSupportedException" IsSingleCtor="true" />
         <class name="NullReferenceException" IsSingleCtor="true" />
         <class name="RankException" IsSingleCtor="true" />
-        <class name="Array">
+        <class name="Array" Name="System.Array">
             <property name="Length">
                 <get Template="#{this}" />
             </property>
@@ -58,10 +66,17 @@
     </namespace>
     <namespace name="System.Linq">
         <class name="Enumerable" Name="System.Linq" />
-    </namespace>    
+    </namespace>
+    <namespace name="System.Diagnostics">
+        <class name="Debug">
+            <method name="Assert" Template="assert({*})" />
+        </class>
+    </namespace>
     <namespace name="System.Diagnostics.Contracts">
         <class name="Contract">
-            <method name="Assert" Template="assert({condition})" />
+            <method name="Assert" Template="assert({*})" />
+            <method name="Assume" Template="assert({*})" />
+            <method name="Ensures" Template="assert({*})" />
         </class>
     </namespace>
 </assembly>

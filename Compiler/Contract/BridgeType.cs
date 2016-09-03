@@ -405,7 +405,6 @@ namespace Bridge.Contract
             }
 
             var customName = emitter.Validator.GetCustomTypeName(type.TypeDefinition, emitter);
-
             if (!String.IsNullOrEmpty(customName))
             {
                 isCustomName = true;

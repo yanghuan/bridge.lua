@@ -38,7 +38,7 @@ namespace Bridge.Translator.Lua
             this.EmitInlineExpressionList(this.ArgumentsInfo, this.InlineCode);
         }
 
-        private static Regex _formatArg = new Regex(@"\{(\*?)(\w+)(\:(\w+))?\}");
+        private static Regex _formatArg = new Regex(@"\{(\*?)(.+)(\:(\w+))?\}");
 
         protected virtual IList<Expression> GetExpressionsByKey(IEnumerable<NamedParamExpression> expressions, string key)
         {
@@ -47,11 +47,14 @@ namespace Bridge.Translator.Lua
                 return new List<Expression>();
             }
 
+            if(key == "*") {
+                return expressions.Select(i => i.Expression).ToList();
+            }
+
             if (Regex.IsMatch(key, "^\\d+$"))
             {
                 var list = new List<Expression>();
                 list.Add(expressions.Skip(int.Parse(key)).First().Expression);
-
                 return list;
             }
 

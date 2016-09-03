@@ -140,23 +140,20 @@ namespace Bridge.Translator.Lua
             return GetInlineCodeFromMember(member, node);
         }
 
-        private Tuple<bool, bool, string> GetInlineCodeFromMember(IMember member, Expression node)
-        {
-            if (member == null)
-            {
+        private Tuple<bool, bool, string> GetInlineCodeFromMember(IMember member, Expression node) {
+            if(member == null) {
                 var resolveResult = this.Resolver.ResolveNode(node, this);
                 var memberResolveResult = resolveResult as MemberResolveResult;
 
-                if (memberResolveResult == null)
-                {
+                if(memberResolveResult == null) {
                     return new Tuple<bool, bool, string>(false, false, null);
                 }
 
                 member = memberResolveResult.Member;
             }
 
-            var inlineCode = this.GetInline(member);
-            bool isInlineMethod = inlineCode != null;
+            bool isInlineMethod = this.IsInlineMethod(member);
+            var inlineCode = isInlineMethod ? null : this.GetInline(member);
             var isStatic = member.IsStatic;
             return new Tuple<bool, bool, string>(isStatic, isInlineMethod, inlineCode);
         }
@@ -545,6 +542,10 @@ namespace Bridge.Translator.Lua
             }
 
             return null;
+        }
+
+        private bool IsInlineMethod(IEntity entity) {
+            return false;
         }
 
         protected virtual IEnumerable<string> GetScriptArguments(ICSharpCode.NRefactory.CSharp.Attribute attr)
