@@ -75,6 +75,8 @@ namespace Bridge.Contract {
             [XmlAttribute]
             public string name;
             [XmlAttribute]
+            public string Name;
+            [XmlAttribute]
             public string Template;
             [XmlElement("arg")]
             public ArgumentModel[] Args;
@@ -199,7 +201,7 @@ namespace Bridge.Contract {
                             }
                             MethodMateInfo info = new MethodMateInfo(methodDefinition, methodModel);
                             XmlMetaMaker.AddMethod(info);
-                        }                        
+                        }
                     }
                 }
             }
@@ -234,6 +236,12 @@ namespace Bridge.Contract {
                     return model_.Template;
                 }
             }
+
+            public string Name {
+                get {
+                    return model_.Name;
+                }
+            }
         }
 
         private static IEmitter emitter_;
@@ -241,7 +249,7 @@ namespace Bridge.Contract {
         private static Dictionary<TypeDefinition, TypeMetaInfo> types_ = new Dictionary<TypeDefinition, TypeMetaInfo>();
         private static Dictionary<PropertyDefinition, PropertyMataInfo> propertys_ = new Dictionary<PropertyDefinition, PropertyMataInfo>();
         private static Dictionary<MethodDefinition, MethodMateInfo> methods_ = new Dictionary<MethodDefinition, MethodMateInfo>();
-      
+
         public static void Load(IEnumerable<string> files, IEmitter emitter) {
             foreach(string file in files) {
                 XmlSerializer xmlSeliz = new XmlSerializer(typeof(XmlMetaModel));
@@ -422,6 +430,18 @@ namespace Bridge.Contract {
             if(methodDefinition != null) {
                 var info = methods_.GetOrDefault(methodDefinition);
                 return info != null ? info.Template : null;
+            }
+            return null;
+        }
+
+        public static string GetMethodName(IMethod method) {
+            if(!method.IsPublic) {
+                return null;
+            }
+            MethodDefinition methodDefinition = GetMethodDefinition(method);
+            if(methodDefinition != null) {
+                var info = methods_.GetOrDefault(methodDefinition);
+                return info != null ? info.Name : null;
             }
             return null;
         }

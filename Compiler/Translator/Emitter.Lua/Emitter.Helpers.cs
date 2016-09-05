@@ -367,38 +367,31 @@ namespace Bridge.Translator.Lua
                 }
             }
 
+            switch(member.SymbolKind) {
+                case SymbolKind.Constructor: {
+                        return "constructor";
+                    }
+                case SymbolKind.Method: {
+                        string methodName = XmlMetaMaker.GetMethodName((IMethod)member);
+                        if(!string.IsNullOrEmpty(methodName)) {
+                            if(Helpers.IsReservedWord(methodName)) {
+                                throw new System.Exception("entityName[{0}, {1}, {2}] from XmlMetaMaker.GetMethodName IsReservedWord".F(methodName, member.Name, member.DeclaringType.FullName));
+                            }
+                            return methodName;
+                        }
+                        break;
+                    }
+            }
+            
             bool preserveMemberChange = !this.IsNativeMember(member.FullName) ? this.AssemblyInfo.PreserveMemberCase : false;
             if (member is IMember && this.IsMemberConst((IMember)member)/* || member.DeclaringType.Kind == TypeKind.Anonymous*/)
             {
                 preserveMemberChange = true;
             }
-            var attr = Helpers.GetInheritedAttribute(member, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".NameAttribute");
+
             bool isIgnore = member.DeclaringTypeDefinition != null && this.Validator.IsIgnoreType(member.DeclaringTypeDefinition);
             string name = member.Name;
-            if (member is IMethod && ((IMethod)member).IsConstructor)
-            {
-                name = "constructor";
-            }
-
-            if (attr != null)
-            {
-                var value = attr.PositionalArguments.First().ConstantValue;
-                if (value is string)
-                {
-                    name = value.ToString();
-                    FixBridgePrefix(ref name);
-                    if (!isIgnore && ((member.IsStatic && Emitter.IsReservedStaticName(name)) || Helpers.IsReservedWord(name)))
-                    {
-                        name = Helpers.ChangeReservedWord(name);
-                    }
-                    return name;
-                }
-
-                preserveMemberChange = !(bool)value;
-            }
-
             name = !preserveMemberChange && !forcePreserveMemberCase ? Object.Net.Utilities.StringUtils.ToLowerCamelCase(name) : name;
-
             if (!isIgnore && ((member.IsStatic && Emitter.IsReservedStaticName(name)) || Helpers.IsReservedWord(name)))
             {
                 name = Helpers.ChangeReservedWord(name);
