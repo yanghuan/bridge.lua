@@ -212,7 +212,7 @@ namespace Bridge.Contract {
                         if(methodModel.IsMatchAll) {
                             var methods = TypeDefinition.Methods.Where(i => i.Name == methodModel.name);
                             foreach(MethodDefinition methodDefinition in methods) {
-                                MethodMateInfo info = new MethodMateInfo(methodDefinition, methodModel);
+                                MethodMetaInfo info = new MethodMetaInfo(methodDefinition, methodModel);
                                 XmlMetaMaker.AddMethod(info);
                             }
                         }
@@ -221,7 +221,7 @@ namespace Bridge.Contract {
                             if(methodDefinition == null) {
                                 throw new ArgumentException(methodModel.name + " is not found match at " + TypeDefinition.FullName);
                             }
-                            MethodMateInfo info = new MethodMateInfo(methodDefinition, methodModel);
+                            MethodMetaInfo info = new MethodMetaInfo(methodDefinition, methodModel);
                             XmlMetaMaker.AddMethod(info);
                         }
                     }
@@ -272,11 +272,11 @@ namespace Bridge.Contract {
             }
         }
 
-        public sealed class MethodMateInfo {
+        public sealed class MethodMetaInfo {
             private XmlMetaModel.MethodModel model_;
             public MethodDefinition MethodDefinition { get; private set; }
 
-            public MethodMateInfo(MethodDefinition methodDefinition, XmlMetaModel.MethodModel model) {
+            public MethodMetaInfo(MethodDefinition methodDefinition, XmlMetaModel.MethodModel model) {
                 MethodDefinition = methodDefinition;
                 model_ = model;
             }
@@ -299,7 +299,7 @@ namespace Bridge.Contract {
         private static Dictionary<TypeDefinition, TypeMetaInfo> types_ = new Dictionary<TypeDefinition, TypeMetaInfo>();
         private static Dictionary<PropertyDefinition, PropertyMataInfo> propertys_ = new Dictionary<PropertyDefinition, PropertyMataInfo>();
         private static Dictionary<FieldDefinition, FieldMetaIfo> fields_ = new Dictionary<FieldDefinition, FieldMetaIfo>();
-        private static Dictionary<MethodDefinition, MethodMateInfo> methods_ = new Dictionary<MethodDefinition, MethodMateInfo>();
+        private static Dictionary<MethodDefinition, MethodMetaInfo> methods_ = new Dictionary<MethodDefinition, MethodMetaInfo>();
 
         public static void Load(IEnumerable<string> files, IEmitter emitter) {
             emitter_ = emitter;
@@ -460,7 +460,7 @@ namespace Bridge.Contract {
             return namespaceMaps_.GetOrDefault(name, name);
         }
 
-        private static void AddMethod(MethodMateInfo info) {
+        private static void AddMethod(MethodMetaInfo info) {
             if(methods_.ContainsKey(info.MethodDefinition)) {
                 throw new ArgumentException(info.MethodDefinition.FullName + " is already has");
             }
