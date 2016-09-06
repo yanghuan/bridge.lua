@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
@@ -84,113 +84,6 @@ namespace Bridge.Lua {
             string path = Path.Combine(directory, Path.GetFileName(lib));
             File.Copy(lib, path, true);
             return path;
-        }
-
-        /// <summary>
-        /// http://stackoverflow.com/questions/2210309/how-to-find-out-if-a-property-is-an-auto-implemented-property-with-reflection
-        /// </summary>
-        public static bool IsAutoProperty(this PropertyDefinition prop) {
-            return prop.DeclaringType.Fields.Any(f => f.IsPrivate && !f.IsStatic && f.Name.Contains("<" + prop.Name + ">"));
-        }
-
-        public static bool IsVolatile(this FieldDefinition fieldDefinition) {
-            RequiredModifierType modifierType = fieldDefinition.FieldType as RequiredModifierType;
-            if(modifierType != null && modifierType.ModifierType.FullName == "System.Runtime.CompilerServices.IsVolatile") {
-                return true;
-            }
-            return false;
-        }
-
-        public static bool IsExtensionMethod(this MethodDefinition methodDefinition) {
-            return methodDefinition.CustomAttributes.Any(i => i.AttributeType.FullName == "System.Runtime.CompilerServices.ExtensionAttribute");
-        }
-
-        public static bool IsStaticClass(this TypeDefinition typeDefinition) {
-            return typeDefinition.IsSealed && typeDefinition.IsAbstract;
-        }
-
-        public static bool IsOpImplicit(this MethodDefinition methodDefinition) {
-            return methodDefinition.IsSpecialName && methodDefinition.Name == "op_Implicit";
-        }
-
-        public static bool IsOpExplicit(this MethodDefinition methodDefinition) {
-            return methodDefinition.IsSpecialName && methodDefinition.Name == "op_Explicit";
-        }
-
-        private static Regex genericInstanceRegex_ = new Regex(@"`\d+", RegexOptions.Compiled | RegexOptions.Singleline);
-
-        public static string RemoveGenericInstanceSign(string name) {
-            return genericInstanceRegex_.Replace(name, "");
-        }
- 
-        public static string Compile(this CodeCompileUnit unit) {
-            using(MemoryStream stream = new MemoryStream()) {
-                StreamWriter sourceWriter = new StreamWriter(stream);
-                CSharpCodeProvider provider = new CSharpCodeProvider();
-                provider.GenerateCodeFromCompileUnit(unit, sourceWriter, new CodeGeneratorOptions());
-                sourceWriter.Flush();
-                stream.Seek(0, SeekOrigin.Begin);
-
-                StringBuilder sb = new StringBuilder();
-                int lineNum = 0;
-                StreamReader reader = new StreamReader(stream);
-                while(true) {
-                    string line = reader.ReadLine();
-                    if(line != null) {
-                        FixLineCode(ref line);
-                        sb.AppendLine(line);
-                    }
-                    else {
-                        break;
-                    }
-                    ++lineNum;
-                }
-                return sb.ToString();
-            }
-        }
-
-        public static string GenCode(this CodeTypeMember codeTypeMember) {
-            CSharpCodeProvider provider = new CSharpCodeProvider();
-            StringWriter sw = new StringWriter();
-            provider.GenerateCodeFromMember(codeTypeMember, sw, new CodeGeneratorOptions());
-            return sw.ToString();
-        }
-
-        public static void FixLineCode(ref string lineCode) {
-            bool isChanged = FixStaticClass(ref lineCode);
-            if(isChanged) {
-                return;
-            }
-        }
-
-        public static bool FixStaticClass(ref string lineCode) {
-            string code = lineCode.Replace("sealed abstract", "static");
-            if(code.Length != lineCode.Length) {
-                lineCode = code;
-                return true;
-            }
-            return false;
-        }
-
-        private static bool FixOpImplicitOrExplicit(ref string lineCode, string sign, string newSign) {
-            int pos = lineCode.IndexOf(sign);
-            if(pos != -1) {
-                int prev = lineCode.LastIndexOf(' ', pos - 1);
-                if(prev != -1) {
-                    string value = lineCode.Substring(prev + 1, pos - prev - 1);
-                    lineCode = lineCode.Replace(value + sign, newSign + value);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public static bool FixOpImplicit(ref string lineCode) {
-            return FixOpImplicitOrExplicit(ref lineCode, " op_Implicit", "implicit operator ");
-        }
-
-        public static bool FixOpExplicit(ref string lineCode) {
-            return FixOpImplicitOrExplicit(ref lineCode, " op_Explicit", "explicit operator ");
         }
     }
 }

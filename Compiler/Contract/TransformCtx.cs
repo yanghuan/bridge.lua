@@ -62,6 +62,8 @@ namespace Bridge.Contract {
             public string name;
             [XmlAttribute]
             public string Name;
+            [XmlAttribute]
+            public bool IsAutoField;
             [XmlElement]
             public TemplateModel set;
             [XmlElement]
@@ -215,12 +217,18 @@ namespace Bridge.Contract {
 
             public string GetTemplate(bool isGet) {
                 var model = isGet ? model_.get : model_.set;
-                return model.Template;
+                return model != null ? model.Template : null;
             }
 
             public string Name {
                 get {
                     return model_.Name;
+                }
+            }
+
+            public bool IsAutoField {
+                get {
+                    return model_.IsAutoField;
                 }
             }
         }
@@ -362,6 +370,20 @@ namespace Bridge.Contract {
             PropertyDefinition propertyDefinition = GetPropertyDefinition(property);
             var info = propertys_.GetOrDefault(propertyDefinition);
             return info != null ? info.GetTemplate(isGet) : null;
+        }
+
+        public static bool IsAutoField(IProperty property) {
+            if(!property.IsPublic) {
+                return false;
+            }
+            PropertyDefinition propertyDefinition = GetPropertyDefinition(property);
+            var info = propertys_.GetOrDefault(propertyDefinition);
+            return info != null && info.IsAutoField;
+        }
+
+        public static bool IsAutoField(PropertyDefinition propertyDefinition) {
+            var info = propertys_.GetOrDefault(propertyDefinition);
+            return info != null && info.IsAutoField;
         }
 
         public static string GetNamespace(string name) {

@@ -8,7 +8,7 @@
             <method name="CompareTo" Template="{this} - {0}" >
                 <arg type="System.Int32" />
             </method>
-            <method name="CompareTo" Template="System.Int.compareToObj({this, {0}})" >
+            <method name="CompareTo" Template="System.Int.CompareToObj({this, {0}})" >
                 <arg type="System.Object" />
             </method>
         </class>
@@ -24,13 +24,13 @@
             </property>
         </class>
         <class name="Object">
-            <method name="ToString" Template="System.Object.toString({this})" />
-            <method name="GetHashCode" Template="System.Object.getHashCode({this})" />
-            <method name="GetType" Template="System.getType({this})" />
-            <method name="Equals" Template="System.Object.equals({this, {0}})" >
+            <method name="ToString" Template="System.Object.ToString({this})" />
+            <method name="GetHashCode" Template="System.Object.GetHashCode({this})" />
+            <method name="GetType" Template="System.GetType({this})" />
+            <method name="Equals" Template="System.Object.Equals({this, {0}})" >
                 <arg type="System.Object" />
             </method>
-            <method name="Equals" Name="equalsStatic" >
+            <method name="Equals" Name="EqualsStatic" >
                 <arg type="System.Object" />
                 <arg type="System.Object" />
             </method>
@@ -41,73 +41,77 @@
             </property>
         </class>
         <class name="IComparable^1">
-            <method name="CompareTo" Template="System.compareT({this}, {0}, {^0})" />
+            <method name="CompareTo" Template="System.CompareT({this}, {0}, {^0})" />
         </class>
     </namespace>
     <namespace name="System.Collections" Name="System" />
     <namespace name="System.Collections.Generic" Name="System">
-        <class name="List^1" Name="System.List" IsSingleCtor="true" >
+        <class name="List^1" Name="System.List">
             <property name="Count">
                 <get Template="#{this}" />
             </property>
         </class>
-        <class name="Dictionary^2" Name="System.Dictionary" IsSingleCtor="true" />
-        <class name="Queue^1" Name="System.Queue" IsSingleCtor="true" >
+        <class name="Dictionary^2" Name="System.Dictionary"/>
+        <class name="Queue^1" Name="System.Queue">
             <property name="Count">
                 <get Template="#{this}" />
             </property>
         </class>
-        <class name="Stack^1" Name="System.Stack" IsSingleCtor="true" >
+        <class name="Stack^1" Name="System.Stack">
             <property name="Count">
                 <get Template="#{this}" />
             </property>
         </class>
-        <class name="LinkedList^1" Name="System.LinkedList" IsSingleCtor="true" />
-        <class name="HashSet^1" Name="System.HashSet" IsSingleCtor="true" />
-        <class name="KeyNotFoundException" Name="System.KeyNotFoundException" IsSingleCtor="true" />
+        <class name="LinkedList^1" Name="System.LinkedList" />
+        <class name="LinkedListNode^1" Name="System.LinkedListNode">
+            <property name="Value" IsAutoField="true" />
+            <property name="List" IsFAutoield="true" />
+        </class>
+        <class name="HashSet^1" Name="System.HashSet" />
+        <class name="KeyNotFoundException" Name="System.KeyNotFoundException" />
         <class name="EqualityComparer^1" >
-            <method name="Equals" Template="{this}.equals({0}, {1})" />
-            <method name="GetHashCode" Template="{this}.getHashCode({0})" />
+            <method name="Equals" Template="{this}.Equals({0}, {1})" />
+            <method name="GetHashCode" Template="{this}.GetHashCode({0})" />
         </class>
         <class name="Comparer^1">
-            <method name="Compare" Template="{this}.compare({0}, {1})" />
+            <method name="Compare" Template="{this}.Compare({0}, {1})" />
         </class>
     </namespace>
     <namespace name="System.Linq">
         <class name="Enumerable" Name="System.Linq" >
-            <method name="Where" Template="System.Linq.where({0}, {1})" />
-            <method name="Select" Template="System.Linq.select({0}, {1}, {^1})" />
-            <method name="SelectMany" Template="System.Linq.selectMany({0, {1}, {^1})" />
-            <method name="Take" Template="System.Linq.take({0}, {1})" />
-            <method name="TakeWhile" Template="System.Linq.takeWhile({0}, {1})" />
-            <method name="Skip" Template="System.Linq.skip({0}, {1})" />
-            <method name="SkipWhile" Template="System.Linq.skipWhile({0}, {1})" />
-            <method name="Concat" Template="System.Linq.concat({0}, {1})" />
-            <method name="Zip" Template="System.Linq.zip({0, {1}, {2}}, {^2})" />
-            <method name="Distinct" Template="System.Linq.distinct({0}, {1})" />
-            <method name="Union" Template="System.Linq.union({0}, {1}, {2})" />
-            <method name="Intersect" Template="System.Linq.intersect({0}, {1}, {2})" />
-            <method name="Except" Template="System.Linq.except({0}, {1}, {2})" />
-            <method name="Reverse" Template="System.Linq.reverse({0})" />
-            <method name="SequenceEqual" Template="System.Linq.sequenceEqual({0}, {1})" />
-            <method name="ToArray" Template="System.Linq.toArray({0})" />
-            <method name="ToList" Template="System.Linq.toList({0})" />
-            <method name="First" Template="System.Linq.first({0}, {1})" />
-            <method name="FirstOrDefault" Template="System.Linq.firstOrDefault({0}, {1})" />
-            <method name="Last" Template="System.Linq.last({0}, {1})" />
-            <method name="LastOrDefault" Template="System.Linq.lastOrDefault({0}, {1})" />
-            <method name="Single" Template="System.Linq.single({0, {1}})" />
-            <method name="SingleOrDefault" Template="System.Linq.singleOrDefault({0}, {1})" />
-            <method name="ElementAt" Template="System.Linq.elementAt({0}, {1})" />
-            <method name="ElementAtOrDefault" Template="System.Linq.elementAtOrDefault({0}, {1})" />
-            <method name="Any" Template="System.Linq.any({0}, {1})" />
-            <method name="All" Template="System.Linq.all({0}, {1})" />
-            <method name="Count" Template="System.Linq.count({0}, {1})" />
-            <method name="Contains" Template="System.Linq.contains({0}, {1}, {2})" />
-            <method name="Aggregate" Template="System.Linq.aggregate({0}, {1}, {2})" />
-            <method name="Sum" Template="System.Linq.sum({0}, {1})" />
-            <method name="Min" Template="System.Linq.min({0}, {1}, {^2})" />
-            <method name="Max" Template="System.Linq.max({0}, {1}, {^2})" />
+            <method name="Where" Template="System.Linq.Where({0}, {1})" />
+            <method name="Select" Template="System.Linq.Select({0}, {1}, {^1})" />
+            <method name="SelectMany" Template="System.Linq.SelectMany({0, {1}, {^1})" />
+            <method name="Take" Template="System.Linq.Take({0}, {1})" />
+            <method name="TakeWhile" Template="System.Linq.TakeWhile({0}, {1})" />
+            <method name="Skip" Template="System.Linq.Skip({0}, {1})" />
+            <method name="SkipWhile" Template="System.Linq.SkipWhile({0}, {1})" />
+            <method name="Concat" Template="System.Linq.Concat({0}, {1})" />
+            <method name="Zip" Template="System.Linq.Zip({0, {1}, {2}}, {^2})" />
+            <method name="Distinct" Template="System.Linq.Distinct({0}, {1})" />
+            <method name="Union" Template="System.Linq.Union({0}, {1}, {2})" />
+            <method name="Intersect" Template="System.Linq.Intersect({0}, {1}, {2})" />
+            <method name="Except" Template="System.Linq.Except({0}, {1}, {2})" />
+            <method name="Reverse" Template="System.Linq.Reverse({0})" />
+            <method name="SequenceEqual" Template="System.Linq.SequenceEqual({0}, {1})" />
+            <method name="ToArray" Template="System.Linq.ToArray({0})" />
+            <method name="ToList" Template="System.Linq.ToList({0})" />
+            <method name="First" Template="System.Linq.First({0}, {1})" />
+            <method name="FirstOrDefault" Template="System.Linq.FirstOrDefault({0}, {1})" />
+            <method name="Last" Template="System.Linq.Last({0}, {1})" />
+            <method name="LastOrDefault" Template="System.Linq.LastOrDefault({0}, {1})" />
+            <method name="Single" Template="System.Linq.Single({0, {1}})" />
+            <method name="SingleOrDefault" Template="System.Linq.SingleOrDefault({0}, {1})" />
+            <method name="ElementAt" Template="System.Linq.ElementAt({0}, {1})" />
+            <method name="ElementAtOrDefault" Template="System.Linq.ElementAtOrDefault({0}, {1})" />
+            <method name="Any" Template="System.Linq.Any({0}, {1})" />
+            <method name="All" Template="System.Linq.All({0}, {1})" />
+            <method name="Count" Template="System.Linq.Count({0}, {1})" />
+            <method name="Contains" Template="System.Linq.Contains({0}, {1}, {2})" />
+            <method name="Aggregate" Template="System.Linq.Aggregate({0}, {1}, {2})" />
+            <method name="Sum" Template="System.Linq.Sum({0}, {1})" />
+            <method name="Min" Template="System.Linq.Min({0}, {1}, {^2})" />
+            <method name="Max" Template="System.Linq.Max({0}, {1}, {^2})" />
         </class>
     </namespace>
     <namespace name="System.Diagnostics">

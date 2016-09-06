@@ -369,12 +369,17 @@ namespace Bridge.Contract
             }
         }
 
-        public static bool IsAutoProperty(PropertyDeclaration propertyDeclaration, IProperty propertyMember)
+        private static bool IsAutoProperty(PropertyDeclaration propertyDeclaration, IProperty propertyMember)
         {
             return propertyDeclaration.Getter.Body.IsNull && propertyDeclaration.Setter.Body.IsNull;
         }
 
         private static bool IsAutoPropertyOfDefinitionInternal(PropertyDefinition propDef) {
+            bool isAutoField = XmlMetaMaker.IsAutoField(propDef);
+            if(isAutoField) {
+                return true;
+            }
+
             var typeDef = propDef.DeclaringType;
             return typeDef.Fields.Any(f => !f.IsPublic && f.Name.Contains("<" + propDef.Name + ">"));
         }
