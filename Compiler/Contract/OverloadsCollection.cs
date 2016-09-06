@@ -398,7 +398,7 @@ namespace Bridge.Contract
         {
             var originalMember = member;
 
-            while (member != null && member.IsOverride && member.IsAbstract && !this.IsTemplateOverride(member))
+            while (member != null && member.IsOverride && !this.IsTemplateOverride(member))
             {
                 member = InheritanceHelper.GetBaseMember(member);
             }
@@ -894,60 +894,38 @@ namespace Bridge.Contract
 
         protected virtual string GetOverloadName(IMember definition)
         {
-            string name = this.Emitter.GetEntityName(definition, this.CancelChangeCase);
-            if (name.StartsWith(".ctor"))
-            {
-                name = "constructor";
-            }
-
-            var attr = Helpers.GetInheritedAttribute(definition, "Bridge.NameAttribute");
-
-            if (attr == null && definition is IProperty)
-            {
-                var prop = (IProperty)definition;
-                var acceessor = this.IsSetter ? prop.Setter : prop.Getter;
-
-                if (acceessor != null)
-                {
-                    attr = Helpers.GetInheritedAttribute(acceessor, "Bridge.NameAttribute");
-                }
-            }
-
-            if (attr != null || (definition.DeclaringTypeDefinition != null && definition.DeclaringTypeDefinition.Kind != TypeKind.Interface && this.Emitter.Validator.IsIgnoreType(definition.DeclaringTypeDefinition)))
-            {
+            bool isMetaName;
+            string name = this.Emitter.GetEntityName(definition, this.CancelChangeCase, out isMetaName);
+            if(isMetaName) {
                 return name;
             }
 
-            if (definition is IMethod && ((IMethod)definition).IsConstructor)
-            {
-                name = "constructor";
+            bool isTypeFromCode = this.Emitter.BridgeTypes.Get(definition.DeclaringTypeDefinition).IsFromCode;
+            if(!isTypeFromCode) {
+                return name;
             }
 
             var index = this.GetIndex(definition);
-
             if (index > 0)
             {
                 name += "_" + index;
-
                 if (name.StartsWith("_"))
                 {
                     name = name.Substring(1);
                 }
             }
 
-            //TODO 暂时注释掉,以后完成
-            /*
             if (definition.ImplementedInterfaceMembers.Count > 0)
             {
                 foreach (var iMember in definition.ImplementedInterfaceMembers)
                 {
-                    if (OverloadsCollection.Create(this.Emitter, iMember, false, true).GetOverloadName() != name)
+                    if (OverloadsCollection.Create(this.Emitter, iMember).GetOverloadName() != name)
                     {
                         string message = "Cannot translate interface ({2}) member '{0}' in '{1}' due name conflicts. Please rename methods or refactor your code";
                         throw new Exception(string.Format(message, definition.ToString(), definition.DeclaringType.ToString(), iMember.DeclaringType.ToString()));
                     }
                 }
-            }*/
+            }
 
             return name;
         }

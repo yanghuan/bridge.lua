@@ -40,34 +40,11 @@
                 <get Template="#{this}" />
             </property>
         </class>
-        <class name="Exception" IsSingleCtor="true" />
-        <class name="ArgumentException" IsSingleCtor="true" />
-        <class name="ArgumentNullException" IsSingleCtor="true" />
-        <class name="ArgumentOutOfRangeException" IsSingleCtor="true" />
-        <class name="ArithmeticException" IsSingleCtor="true" />
-        <class name="DivideByZeroException" IsSingleCtor="true" />
-        <class name="OverflowException" IsSingleCtor="true" />
-        <class name="FormatException" IsSingleCtor="true" />
-        <class name="InvalidCastException" IsSingleCtor="true" />
-        <class name="InvalidOperationException" IsSingleCtor="true" />
-        <class name="NotImplementedException" IsSingleCtor="true" />
-        <class name="NotSupportedException" IsSingleCtor="true" />
-        <class name="NullReferenceException" IsSingleCtor="true" />
-        <class name="RankException" IsSingleCtor="true" />
         <class name="IComparable^1">
             <method name="CompareTo" Template="System.compareT({this}, {0}, {^0})" />
         </class>
     </namespace>
-    <namespace name="System.Collections" Name="System">
-        <class name="IEnumerable">
-            <method name="GetEnumerator" Template="{this}:getEnumerator" />
-        </class>
-        <class name="IEnumerator">
-            <property name="Current" >
-                <get Template="{this}:getCurrnet()" />
-            </property>
-        </class>
-    </namespace>
+    <namespace name="System.Collections" Name="System" />
     <namespace name="System.Collections.Generic" Name="System">
         <class name="List^1" Name="System.List" IsSingleCtor="true" >
             <property name="Count">
@@ -145,5 +122,4 @@
             <method name="Ensures" Template="assert({0}, {1})" />
         </class>
     </namespace>
-
 </assembly>

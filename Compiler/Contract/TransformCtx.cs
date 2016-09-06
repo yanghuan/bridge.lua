@@ -60,6 +60,8 @@ namespace Bridge.Contract {
         public sealed class PropertyModel {
             [XmlAttribute]
             public string name;
+            [XmlAttribute]
+            public string Name;
             [XmlElement]
             public TemplateModel set;
             [XmlElement]
@@ -93,8 +95,6 @@ namespace Bridge.Contract {
             public string name;
             [XmlAttribute]
             public string Name;
-            [XmlAttribute]
-            public bool IsSingleCtor;
             [XmlElement("property")]
             public PropertyModel[] Propertys;
             [XmlElement("method")]
@@ -129,12 +129,6 @@ namespace Bridge.Contract {
             public string Name {
                 get {
                     return model_.Name;
-                }
-            }
-
-            public bool IsSingleCtor {
-                get {
-                    return model_.IsSingleCtor;
                 }
             }
 
@@ -223,6 +217,12 @@ namespace Bridge.Contract {
                 var model = isGet ? model_.get : model_.set;
                 return model.Template;
             }
+
+            public string Name {
+                get {
+                    return model_.Name;
+                }
+            }
         }
 
         public sealed class MethodMateInfo {
@@ -291,31 +291,34 @@ namespace Bridge.Contract {
                 namespaceMaps_.Add(namespaceName, model.Name);
             }
 
-            if(model.Classes != null) {
-                foreach(var classModel in model.Classes) {
-                    string className = classModel.name;
-                    if(string.IsNullOrEmpty(className)) {
-                        throw new ArgumentException(string.Format("namespace[{0}] has a class's name is empty", namespaceName));
-                    }
-
-                    string keyName = namespaceName + '.' + className;
-                    FixName(ref keyName);
-                    var type = emitter_.BridgeTypes.GetOrDefault(keyName);
-                    if(type != null) {
-                        if(types_.ContainsKey(type.TypeDefinition)) {
-                            throw new ArgumentException(type.TypeDefinition.FullName + " is already has");
+            if(emitter_.BridgeTypes.IsNamespaceExists(model.name)) {
+                if(model.Classes != null) {
+                    foreach(var classModel in model.Classes) {
+                        string className = classModel.name;
+                        if(string.IsNullOrEmpty(className)) {
+                            throw new ArgumentException(string.Format("namespace[{0}] has a class's name is empty", namespaceName));
                         }
 
-                        TypeMetaInfo info = new TypeMetaInfo(type.TypeDefinition, classModel);
-                        types_.Add(info.TypeDefinition, info);
+                        string keyName = namespaceName + '.' + className;
+                        FixName(ref keyName);
+                        var type = emitter_.BridgeTypes.GetOrDefault(keyName);
+                        if(type != null) {
+                            if(types_.ContainsKey(type.TypeDefinition)) {
+                                throw new ArgumentException(type.TypeDefinition.FullName + " is already has");
+                            }
+
+                            TypeMetaInfo info = new TypeMetaInfo(type.TypeDefinition, classModel);
+                            types_.Add(info.TypeDefinition, info);
+                        }
+                        else {
+                            emitter_.Log.Warn(keyName + " is not found at BridgeTypes");
+                        }
                     }
                 }
             }
-        }
-
-        public static bool IsSingleCtor(TypeDefinition type) {
-            var info = types_.GetOrDefault(type);
-            return info != null && info.IsSingleCtor;
+            else {
+                emitter_.Log.Info("namespace " + model.name + " is not load meta data xml");
+            }
         }
 
         public static string GetCustomName(TypeDefinition type) {
@@ -328,6 +331,16 @@ namespace Bridge.Contract {
                 throw new ArgumentException(info.PropertyDefinition.FullName + " is already has");
             }
             propertys_.Add(info.PropertyDefinition, info);
+        }
+
+        public static string GetPropertyName(IProperty property) {
+            if(!property.IsPublic) {
+                return null;
+            }
+            var type = emitter_.BridgeTypes.Get(property.MemberDefinition.DeclaringType);
+            PropertyDefinition propertyDefinition = type.TypeDefinition.Properties.First(i => i.Name == property.Name);
+            var info = propertys_.GetOrDefault(propertyDefinition);
+            return info != null ? info.Name : null;
         }
 
         public static string GetPropertyInline(IProperty property, bool isGet) {
@@ -427,6 +440,7 @@ namespace Bridge.Contract {
             if(!method.IsPublic) {
                 return null;
             }
+
             MethodDefinition methodDefinition = GetMethodDefinition(method);
             if(methodDefinition != null) {
                 var info = methods_.GetOrDefault(methodDefinition);
@@ -439,6 +453,7 @@ namespace Bridge.Contract {
             if(!method.IsPublic) {
                 return null;
             }
+
             MethodDefinition methodDefinition = GetMethodDefinition(method);
             if(methodDefinition != null) {
                 var info = methods_.GetOrDefault(methodDefinition);

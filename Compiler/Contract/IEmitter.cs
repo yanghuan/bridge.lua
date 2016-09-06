@@ -98,6 +98,8 @@ namespace Bridge.Contract
 
         string GetEntityName(ICSharpCode.NRefactory.CSharp.ParameterDeclaration entity, bool cancelChangeCase = false);
 
+        string GetEntityName(ICSharpCode.NRefactory.TypeSystem.IEntity member, bool forcePreserveMemberCase, out bool isMetaName);
+
         string GetEntityName(ICSharpCode.NRefactory.TypeSystem.IEntity member, bool forcePreserveMemberCase = false, bool ignoreInterface = false);
 
         string GetInline(ICSharpCode.NRefactory.CSharp.EntityDeclaration method);
@@ -111,8 +113,6 @@ namespace Bridge.Contract
         Tuple<bool, bool, string> GetInlineCode(ICSharpCode.NRefactory.CSharp.MemberReferenceExpression node);
 
         bool IsForbiddenInvocation(InvocationExpression node);
-
-        string GetDefinitionName(IEmitter emitter, IMemberDefinition member, bool changeCase = true);
 
         System.Collections.Generic.IEnumerable<string> GetScript(ICSharpCode.NRefactory.CSharp.EntityDeclaration method);
 
@@ -382,8 +382,6 @@ namespace Bridge.Contract
             get;
             set;
         }
-
-        string GetEntityNameFromAttr(IEntity member, bool setter = false);
 
         bool ReplaceJump
         {

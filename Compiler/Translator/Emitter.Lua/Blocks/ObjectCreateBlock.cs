@@ -126,7 +126,7 @@ namespace Bridge.Translator.Lua
                     new InlineArgumentsBlock(this.Emitter, argsInfo, inlineCode).Emit();
                 }
                 else
-                {
+                { 
                     if (String.IsNullOrEmpty(customCtor))
                     {
                         objectCreateExpression.Type.AcceptVisitor(this.Emitter);
@@ -138,11 +138,16 @@ namespace Bridge.Translator.Lua
                     }
 
                     if (!isTypeParam && !this.Emitter.Validator.IsIgnoreType(type))  {
-                        if(!XmlMetaMaker.IsSingleCtor(type) && type.Methods.Count(m => m.IsConstructor && !m.IsStatic) > (type.IsValueType ? 0 : 1)) {
-                            string name = OverloadsCollection.Create(this.Emitter, ((InvocationResolveResult)this.Emitter.Resolver.ResolveNode(objectCreateExpression, this.Emitter)).Member).GetOverloadName();
-                            int index = ConstructorBlock.GetCtorIndex(name);
-                            this.Write(index);
-                            this.WriteComma();
+                        bool isFromCode = this.Emitter.BridgeTypes.Get(type).IsFromCode;
+                        if(isFromCode) {
+                            if(type.Methods.Count(m => m.IsConstructor && !m.IsStatic) > (type.IsValueType ? 0 : 1)) {
+                                string name = OverloadsCollection.Create(this.Emitter, ((InvocationResolveResult)this.Emitter.Resolver.ResolveNode(objectCreateExpression, this.Emitter)).Member).GetOverloadName();
+                                int index = ConstructorBlock.GetCtorIndex(name);
+                                this.Write(index);
+                                if(argsExpressions.Length > 0) {
+                                    this.WriteComma();
+                                }
+                            }
                         }
                     }
 

@@ -231,183 +231,78 @@ namespace Bridge.Translator.Lua
         public virtual IEnumerable<string> GetScript(EntityDeclaration method)
         {
             var attr = this.GetAttribute(method.Attributes, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".Script");
-
             return this.GetScriptArguments(attr);
         }
 
-        public virtual string GetDefinitionName(IEmitter emitter, IMemberDefinition member, bool preserveMemberCase = false)
-        {
-            if (!preserveMemberCase)
-            {
-                preserveMemberCase = !this.IsNativeMember(member.FullName) ? this.AssemblyInfo.PreserveMemberCase : false;
-
-                if (member is FieldDefinition && ((FieldDefinition)member).HasConstant && !member.DeclaringType.IsEnum)
-                {
-                    preserveMemberCase = true;
+        private string GetMetaName(IEntity member) {
+            string name = null;
+            if(TransformCtx.GetEntityName != null) {
+                name = TransformCtx.GetEntityName(member);
+            }
+            else {
+                switch(member.SymbolKind) {
+                    case SymbolKind.Property: {
+                            name = XmlMetaMaker.GetPropertyName((IProperty)member);
+                            break;
+                        }
+                    case SymbolKind.Method: {
+                            name = XmlMetaMaker.GetMethodName((IMethod)member);
+                            break;
+                        }
                 }
             }
-            string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".NameAttribute";
-            var attr = Helpers.GetInheritedAttribute(emitter, member, attrName);
 
-            bool isIgnore = this.Validator.IsIgnoreType(member.DeclaringType);
-            string name = member.Name;
-            bool isStatic = false;
-
-            if (member is MethodDefinition)
-            {
-                var method = (MethodDefinition)member;
-                isStatic = method.IsStatic;
-                if (method.IsConstructor)
-                {
-                    name = "constructor";
+            if(name != null) {
+                if(Helpers.IsReservedWord(name)) {
+                    throw new System.Exception("GetMetaName[{0}, {1}, {2}] IsReservedWord".F(name, member.Name, member.DeclaringType.FullName));
                 }
-            }
-            else if (member is FieldDefinition)
-            {
-                isStatic = ((FieldDefinition)member).IsStatic;
-            }
-            else if (member is PropertyDefinition)
-            {
-                var prop = (PropertyDefinition)member;
-                var accessor = prop.GetMethod ?? prop.SetMethod;
-                isStatic = prop.GetMethod != null ? prop.GetMethod.IsStatic : false;
-            }
-            else if (member is EventDefinition)
-            {
-                var ev = (EventDefinition)member;
-                isStatic = ev.AddMethod != null ? ev.AddMethod.IsStatic : false;
-            }
-            if (attr != null)
-            {
-                var value = attr.ConstructorArguments.First().Value;
-                if (value is string)
-                {
-                    name = value.ToString();
-                    FixBridgePrefix(ref name);
-
-                    if (!isIgnore &&
-                        ((isStatic && Emitter.IsReservedStaticName(name)) ||
-                        Helpers.IsReservedWord(name)))
-                    {
-                        name = Helpers.ChangeReservedWord(name);
-                    }
-                    return name;
-                }
-
-                preserveMemberCase = !(bool)value;
-            }
-
-            if (name.Contains("."))
-            {
-                name = Object.Net.Utilities.StringUtils.RightOfRightmostOf(name, '.');
-            }
-            name = preserveMemberCase ? name : Object.Net.Utilities.StringUtils.ToLowerCamelCase(name);
-            if (!isIgnore &&
-                ((isStatic && Emitter.IsReservedStaticName(name)) ||
-                Helpers.IsReservedWord(name)))
-            {
-                name = Helpers.ChangeReservedWord(name);
             }
 
             return name;
         }
 
-        public virtual string GetEntityNameFromAttr(IEntity member, bool setter = false)
-        {
-            var prop = member as IProperty;
-            if (prop != null)
-            {
-                member = setter ? prop.Setter : prop.Getter;
+        public string GetEntityName(IEntity member, bool forcePreserveMemberCase, out bool isMetaName) {
+            isMetaName = false;
+            string name = GetMetaName(member);
+            if(name != null) {
+                isMetaName = true;
+                return name;
             }
-            else
-            {
-                var e = member as IEvent;
-                if (e != null)
-                {
-                    member = setter ? e.AddAccessor : e.RemoveAccessor;
-                }
+           
+            if(member.SymbolKind == SymbolKind.Constructor) {
+                name = "constructor";
             }
-
-            if (member == null)
-            {
-                return null;
+            else {
+                name = member.Name;
             }
 
-            var attr = Helpers.GetInheritedAttribute(member, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".NameAttribute");
-            bool isIgnore = member.DeclaringTypeDefinition != null && this.Validator.IsIgnoreType(member.DeclaringTypeDefinition);
-            string name;
-
-            if (attr != null)
-            {
-                var value = attr.PositionalArguments.First().ConstantValue;
-                if (value is string)
-                {
-                    name = value.ToString();
-                    FixBridgePrefix(ref name);
-                    if (!isIgnore && ((member.IsStatic && Emitter.IsReservedStaticName(name)) || Helpers.IsReservedWord(name)))
-                    {
-                        name = Helpers.ChangeReservedWord(name);
-                    }
-                    return name;
-                }
-            }
-
-            return null;
-        }
-
-        public virtual string GetEntityName(IEntity member, bool forcePreserveMemberCase = false, bool ignoreInterface = false)
-        {
-            if(TransformCtx.GetEntityName != null) {
-                string entityName = TransformCtx.GetEntityName(member);
-                if(!string.IsNullOrEmpty(entityName)) {
-                    if(Helpers.IsReservedWord(entityName)) {
-                        throw new System.Exception("entityName[{0}, {1}, {2}] from TransformCtx.GetEntityName IsReservedWord".F(entityName, member.Name, member.DeclaringType.FullName));   
-                    }
-                    return entityName;
-                }
-            }
-
-            switch(member.SymbolKind) {
-                case SymbolKind.Constructor: {
-                        return "constructor";
-                    }
-                case SymbolKind.Method: {
-                        string methodName = XmlMetaMaker.GetMethodName((IMethod)member);
-                        if(!string.IsNullOrEmpty(methodName)) {
-                            if(Helpers.IsReservedWord(methodName)) {
-                                throw new System.Exception("entityName[{0}, {1}, {2}] from XmlMetaMaker.GetMethodName IsReservedWord".F(methodName, member.Name, member.DeclaringType.FullName));
-                            }
-                            return methodName;
-                        }
-                        break;
-                    }
-            }
-            
             bool preserveMemberChange = !this.IsNativeMember(member.FullName) ? this.AssemblyInfo.PreserveMemberCase : false;
-            if (member is IMember && this.IsMemberConst((IMember)member)/* || member.DeclaringType.Kind == TypeKind.Anonymous*/)
-            {
+            if(member is IMember && this.IsMemberConst((IMember)member)/* || member.DeclaringType.Kind == TypeKind.Anonymous*/) {
                 preserveMemberChange = true;
             }
 
             bool isIgnore = member.DeclaringTypeDefinition != null && this.Validator.IsIgnoreType(member.DeclaringTypeDefinition);
-            string name = member.Name;
             name = !preserveMemberChange && !forcePreserveMemberCase ? Object.Net.Utilities.StringUtils.ToLowerCamelCase(name) : name;
-            if (!isIgnore && ((member.IsStatic && Emitter.IsReservedStaticName(name)) || Helpers.IsReservedWord(name)))
-            {
+            if(!isIgnore && ((member.IsStatic && Emitter.IsReservedStaticName(name)) || Helpers.IsReservedWord(name))) {
                 name = Helpers.ChangeReservedWord(name);
             }
+
             return name;
+        }
+
+        public string GetEntityName(IEntity member, bool forcePreserveMemberCase = false, bool ignoreInterface = false)
+        {
+            bool _;
+            return GetEntityName(member, forcePreserveMemberCase, out _);
         }
 
         public virtual string GetEntityName(EntityDeclaration entity, bool forcePreserveMemberCase = false, bool ignoreInterface = false)
         {
             var rr = this.Resolver.ResolveNode(entity, this) as MemberResolveResult;
-
             if (rr != null)
             {
                 return this.GetEntityName(rr.Member, forcePreserveMemberCase, ignoreInterface);
             }
-
             return null;
         }
 

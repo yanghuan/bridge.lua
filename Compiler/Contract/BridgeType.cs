@@ -56,6 +56,7 @@ namespace Bridge.Contract
         private Dictionary<TypeDefinition, BridgeType> typesOfTypeDefinition_ = new Dictionary<TypeDefinition, BridgeType>();
         private Dictionary<string, BridgeType> typesOfFullName_ = new Dictionary<string, BridgeType>();
         private Dictionary<IType, BridgeType> typesOfIType_ = new Dictionary<IType, BridgeType>();
+        private HashSet<string> namespaces_ = new HashSet<string>();
 
         public void InitItems(IEmitter emitter)
         {
@@ -79,6 +80,7 @@ namespace Bridge.Contract
                 typesOfTypeDefinition_.Add(type.TypeDefinition, type);
                 typesOfFullName_.Add(type.TypeDefinition.FullName, type);
                 typesOfIType_.Add(type.Type, type);
+                namespaces_.Add(type.TypeDefinition.Namespace);
             }
         }
 
@@ -86,6 +88,10 @@ namespace Bridge.Contract
         {
             get;
             set;
+        }
+
+        public bool IsNamespaceExists(string name) {
+            return namespaces_.Contains(name);
         }
 
         public BridgeType Get(string key)

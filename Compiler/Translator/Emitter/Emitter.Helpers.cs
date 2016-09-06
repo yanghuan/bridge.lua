@@ -357,6 +357,10 @@ namespace Bridge.Translator
             return null;
         }
 
+        public string GetEntityName(IEntity member, bool forcePreserveMemberCase, out bool isMetaName) {
+            throw new NotSupportedException();
+        }
+
         public virtual string GetEntityName(IEntity member, bool forcePreserveMemberCase = false, bool ignoreInterface = false)
         {
             bool preserveMemberChange = !this.IsNativeMember(member.FullName) ? this.AssemblyInfo.PreserveMemberCase : false;
