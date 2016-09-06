@@ -253,7 +253,6 @@ namespace Bridge.Translator
                     if (itemrr != null)
                     {
                         var oc = OverloadsCollection.Create(this.Emitter, itemrr.Member);
-                        oc.CancelChangeCase = this.Emitter.IsNativeMember(itemrr.Member.FullName) ? false : preserveMemberCase;
                         name = oc.GetOverloadName();
                     }
 

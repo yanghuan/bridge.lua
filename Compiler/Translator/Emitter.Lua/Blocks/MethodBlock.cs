@@ -148,13 +148,14 @@ namespace Bridge.Translator.Lua
                 return;
             }
 
-            if (!this.TypeInfo.InstanceMethods.ContainsKey("GetHashCode"))
+            const string kGetHashCode = "GetHashCode"; 
+            if (!this.TypeInfo.InstanceMethods.ContainsKey(kGetHashCode))
             {
-                TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() { Name = "getHashCode" });
+                TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() { Name = kGetHashCode });
 
                 //this.EnsureComma();
                 this.EnsureNewLine();
-                this.Write("getHashCode = function(this) ");
+                this.Write(kGetHashCode, " = function(this) ");
                 this.BeginFunctionBlock();
                 this.Write("local hash = 17");
 
@@ -166,7 +167,7 @@ namespace Bridge.Translator.Lua
                     this.Write("hash = hash * 23 + ");
                     this.Write("(this." + fieldName);
                     this.Write(" == nil and 0 or ");
-                    this.Write("System.Object.getHashCode(");
+                    this.Write("System.Object.", kGetHashCode, "(");
                     this.Write("this." + fieldName);
                     this.Write("))");
                 }
@@ -178,13 +179,14 @@ namespace Bridge.Translator.Lua
                 this.Emitter.Comma = true;
             }
 
+            const string kEqualsObj = "EqualsObj";
             if (!this.TypeInfo.InstanceMethods.ContainsKey("Equals"))
             {
-                TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() { Name = "equalsObj" });
+                TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() { Name = kEqualsObj });
 
                 //this.EnsureComma();
                 this.EnsureNewLine();
-                this.Write("equalsObj = function (this, o) ");
+                this.Write(kEqualsObj, " = function (this, o) ");
                 this.BeginFunctionBlock();
                 this.Write("if getmetatable(o) ~= ");
                 this.Write(structName);

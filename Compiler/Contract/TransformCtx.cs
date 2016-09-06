@@ -333,12 +333,24 @@ namespace Bridge.Contract {
             propertys_.Add(info.PropertyDefinition, info);
         }
 
+        private static Dictionary<IProperty, PropertyDefinition> propertyDefinitionMaps_ = new Dictionary<IProperty, PropertyDefinition>();
+
+        private static PropertyDefinition GetPropertyDefinition(IProperty property) {
+            PropertyDefinition propertyDefinition;
+            if(!propertyDefinitionMaps_.TryGetValue(property, out propertyDefinition)) {
+                var type = emitter_.BridgeTypes.Get(property.MemberDefinition.DeclaringType);
+                propertyDefinition = type.TypeDefinition.Properties.First(i => i.Name == property.Name);
+                propertyDefinitionMaps_.Add(property, propertyDefinition);
+            }
+
+            return propertyDefinition;
+        }
+
         public static string GetPropertyName(IProperty property) {
             if(!property.IsPublic) {
                 return null;
             }
-            var type = emitter_.BridgeTypes.Get(property.MemberDefinition.DeclaringType);
-            PropertyDefinition propertyDefinition = type.TypeDefinition.Properties.First(i => i.Name == property.Name);
+            PropertyDefinition propertyDefinition = GetPropertyDefinition(property);
             var info = propertys_.GetOrDefault(propertyDefinition);
             return info != null ? info.Name : null;
         }
@@ -347,8 +359,7 @@ namespace Bridge.Contract {
             if(!property.IsPublic) {
                 return null;
             }
-            var type = emitter_.BridgeTypes.Get(property.MemberDefinition.DeclaringType);
-            PropertyDefinition propertyDefinition = type.TypeDefinition.Properties.First(i => i.Name == property.Name);
+            PropertyDefinition propertyDefinition = GetPropertyDefinition(property);
             var info = propertys_.GetOrDefault(propertyDefinition);
             return info != null ? info.GetTemplate(isGet) : null;
         }

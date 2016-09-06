@@ -276,17 +276,7 @@ namespace Bridge.Translator.Lua
                 name = member.Name;
             }
 
-            bool preserveMemberChange = !this.IsNativeMember(member.FullName) ? this.AssemblyInfo.PreserveMemberCase : false;
-            if(member is IMember && this.IsMemberConst((IMember)member)/* || member.DeclaringType.Kind == TypeKind.Anonymous*/) {
-                preserveMemberChange = true;
-            }
-
-            bool isIgnore = member.DeclaringTypeDefinition != null && this.Validator.IsIgnoreType(member.DeclaringTypeDefinition);
-            name = !preserveMemberChange && !forcePreserveMemberCase ? Object.Net.Utilities.StringUtils.ToLowerCamelCase(name) : name;
-            if(!isIgnore && ((member.IsStatic && Emitter.IsReservedStaticName(name)) || Helpers.IsReservedWord(name))) {
-                name = Helpers.ChangeReservedWord(name);
-            }
-
+            Helpers.FixReservedWord(ref name);
             return name;
         }
 

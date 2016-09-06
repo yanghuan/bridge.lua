@@ -169,12 +169,6 @@ namespace Bridge.Contract
             private set;
         }
 
-        public bool CancelChangeCase
-        {
-            get;
-            set;
-        }
-
         public bool IsSetter
         {
             get;
@@ -214,7 +208,6 @@ namespace Bridge.Contract
             this.JsName = this.Emitter.GetEntityName(eventDeclaration, false, true);
             this.Inherit = !eventDeclaration.HasModifier(Modifiers.Static);
             this.Static = eventDeclaration.HasModifier(Modifiers.Static);
-            this.CancelChangeCase = true;
             this.Member = this.FindMember(eventDeclaration);
             this.TypeDefinition = this.Member.DeclaringTypeDefinition;
             this.Type = this.Member.DeclaringType;
@@ -229,7 +222,6 @@ namespace Bridge.Contract
             this.JsName = Helpers.GetEventRef(eventDeclaration, emitter, remove, true);
             this.AltJsName = Helpers.GetEventRef(eventDeclaration, emitter, !remove, true);
             this.Inherit = !eventDeclaration.HasModifier(Modifiers.Static);
-            this.CancelChangeCase = true;
             this.IsSetter = remove;
             this.Static = eventDeclaration.HasModifier(Modifiers.Static);
             this.Member = this.FindMember(eventDeclaration);
@@ -276,7 +268,6 @@ namespace Bridge.Contract
             this.AltJsName = Helpers.GetPropertyRef(propDeclaration, emitter, !isSetter, true, true);
             this.Inherit = !propDeclaration.HasModifier(Modifiers.Static);
             this.Static = propDeclaration.HasModifier(Modifiers.Static);
-            this.CancelChangeCase = !Helpers.IsFieldProperty(propDeclaration, emitter);
             this.IsSetter = isSetter;
             this.Member = this.FindMember(propDeclaration);
             this.TypeDefinition = this.Member.DeclaringTypeDefinition;
@@ -293,7 +284,6 @@ namespace Bridge.Contract
             this.AltJsName = Helpers.GetPropertyRef(indexerDeclaration, emitter, !isSetter, true, true);
             this.Inherit = true;
             this.Static = false;
-            this.CancelChangeCase = true;
             this.IsSetter = isSetter;
             this.Member = this.FindMember(indexerDeclaration);
             this.TypeDefinition = this.Member.DeclaringTypeDefinition;
@@ -337,13 +327,11 @@ namespace Bridge.Contract
 
             if (member is IProperty)
             {
-                this.CancelChangeCase = !Helpers.IsFieldProperty(member, emitter);
                 this.JsName = Helpers.GetPropertyRef(member, emitter, isSetter, true, true);
                 this.AltJsName = Helpers.GetPropertyRef(member, emitter, !isSetter, true, true);
             }
             else if (member is IEvent)
             {
-                this.CancelChangeCase = true;
                 this.JsName = Helpers.GetEventRef(member, emitter, isSetter, true, true);
                 this.AltJsName = Helpers.GetEventRef(member, emitter, !isSetter, true, true);
             }
@@ -895,7 +883,7 @@ namespace Bridge.Contract
         protected virtual string GetOverloadName(IMember definition)
         {
             bool isMetaName;
-            string name = this.Emitter.GetEntityName(definition, this.CancelChangeCase, out isMetaName);
+            string name = this.Emitter.GetEntityName(definition, false, out isMetaName);
             if(isMetaName) {
                 return name;
             }

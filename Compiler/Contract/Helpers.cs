@@ -614,6 +614,12 @@ namespace Bridge.Contract
             return "_" + name;
         }
 
+        public static void FixReservedWord(ref string name) {
+            if(IsReservedWord(name)) {
+                name = ChangeReservedWord(name);
+            }
+        }
+
         private static readonly Dictionary<string, string> operatorMappings_ = new Dictionary<string, string>() {
             ["op_Addition"] = "__add",
             ["op_Subtraction"] = "__sub",
