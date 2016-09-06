@@ -395,6 +395,10 @@ namespace Bridge.Translator.Lua
         public virtual string GetInline(IEntity entity)
         {
             switch(entity.SymbolKind) {
+                case SymbolKind.Field: {
+                        IField field = (IField)entity;
+                        return XmlMetaMaker.GetFieldInline(field);
+                    }
                 case SymbolKind.Property: {
                         IProperty property = (IProperty)entity;
                         bool isGetOrSet = !IsAssignment;
@@ -461,22 +465,6 @@ namespace Bridge.Translator.Lua
                 return specializedField.IsConst;
             }
 
-            return false;
-        }
-
-        public virtual bool IsInlineConst(IMember member)
-        {
-            bool isConst = IsMemberConst(member);
-            if (isConst)
-            {
-                return true;
-                /*
-                var attr = this.GetAttribute(member.Attributes, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".InlineConstAttribute");
-                if (attr != null)
-                {
-                    return true;
-                }*/
-            }
             return false;
         }
 

@@ -185,7 +185,7 @@ namespace Bridge.Translator.Lua {
                 return;
             }
 
-            if(member != null && member.Member.SymbolKind == SymbolKind.Field && this.Emitter.IsMemberConst(member.Member) && this.Emitter.IsInlineConst(member.Member)) {
+            if(member != null && member.Member.SymbolKind == SymbolKind.Field && this.Emitter.IsMemberConst(member.Member) && !hasInline) {
                 this.WriteScript(member.ConstantValue);
             }
             else if(hasInline && member.Member.IsStatic) {
@@ -748,8 +748,7 @@ namespace Bridge.Translator.Lua {
                 }
                 else if(member.Member.SymbolKind == SymbolKind.Field) {
                     bool isConst = this.Emitter.IsMemberConst(member.Member);
-
-                    if(isConst && this.Emitter.IsInlineConst(member.Member)) {
+                    if(isConst) {
                         this.WriteScript(member.ConstantValue);
                     }
                     else {

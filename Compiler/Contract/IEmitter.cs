@@ -144,8 +144,6 @@ namespace Bridge.Contract
             set;
         }
 
-        bool IsInlineConst(ICSharpCode.NRefactory.TypeSystem.IMember member);
-
         bool IsMemberConst(ICSharpCode.NRefactory.TypeSystem.IMember member);
 
         bool IsNativeMember(string fullName);

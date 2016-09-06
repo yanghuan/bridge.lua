@@ -221,7 +221,7 @@ namespace Bridge.Translator
                 return;
             }
 
-            if (member != null && member.Member.SymbolKind == SymbolKind.Field && this.Emitter.IsMemberConst(member.Member) && this.Emitter.IsInlineConst(member.Member))
+            if (member != null && member.Member.SymbolKind == SymbolKind.Field && this.Emitter.IsMemberConst(member.Member))
             {
                 this.WriteScript(member.ConstantValue);
             }
@@ -883,8 +883,7 @@ namespace Bridge.Translator
                 else if (member.Member.SymbolKind == SymbolKind.Field)
                 {
                     bool isConst = this.Emitter.IsMemberConst(member.Member);
-
-                    if (isConst && this.Emitter.IsInlineConst(member.Member))
+                    if (isConst)
                     {
                         this.WriteScript(member.ConstantValue);
                     }

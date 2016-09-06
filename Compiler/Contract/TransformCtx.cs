@@ -70,6 +70,13 @@ namespace Bridge.Contract {
             public TemplateModel get;
         }
 
+        public sealed class FieldModel {
+            [XmlAttribute]
+            public string name;
+            [XmlAttribute]
+            public string Template;
+        }
+
         public sealed class ArgumentModel {
             [XmlAttribute]
             public string type;
@@ -99,6 +106,8 @@ namespace Bridge.Contract {
             public string Name;
             [XmlElement("property")]
             public PropertyModel[] Propertys;
+            [XmlElement("field")]
+            public FieldModel[] Fields;
             [XmlElement("method")]
             public MethodModel[] Methods;
         }
@@ -125,6 +134,7 @@ namespace Bridge.Contract {
                 TypeDefinition = typeDefinition;
                 model_ = model;
                 Property();
+                Field();
                 Method();
             }
 
@@ -143,6 +153,19 @@ namespace Bridge.Contract {
                         }
                         PropertyMataInfo info = new PropertyMataInfo(propertyDefinition, propertyModel);
                         XmlMetaMaker.AddProperty(info);
+                    }
+                }
+            }
+
+            private void Field() {
+                if(model_.Fields != null) {
+                    foreach(var fieldModel in model_.Fields) {
+                        FieldDefinition fieldDefinition = TypeDefinition.Fields.FirstOrDefault(i => i.Name == fieldModel.name);
+                        if(fieldDefinition == null) {
+                            throw new ArgumentException(fieldModel.name + " is not found at " + TypeDefinition.FullName);
+                        }
+                        FieldMetaIfo info = new FieldMetaIfo(fieldDefinition, fieldModel);
+                        XmlMetaMaker.AddField(info);
                     }
                 }
             }
@@ -196,7 +219,7 @@ namespace Bridge.Contract {
                         else {
                             MethodDefinition methodDefinition = TypeDefinition.Methods.FirstOrDefault(i => IsMethodMatch(i, methodModel));
                             if(methodDefinition == null) {
-                                throw new ArgumentException(methodModel + " is not found match");
+                                throw new ArgumentException(methodModel.name + " is not found match at " + TypeDefinition.FullName);
                             }
                             MethodMateInfo info = new MethodMateInfo(methodDefinition, methodModel);
                             XmlMetaMaker.AddMethod(info);
@@ -233,6 +256,22 @@ namespace Bridge.Contract {
             }
         }
 
+        public sealed class FieldMetaIfo {
+            private XmlMetaModel.FieldModel model_;
+            public FieldDefinition FieldDefinition { get; private set; }
+
+            public FieldMetaIfo(FieldDefinition fieldDefinition, XmlMetaModel.FieldModel model) {
+                FieldDefinition = fieldDefinition;
+                model_ = model;
+            }
+
+            public string Template {
+               get {
+                    return model_.Template;
+                }
+            }
+        }
+
         public sealed class MethodMateInfo {
             private XmlMetaModel.MethodModel model_;
             public MethodDefinition MethodDefinition { get; private set; }
@@ -259,6 +298,7 @@ namespace Bridge.Contract {
         private static Dictionary<string, string> namespaceMaps_ = new Dictionary<string, string>();
         private static Dictionary<TypeDefinition, TypeMetaInfo> types_ = new Dictionary<TypeDefinition, TypeMetaInfo>();
         private static Dictionary<PropertyDefinition, PropertyMataInfo> propertys_ = new Dictionary<PropertyDefinition, PropertyMataInfo>();
+        private static Dictionary<FieldDefinition, FieldMetaIfo> fields_ = new Dictionary<FieldDefinition, FieldMetaIfo>();
         private static Dictionary<MethodDefinition, MethodMateInfo> methods_ = new Dictionary<MethodDefinition, MethodMateInfo>();
 
         public static void Load(IEnumerable<string> files, IEmitter emitter) {
@@ -277,7 +317,9 @@ namespace Bridge.Contract {
                     }
                 }
                 catch(Exception e) {
-                    throw new Exception("load xml file wrong at " + file, e);
+                    e = new Exception("load xml file wrong at " + file, e);
+                    emitter_.Log.Error(e.ToString());
+                    throw e;
                 }
             }
         }
@@ -384,6 +426,34 @@ namespace Bridge.Contract {
         public static bool IsAutoField(PropertyDefinition propertyDefinition) {
             var info = propertys_.GetOrDefault(propertyDefinition);
             return info != null && info.IsAutoField;
+        }
+
+        private static void AddField(FieldMetaIfo info) {
+            if(fields_.ContainsKey(info.FieldDefinition)) {
+                throw new ArgumentException(info.FieldDefinition.FullName + " is already has");
+            }
+            fields_.Add(info.FieldDefinition, info);
+        }
+
+        private static Dictionary<IField, FieldDefinition> fieldDefinitionMaps_ = new Dictionary<IField, FieldDefinition>();
+
+        private static FieldDefinition GetFieldDefinition(IField field) {
+            FieldDefinition fieldDefinition;
+            if(!fieldDefinitionMaps_.TryGetValue(field, out fieldDefinition)) {
+                var type = emitter_.BridgeTypes.Get(field.MemberDefinition.DeclaringType);
+                fieldDefinition = type.TypeDefinition.Fields.First(i => i.Name == field.Name);
+                fieldDefinitionMaps_.Add(field, fieldDefinition);
+            }
+            return fieldDefinition;
+        }
+
+        public static string GetFieldInline(IField field) {
+            if(!field.IsPublic) {
+                return null;
+            }
+            FieldDefinition fieldDefinition = GetFieldDefinition(field);
+            var info = fields_.GetOrDefault(fieldDefinition);
+            return info != null ? info.Template : null;
         }
 
         public static string GetNamespace(string name) {
