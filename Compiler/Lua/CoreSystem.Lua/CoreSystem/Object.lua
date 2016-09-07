@@ -1,17 +1,20 @@
 local System = System
 local throw = System.throw
+local NullReferenceException = System.NullReferenceException
+
+local type = type
 
 local Object = {}
 
 local getHashCodeTable = {
-    number = System.Double.getHashCode,
-    string = System.String.getHashCode ,
-    boolean = System.Boolean.getHashCode,
+    number = System.Double.GetHashCode,
+    string = System.String.GetHashCode ,
+    boolean = System.Boolean.GetHashCode,
 }
 
-function Object.getHashCode(this)
+function Object.GetHashCode(this)
     if this == nil then
-        throw(System.NullReferenceException()) 
+        throw(NullReferenceException()) 
     end
     local typename = type(this)
     local getHashCode = getHashCodeTable[typename]
@@ -19,7 +22,7 @@ function Object.getHashCode(this)
         return getHashCode(this)
     end
     if typename == "table" then
-        getHashCode = this.getHashCode
+        getHashCode = this.GetHashCode
         if getHashCode ~= nil then
             return getHashCode(this)     
         end
@@ -28,22 +31,19 @@ function Object.getHashCode(this)
 end
 
 local equalsObjTable = {
-    number = System.Double.equalsObj,
-    string = System.String.equalsObj ,
-    boolean = System.Boolean.equalsObj,
+    number = System.Double.EqualsObj,
+    string = System.String.EqualsObj ,
+    boolean = System.Boolean.EqualsObj,
 }
 
 local function equals(this, v)
-    if this == nil then
-        throw(System.NullReferenceException()) 
-    end
     local typename = type(this)
     local equals = equalsObjTable[typename]
     if equals ~= nil then
         return equals(this, v)
     end
     if typename == "table" then
-        equals = this.equalsObj
+        equals = this.EqualsObj
         if equals ~= nil then
             return equals(this, v) 
         end
@@ -51,9 +51,14 @@ local function equals(this, v)
     return this == v
 end
 
-Object.equals = equals
+function Object.equals(this, v)
+    if this == nil then
+        throw(NullReferenceException()) 
+    end
+    return equals(this, v)
+end
 
-function Object.equalsStatic(x, y)
+function Object.EqualsStatic(x, y)
     if x ~= nil then
         if y ~= nil then return equals(x, y) end
         return false
@@ -62,14 +67,14 @@ function Object.equalsStatic(x, y)
     return true
 end
 
-function Object.toString(this)
+function Object.ToString(this)
     if this == nil then
-       throw(System.NullReferenceException()) 
+       throw(NullReferenceException()) 
     end
     return tostring(this)
 end
 
-function Object.referenceEquals(a, b)
+function Object.ReferenceEquals(a, b)
     return a == b
 end
 

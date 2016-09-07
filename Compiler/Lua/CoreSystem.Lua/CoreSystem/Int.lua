@@ -5,6 +5,10 @@ local ArgumentNullException = System.ArgumentNullException
 local FormatException = System.FormatException
 local OverflowException = System.OverflowException
 
+local type = type
+local tonumber = tonumber
+local floor = math.floor
+
 local Int = {}
 
 local function compare(this, v)
@@ -13,9 +17,9 @@ local function compare(this, v)
     return 0
 end
 
-Int.compareTo = compare
+Int.CompareTo = compare
 
-function Int.compareToObj(this, v)
+function Int.CompareToObj(this, v)
    if v == null then return 1 end
    if type(v) ~= "number" then
        throw(ArgumentException("Arg_MustBeInt"))
@@ -23,59 +27,124 @@ function Int.compareToObj(this, v)
    return compare(this, v)
 end
 
-function Int.equals(this, v)
+function Int.Equals(this, v)
     return this == v
 end
 
-function Int.equalsObj(this, v)
+function Int.EqualsObj(this, v)
     if type(v) ~= "number" then
         return false
     end
     return this == v
 end
 
-function Int.getHashCode(this)
+function Int.GetHashCode(this)
     return this
 end
 
-local function parse(s, min, max, safe)
+local function parse(s, min, max)
     if s == nil then
-        if safe then return
-        else
-            throw(ArgumentNullException())
-        end
+        return nil, 1        
     end
     local v = tonumber(s)
-    if v == nil or v ~= math.floor(v) then
-        if safe then return
-        else
-            throw(FormatException())
-        end
+    if v == nil or v ~= floor(v) then
+        return nil, 2
     end
     if v < min or v > max then
-        if safe then return
-        else
-            throw(OverflowException())
-        end
+        return nil, 3
     end
     return v
 end
 
-function Int.parse(s, min, max)
-    return parse(s, min, max)
-end
-
-function Int.tryParse(s, _, min, max)
-    local v = parse(s, min, max, true)
+local function tryParse(s, min, max)
+    local v = parse(s, min, max)
     if v then
         return true, v
     end
     return false, 0
 end
 
+local function parseWithException(s, min, max)
+    local v, err = parse(s, min, max)
+    if v then
+        return v    
+    end
+    if err == 1 then
+        throw(ArgumentNullException())
+    elseif err == 2 then
+        throw(FormatException())
+    else
+        throw(OverflowException())
+    end
+end
+
+function Int.Parse(s)
+    return parseWithException(s, -2147483648, 2147483647)
+end
+
+function Int.TryParse(s)
+    return tryParse(s, -2147483648, 2147483647)
+end
+
 function Int.__default__()
     return 0
 end 
+
+function Int.ParseByte(s)
+    return parseWithException(s, 0, 255)
+end
+
+function Int.TryParseByte(s)
+    return tryParse(s, 0, 255)
+end
+
+function Int.ParseInt16(s)
+    return parseWithException(s, -32768, 32767)
+end
+
+function Int.TryParseInt16(s)
+    return tryParse(s, -32768, 32767)
+end
+
+function Int.ParseInt64(s)
+    return parseWithException(s, -9223372036854775808, 9223372036854775807)
+end
+
+function Int.TryParseInt64(s)
+    return tryParse(s, -9223372036854775808, 9223372036854775807)
+end
+
+function Int.ParseSByte(s)
+    return parseWithException(s, -128, 127)
+end
+
+function Int.TryParseSByte(s)
+    return tryParse(s, -128, 127)
+end
+
+function Int.ParseUInt16(s)
+    return parseWithException(s, 0, 65535)
+end
+
+function Int.TryParseUInt16(s)
+    return tryParse(s, 0, 65535)
+end
+
+function Int.ParseUInt32(s)
+    return parseWithException(s, 0, 4294967295)
+end
+
+function Int.TryParseUInt32(s)
+    return tryParse(s, 0, 4294967295)
+end
+
+function Int.ParseUInt64(s)
+    return parseWithException(s, 0, 18446744073709551615)
+end
+
+function Int.TryParseUInt64(s)
+    return tryParse(s, 0, 18446744073709551615)
+end
 
 System.defStc("System.Int", Int)
 Int.__inherits__ = { System.IComparable, System.IFormattable, System.IComparable_1(Int), System.IEquatable_1(Int) }

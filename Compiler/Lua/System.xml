@@ -280,40 +280,40 @@
         </class>
     </namespace>
     <namespace name="System.Linq">
-        <class name="Enumerable" Name="System.Linq" >
-            <method name="Where" Template="System.Linq.Where({0}, {1})" />
-            <method name="Select" Template="System.Linq.Select({0}, {1}, {^1})" />
-            <method name="SelectMany" Template="System.Linq.SelectMany({0}, {1}, {^1})" />
-            <method name="Take" Template="System.Linq.Take({0}, {1})" />
-            <method name="TakeWhile" Template="System.Linq.TakeWhile({0}, {1})" />
-            <method name="Skip" Template="System.Linq.Skip({0}, {1})" />
-            <method name="SkipWhile" Template="System.Linq.SkipWhile({0}, {1})" />
-            <method name="Concat" Template="System.Linq.Concat({0}, {1})" />
-            <method name="Zip" Template="System.Linq.Zip({0, {1}, {2}}, {^2})" />
-            <method name="Distinct" Template="System.Linq.Distinct({0}, {1})" />
-            <method name="Union" Template="System.Linq.Union({0}, {1}, {2})" />
-            <method name="Intersect" Template="System.Linq.Intersect({0}, {1}, {2})" />
-            <method name="Except" Template="System.Linq.Except({0}, {1}, {2})" />
-            <method name="Reverse" Template="System.Linq.Reverse({0})" />
-            <method name="SequenceEqual" Template="System.Linq.SequenceEqual({0}, {1})" />
-            <method name="ToArray" Template="System.Linq.ToArray({0})" />
-            <method name="ToList" Template="System.Linq.ToList({0})" />
-            <method name="First" Template="System.Linq.First({0}, {1})" />
-            <method name="FirstOrDefault" Template="System.Linq.FirstOrDefault({0}, {1})" />
-            <method name="Last" Template="System.Linq.Last({0}, {1})" />
-            <method name="LastOrDefault" Template="System.Linq.LastOrDefault({0}, {1})" />
-            <method name="Single" Template="System.Linq.Single({0, {1}})" />
-            <method name="SingleOrDefault" Template="System.Linq.SingleOrDefault({0}, {1})" />
-            <method name="ElementAt" Template="System.Linq.ElementAt({0}, {1})" />
-            <method name="ElementAtOrDefault" Template="System.Linq.ElementAtOrDefault({0}, {1})" />
-            <method name="Any" Template="System.Linq.Any({0}, {1})" />
-            <method name="All" Template="System.Linq.All({0}, {1})" />
-            <method name="Count" Template="System.Linq.Count({0}, {1})" />
-            <method name="Contains" Template="System.Linq.Contains({0}, {1}, {2})" />
-            <method name="Aggregate" Template="System.Linq.Aggregate({0}, {1}, {2})" />
-            <method name="Sum" Template="System.Linq.Sum({0}, {1})" />
-            <method name="Min" Template="System.Linq.Min({0}, {1}, {^2})" />
-            <method name="Max" Template="System.Linq.Max({0}, {1}, {^2})" />
+        <class name="Enumerable" Name="Linq" >
+            <method name="Where" Template="Linq.Where({0}, {1})" />
+            <method name="Select" Template="Linq.Select({0}, {1}, {^1})" />
+            <method name="SelectMany" Template="Linq.SelectMany({0}, {1}, {^1})" />
+            <method name="Take" Template="Linq.Take({0}, {1})" />
+            <method name="TakeWhile" Template="Linq.TakeWhile({0}, {1})" />
+            <method name="Skip" Template="Linq.Skip({0}, {1})" />
+            <method name="SkipWhile" Template="Linq.SkipWhile({0}, {1})" />
+            <method name="Concat" Template="Linq.Concat({0}, {1})" />
+            <method name="Zip" Template="Linq.Zip({0, {1}, {2}}, {^2})" />
+            <method name="Distinct" Template="Linq.Distinct({0}, {1})" />
+            <method name="Union" Template="Linq.Union({0}, {1}, {2})" />
+            <method name="Intersect" Template="Linq.Intersect({0}, {1}, {2})" />
+            <method name="Except" Template="Linq.Except({0}, {1}, {2})" />
+            <method name="Reverse" Template="Linq.Reverse({0})" />
+            <method name="SequenceEqual" Template="Linq.SequenceEqual({0}, {1})" />
+            <method name="ToArray" Template="Linq.ToArray({0})" />
+            <method name="ToList" Template="Linq.ToList({0})" />
+            <method name="First" Template="Linq.First({0}, {1})" />
+            <method name="FirstOrDefault" Template="Linq.FirstOrDefault({0}, {1})" />
+            <method name="Last" Template="Linq.Last({0}, {1})" />
+            <method name="LastOrDefault" Template="Linq.LastOrDefault({0}, {1})" />
+            <method name="Single" Template="Linq.Single({0, {1}})" />
+            <method name="SingleOrDefault" Template="Linq.SingleOrDefault({0}, {1})" />
+            <method name="ElementAt" Template="Linq.ElementAt({0}, {1})" />
+            <method name="ElementAtOrDefault" Template="Linq.ElementAtOrDefault({0}, {1})" />
+            <method name="Any" Template="Linq.Any({0}, {1})" />
+            <method name="All" Template="Linq.All({0}, {1})" />
+            <method name="Count" Template="Linq.Count({0}, {1})" />
+            <method name="Contains" Template="Linq.Contains({0}, {1}, {2})" />
+            <method name="Aggregate" Template="Linq.Aggregate({0}, {1}, {2})" />
+            <method name="Sum" Template="Linq.Sum({0}, {1})" />
+            <method name="Min" Template="Linq.Min({0}, {1}, {^2})" />
+            <method name="Max" Template="Linq.Max({0}, {1}, {^2})" />
         </class>
     </namespace>
     <namespace name="System.Diagnostics">
