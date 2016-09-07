@@ -38,9 +38,7 @@ function Boolean.EqualsObj(this, v)
     return this == v
 end
 
-function Boolean.GetHashCode(this)
-    return this
-end
+Boolean.GetHashCode = System.identityFn
 
 local function parse(s)
     if s == nil then

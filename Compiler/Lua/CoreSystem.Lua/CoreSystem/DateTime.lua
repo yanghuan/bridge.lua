@@ -7,6 +7,9 @@ local TimeSpan = System.TimeSpan
 local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
 local ArgumentException = System.ArgumentException
 
+local getmetatable = getmetatable
+local select = select
+
 --http://referencesource.microsoft.com/#mscorlib/system/datetime.cs
 local DateTime = {}
 
@@ -16,10 +19,10 @@ local function compare(t1, t2)
     return 0
 end
 
-DateTime.compare = compare
-DateTime.compareTo = compare
+DateTime.Compare = compare
+DateTime.CompareTo = compare
 
-function DateTime.compareToObj(this, t)
+function DateTime.CompareToObj(this, t)
    if t == null then return 1 end
    if getmetatable(t) ~= DateTime then
        throw(ArgumentException("Arg_MustBeDateTime"))
@@ -27,18 +30,18 @@ function DateTime.compareToObj(this, t)
    return compare(this, t)
 end
 
-function DateTime.equals(t1, t2)
+function DateTime.Equals(t1, t2)
     return t1.ticks == t2.ticks
 end
 
-function DateTime.equalsObj(this, t)
+function DateTime.EqualsObj(this, t)
     if getmetatable(t) == DateTime then
         return this.ticks == t.ticks
     end
     return false
 end
 
-function DateTime.getHashCode(this)
+function DateTime.GetHashCode(this)
     return this.ticks
 end
 
@@ -52,7 +55,7 @@ local function isLeapYear(year)
     return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)
 end
 
-DateTime.isLeapYear = isLeapYear
+DateTime.IsLeapYear = isLeapYear
 
 local function dateToTicks(year, month, day) 
     if year >= 1 and year <= 9999 and month >= 1 and month <= 12 then
@@ -118,29 +121,29 @@ local function add(this, value, scale)
      return addTicks(this, millis * 10000)
 end
 
-DateTime.addTicks = addTicks
+DateTime.AddTicks = addTicks
 
-function DateTime.add(this, ts)
+function DateTime.Add(this, ts)
     return addTicks(this, ts.ticks)
 end
 
-function DateTime.addDays(this, days)
+function DateTime.AddDays(this, days)
     return add(this, days, 86400000)
 end
 
-function DateTime.addHours(this, hours)
+function DateTime.AddHours(this, hours)
     return add(this, hours, 3600000)
 end
 
-function DateTime.addMinutes(this, minutes) 
+function DateTime.AddMinutes(this, minutes) 
     return add(this, minutes, 60000);
 end
 
-function DateTime.addSeconds(this, seconds)
+function DateTime.AddSeconds(this, seconds)
     return add(this, seconds, 1000)
 end
 
-function DateTime.addMilliseconds(this, milliseconds)
+function DateTime.AddMilliseconds(this, milliseconds)
     return add(this, milliseconds, 1)
 end
 
@@ -176,7 +179,7 @@ local function daysInMonth(year, month)
     return days[month + 1] - days[month]
 end
 
-DateTime.daysInMonth = daysInMonth
+DateTime.DaysInMonth = daysInMonth
 
 local function addMonths(this, months)
     if months < -120000 or months > 12000 then
@@ -202,25 +205,24 @@ local function addMonths(this, months)
     return DateTime(dateToTicks(y, m, d) + ticks % 864e9, this.kind)
 end
 
-DateTime.addMonths = addMonths
+DateTime.AddMonths = addMonths
 
-function DateTime.addYears(this, years)
+function DateTime.AddYears(this, years)
     if years < - 10000 or years > 10000 then
         throw(ArgumentOutOfRangeException("years")) 
     end
     return addMonths(this, years * 12)
 end
 
-function DateTime.specifyKind(this, kind)
+function DateTime.SpecifyKind(this, kind)
     return DateTime(this.ticks, kind)
 end
 
-function DateTime.subtract(this, v) 
-    return TimeSpan(this.ticks - v.ticks)
-end
-
-function DateTime.subtractTs(this, ts)
-    return DateTime(this.ticks - ts.ticks, this.kind)
+function DateTime.Subtract(this, v) 
+    if getmetatable(v) == DateTime then
+        return TimeSpan(this.ticks - v.ticks)
+    end
+    return DateTime(this.ticks - ts.ticks, this.kind) 
 end
 
 function DateTime.getDay(this)
@@ -284,7 +286,7 @@ function DateTime.getToday()
     return DateTime.getNow():getDate()
 end
 
-function DateTime.toLocalTime(this)
+function DateTime.ToLocalTime(this)
     if this.kind == 2 then 
         return this
     end
@@ -292,7 +294,7 @@ function DateTime.toLocalTime(this)
     return DateTime(ticks, 2)
 end
 
-function DateTime.toUniversalTime(this)
+function DateTime.ToUniversalTime(this)
     if this.kind == 1 then
         return this
     end
@@ -300,18 +302,14 @@ function DateTime.toUniversalTime(this)
     return DateTime(ticks, 1)
 end
 
-function DateTime.toString(this)
+function DateTime.ToString(this)
     return string.format("%d/%d/%d %02d:%02d:%02d.%03d", 
         this:getYear(), this:getMonth(), this:getDay(), 
         this:getHour(), this:getMinute(), this:getSecond(), this:getMillisecond())
 end
 
-DateTime.__add = DateTime.add
-
-function  DateTime.__sub(t1, t2)
-    local sub = getmetatable(t2) == DateTime and DateTime.subtract or DateTime.subtractTs
-    return sub(t1, t2)
-end
+DateTime.__add = DateTime.Add
+DateTime.__sub = DateTime.Subtract
 
 function DateTime.__eq(t1, t2)
     return t1.ticks == t2.ticks
@@ -325,16 +323,13 @@ function DateTime.__le(t1, t2)
     return t1.ticks <= t2.ticks
 end
 
-DateTime.__tostring = DateTime.toString
+System.defStc("System.DateTime", DateTime)
+DateTime.__inherits__ = { System.IComparable, System.IComparable_1(DateTime), System.IEquatable_1(DateTime) }
 
-local new = System.new
-local minValue = new(DateTime, 0)
+local minValue = DateTime(0)
 DateTime.minValue = minValue
-DateTime.maxValue = new(DateTime, 3155378975999999999)
+DateTime.maxValue = DateTime(3155378975999999999)
 
 function DateTime.__default__()
     return minValue
 end  
-
-System.defStc("System.DateTime", DateTime)
-DateTime.__inherits__ = { System.IComparable, System.IComparable_1(DateTime), System.IEquatable_1(DateTime) }

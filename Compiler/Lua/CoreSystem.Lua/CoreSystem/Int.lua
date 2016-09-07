@@ -38,9 +38,7 @@ function Int.EqualsObj(this, v)
     return this == v
 end
 
-function Int.GetHashCode(this)
-    return this
-end
+Int.GetHashCode = System.identityFn
 
 local function parse(s, min, max)
     if s == nil then

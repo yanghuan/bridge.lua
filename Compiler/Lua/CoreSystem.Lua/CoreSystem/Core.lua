@@ -8,34 +8,36 @@ local getmetatable = getmetatable
 local type = type
 local ipairs = ipairs
 local assert = assert
+local table = table
 local tinsert = table.insert
 local tremove = table.remove
 local rawget = rawget
 local floor = math.floor
+local error = error
 
 local emptyFn = function() end
+local identityFn = function(x) return x end
 local genericCache = {}
 local class = {}
 local modules = {}
 local usings = {}
 local id = 0
+local Object = {}
 
-local function callMultiCtor(this, ctor, index, ...)
-    ctor[index](this, ...)
-end
-
-local function new(cls, ...) 
+local function new(cls, ...)
     local this = setmetatable({}, cls)
-    local ctor = cls.__ctor__
-    if type(ctor) == "table" then
-        callMultiCtor(this, ctor, ...)
-    else
-        ctor(this, ...)
-    end
+    cls.__ctor__(this, ...)
     return this
 end
 
-local newmetatable = { __call = new }
+local function multiNew(cls, inx, ...) 
+    local this = setmetatable({}, cls)
+    cls.__ctor__[inx](this, ...)
+    return this
+end
+
+Object.__call = new
+Object.new = multiNew
 
 local function throw(e, lv)
     e:traceback(lv)
@@ -178,7 +180,7 @@ local function def(name, kind, cls, generic)
         end    
         local super = getmetatable(cls)
         if super == nil then
-            setmetatable(cls, newmetatable)
+            setmetatable(cls, Object)
         end
         if cls.__default__ == nil then
             cls.__default__ = emptyFn
@@ -215,7 +217,7 @@ end
 System = {
     null = null,
     emptyFn = emptyFn,
-    new = new,
+    identityFn = identityFn,
     try = try,
     throw = throw,
     define = defCls,
@@ -224,6 +226,7 @@ System = {
 }
 
 local System = System
+defCls("System.Object", Object)
 
 System.bnot = bit.bnot
 System.band = bit.band

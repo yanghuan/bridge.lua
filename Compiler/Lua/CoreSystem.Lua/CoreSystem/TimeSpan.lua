@@ -3,6 +3,9 @@ local throw = System.throw
 local div = System.div
 local ArgumentException = System.ArgumentException
 
+local getmetatable = getmetatable
+local select = select
+
 local TimeSpan = {}
 
 local function compare(t1, t2)
@@ -11,10 +14,10 @@ local function compare(t1, t2)
     return 0
 end
 
-TimeSpan.compare = compare
-TimeSpan.compareTo = compare
+TimeSpan.Compare = compare
+TimeSpan.CompareTo = compare
 
-function TimeSpan.compareToObj(this, t)
+function TimeSpan.CompareToObj(this, t)
    if t == null then return 1 end
    if getmetatable(t) ~= TimeSpan then
        throw(ArgumentException("Arg_MustBeTimeSpan"))
@@ -22,18 +25,18 @@ function TimeSpan.compareToObj(this, t)
    compare(this, t)
 end
 
-function TimeSpan.equals(t1, t2)
+function TimeSpan.Equals(t1, t2)
     return t1.ticks == t2.ticks
 end
 
-function TimeSpan.equalsObj(this, t)
+function TimeSpan.EqualsObj(this, t)
     if getmetatable(t) == TimeSpan then
         return this.ticks == t.ticks
     end
     return false
 end
 
-function TimeSpan.getHashCode(this)
+function TimeSpan.GetHashCode(this)
     return this.ticks
 end
 
@@ -100,30 +103,30 @@ function TimeSpan.getTotalSeconds(this)
     return this.ticks / 1e7
 end
 
-function TimeSpan.add(this, ts) 
+function TimeSpan.Add(this, ts) 
     return TimeSpan(this.ticks + ts.ticks)
 end
 
-function TimeSpan.subtract(this, ts) 
+function TimeSpan.Subtract(this, ts) 
     return TimeSpan(this.ticks - ts.ticks)
 end
 
-function TimeSpan.duration(this) 
+function TimeSpan.Duration(this) 
     return TimeSpan(math.abs(this.ticks))
 end
 
-function TimeSpan.negate(this) 
+function TimeSpan.Negate(this) 
     return TimeSpan(-this.ticks)
 end
 
-function TimeSpan.toString(this) 
+function TimeSpan.ToString(this) 
     local day = this:getDays()
     local daysStr = day == 0 and "" or (tostring(day) .. ".")
     return string.format("%s%02d:%02d:%02d.%03d", daysStr, this:getHours(), this:getMinutes(), this:getSeconds(), this:getMilliseconds())
 end
 
-TimeSpan.__add = TimeSpan.add
-TimeSpan.__sub = TimeSpan.subtract
+TimeSpan.__add = TimeSpan.Add
+TimeSpan.__sub = TimeSpan.Subtract
 
 function TimeSpan.__eq(t1, t2)
     return t1.ticks == t2.ticks
@@ -137,41 +140,38 @@ function TimeSpan.__le(t1, t2)
     return t1.ticks <= t2.ticks
 end
 
-TimeSpan.__tostring = TimeSpan.toString
-
-local new = System.new
-local zero = new(TimeSpan, 0)
-TimeSpan.zero = zero
-TimeSpan.maxValue = new(TimeSpan, 864e13)
-TimeSpan.minValue = new(TimeSpan, -864e13)
-
-function TimeSpan.fromDays(value) 
+function TimeSpan.FromDays(value) 
     return TimeSpan(value * 864e9)
 end
 
-function TimeSpan.fromHours(value) 
+function TimeSpan.FromHours(value) 
     return TimeSpan(value * 36e9)
 end
 
-function TimeSpan.fromMilliseconds(value) 
+function TimeSpan.FromMilliseconds(value) 
     return TimeSpan(value * 1e4)
 end
 
-function TimeSpan.fromMinutes(value) 
+function TimeSpan.FromMinutes(value) 
     return TimeSpan(value * 6e8)
 end
 
-function TimeSpan.fromSeconds(value) 
+function TimeSpan.FromSeconds(value) 
     return TimeSpan(value * 1e7)
 end
 
-function TimeSpan.fromTicks(value) 
+function TimeSpan.FromTicks(value) 
     return TimeSpan(value)
-end
-
-function TimeSpan.__default__()
-    return zero
 end
 
 System.defStc("System.TimeSpan", TimeSpan)
 TimeSpan.__inherits__ = { System.IComparable, System.IComparable_1(TimeSpan), System.IEquatable_1(TimeSpan) }
+
+local zero = TimeSpan(0)
+TimeSpan.zero = zero
+TimeSpan.maxValue = TimeSpan(864e13)
+TimeSpan.minValue = TimeSpan(-864e13)
+
+function TimeSpan.__default__()
+    return zero
+end

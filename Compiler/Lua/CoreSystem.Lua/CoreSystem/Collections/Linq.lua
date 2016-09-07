@@ -1,6 +1,7 @@
 local System = System
 local throw = System.throw
 local each = System.each
+local identityFn = System.identityFn
 local Collection = System.Collection
 local wrap = Collection.wrap
 local unWrap = Collection.unWrap
@@ -280,10 +281,6 @@ local function groupBy(source, keySelector, elementSelector, comparer, TKey, TEl
     return createInternal(IGrouping, function()
         return createLookup(source, keySelector, elementSelector, comparer, TKey, TElement):getEnumerator()
     end)
-end
-
-local function identityFn(x)
-    return x
 end
 
 function Enumerable.groupBy(source, ...)

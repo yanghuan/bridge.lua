@@ -3,8 +3,7 @@ local throw = System.throw
 local NullReferenceException = System.NullReferenceException
 
 local type = type
-
-local Object = {}
+local Object = System.Object
 
 local getHashCodeTable = {
     number = System.Double.GetHashCode,
@@ -77,5 +76,3 @@ end
 function Object.ReferenceEquals(a, b)
     return a == b
 end
-
-System.define("System.Object", Object)
