@@ -19,13 +19,8 @@ using Bridge.Contract;
 using Bridge.Translator;
 
 namespace Bridge.Lua {
-    public sealed class BridgeLuaException : System.Exception {
-        public BridgeLuaException(string message) : base(message) { } 
-    }
-
     public sealed class Worker {
         private const string kBridge = "Bridge";
-        private const string kDefaultBridgePath = "~/" + kBridge + ".dll";
         private const string kTempDirName = "__temp__";
         private const string kOutDllName = "__out__.dll";
         private static readonly UTF8Encoding UTF8Encoding = new UTF8Encoding(false);
@@ -38,18 +33,11 @@ namespace Bridge.Lua {
         private string folder_;
         private string output_;
         private string[] libs_;
-        private string bridgeDllPath_;
         private string tempDirectory_;
-        private string libWhite_;
-        private string libBlack_;
 
-        public Worker(string folder, string output, string bridgeDllPath, string lib, string libWhite, string libBlack) {
+        public Worker(string folder, string output, string lib) {
             folder_ = folder;
             output_ = output;
-            if(string.IsNullOrWhiteSpace(bridgeDllPath)) {
-                bridgeDllPath = kDefaultBridgePath;
-            }
-            bridgeDllPath_ = Utility.GetCurrentDirectory(bridgeDllPath);
             if(!string.IsNullOrEmpty(lib)) {
                 List<string> list = new List<string>();
                 string[] libs = lib.Split(';');
@@ -60,8 +48,6 @@ namespace Bridge.Lua {
                 }
                 libs_ = list.ToArray();
             }
-            libWhite_ = libWhite;
-            libBlack_ = libBlack;
         }
 
         public void Do() {
@@ -86,7 +72,7 @@ namespace Bridge.Lua {
         private string Compiler() {
             string[] files = Directory.GetFiles(folder_, "*.cs", SearchOption.AllDirectories);
             if(files.Length == 0) {
-                throw new BridgeLuaException(string.Format("{0} is empty", folder_));
+                throw new ArgumentException(string.Format("{0} is empty", folder_));
             }
         
             CompilerParameters cp = new CompilerParameters();
@@ -134,11 +120,9 @@ namespace Bridge.Lua {
         private sealed class LuaTranslater : Bridge.Translator.Translator {
             private string output_;
 
-            public LuaTranslater(string folder, string output, string dll, string bridgeDllPath) : base(folder, null, true, dll) {
+            public LuaTranslater(string folder, string output, string dll) : base(folder, null, true, dll) {
                 output_ = output;
-                this.BridgeLocation = bridgeDllPath;
                 this.Log = new Logger("LuaTranslater", true, new ConsoleLoggerWriter());
-
                 TransformCtx.GetEntityName = GetEntityName;
             }
 
@@ -159,8 +143,7 @@ namespace Bridge.Lua {
         }
 
         private void ToLua(string outDllPath) {
-            string bridgeDllPath = Utility.Move(tempDirectory_, bridgeDllPath_);
-            var translator = new LuaTranslater(folder_, output_, outDllPath, bridgeDllPath);
+            var translator = new LuaTranslater(folder_, output_, outDllPath);
             translator.SearchPaths = GetSearchPaths();
             translator.XmlMetaFiles = new string[] { "System.xml" };
             translator.Translate();

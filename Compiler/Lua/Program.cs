@@ -29,21 +29,14 @@ Options
 
                     string folder = cmds.GetArgument("-f");
                     string output = cmds.GetArgument("-p");
-                    string bridge = cmds.GetArgument("-b", true);
                     string lib = cmds.GetArgument("-l", true);
-                    string libWhite = cmds.GetArgument("-lw", true);
-                    string libBlack = cmds.GetArgument("-lb", true);
-
-                    Worker w = new Worker(folder, output, bridge, lib, libWhite, libBlack);
+                    Worker w = new Worker(folder, output, lib);
                     w.Do();
                     Console.WriteLine("all operator success");
                 }
                 catch(CmdArgumentException e) {
                     Console.Error.WriteLine(e.ToString());
-                    Environment.ExitCode = -1;
-                }
-                catch(BridgeLuaException e) {
-                    Console.Error.WriteLine(e.Message);
+                    ShowHelpInfo();
                     Environment.ExitCode = -1;
                 }
                 catch(Exception e) {
