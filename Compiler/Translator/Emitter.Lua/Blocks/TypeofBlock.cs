@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace Bridge.Translator.Lua {
         }
 
         protected override void DoEmit() {
-            this.Write("System.typeof");
+            this.Write(LuaHelper.Typeof);
             this.WriteOpenParentheses();
             TypeOfExpression.Type.AcceptVisitor(this.Emitter);
             this.WriteCloseParentheses();

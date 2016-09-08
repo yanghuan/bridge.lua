@@ -48,6 +48,17 @@ namespace Bridge.Contract {
         public static List<MethodInfo> CurClassOtherMethodNames = new List<MethodInfo>();
         public static Dictionary<ITypeInfo, string> NamespaceNames = new Dictionary<ITypeInfo, string>();
         public static HashSet<IType> ExportEnums = new HashSet<IType>();
+        public static HashSet<IType> UseLinqClasses = new HashSet<IType>();
+
+        public static bool IsCurClssUseLinq {
+            get {
+                return UseLinqClasses.Contains(CurClass);
+            }
+        }
+
+        public static void CurClassUseLinq() {
+            UseLinqClasses.Add(CurClass);
+        }
     }
 
     [XmlRoot("assembly")]
@@ -89,12 +100,14 @@ namespace Bridge.Contract {
             public string Name;
             [XmlAttribute]
             public string Template;
+            [XmlAttribute]
+            public int ArgCount;
             [XmlElement("arg")]
             public ArgumentModel[] Args;
 
             public bool IsMatchAll {
                 get {
-                    return Args == null;
+                    return Args == null && ArgCount == 0;
                 }
             }
         }
@@ -215,6 +228,14 @@ namespace Bridge.Contract {
                                 MethodMetaInfo info = new MethodMetaInfo(methodDefinition, methodModel);
                                 XmlMetaMaker.AddMethod(info);
                             }
+                        }
+                        else if(methodModel.ArgCount != 0) {
+                            MethodDefinition methodDefinition = TypeDefinition.Methods.SingleOrDefault(i => i.Name == methodModel.name && i.Parameters.Count == methodModel.ArgCount);
+                            if(methodDefinition == null) {
+                                throw new ArgumentException(methodModel.name + " is not found match at " + TypeDefinition.FullName);
+                            }
+                            MethodMetaInfo info = new MethodMetaInfo(methodDefinition, methodModel);
+                            XmlMetaMaker.AddMethod(info);
                         }
                         else {
                             MethodDefinition methodDefinition = TypeDefinition.Methods.FirstOrDefault(i => IsMethodMatch(i, methodModel));

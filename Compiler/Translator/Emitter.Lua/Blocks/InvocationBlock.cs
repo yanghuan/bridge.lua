@@ -257,18 +257,21 @@ namespace Bridge.Translator.Lua
                         }
                         else {
                             if(csharpInvocation.TargetResult.Type.Kind == TypeKind.Enum) {
-                                string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".EnumExportAttribute";
-                                var attr = csharpInvocation.Member.Attributes.FirstOrDefault(i => i.AttributeType.FullName == attrName);
-                                if(attr != null) {
-                                    TransformCtx.ExportEnums.Add(csharpInvocation.TargetResult.Type);
+                                if(targetMember.MemberName == "GetType") {
+                                    var type = csharpInvocation.TargetResult.Type;
+                                    TransformCtx.ExportEnums.Add(type);
+
+                                    this.Write(LuaHelper.Typeof);
+                                    this.WriteOpenParentheses();
+                                    string name = BridgeTypes.ToJsName(type, this.Emitter);
+                                    this.Write(name);
+                                    this.WriteCloseParentheses();
+                                    return;
                                 }
                             }
                             else if(csharpInvocation.TargetResult.Type.FullName == "System.Enum") {
-                                string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".EnumExportAttribute";
-                                var attr = csharpInvocation.Member.Attributes.FirstOrDefault(i => i.AttributeType.FullName == attrName);
-                                if(attr != null) {
-                                    string typeName = attr.PositionalArguments[0].ConstantValue.ToString();
-                                    var typeArgument = argsInfo.TypeArguments.FirstOrDefault(i => i.Name == typeName);
+                                if(targetMember.MemberName == "TryParse") {
+                                    var typeArgument = argsInfo.TypeArguments[0];
                                     if(typeArgument != null) {
                                         if(typeArgument.IType != null) {
                                             TransformCtx.ExportEnums.Add(typeArgument.IType);
@@ -292,8 +295,13 @@ namespace Bridge.Translator.Lua
                             if (resolvedMethod != null && resolvedMethod.IsExtensionMethod)
                             {
                                 string inline = this.Emitter.GetInline(resolvedMethod);
-                                bool isNative = this.IsNativeMethod(resolvedMethod);
+                                if(inline != null && !TransformCtx.IsCurClssUseLinq) {
+                                    if(resolvedMethod.DeclaringType.FullName == "System.Linq.Enumerable") {
+                                        TransformCtx.CurClassUseLinq();
+                                    }
+                                }
 
+                                bool isNative = this.IsNativeMethod(resolvedMethod);
                                 if (string.IsNullOrWhiteSpace(inline) && isNative)
                                 {
                                     invocationResult = null;

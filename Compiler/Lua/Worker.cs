@@ -196,6 +196,10 @@ namespace Bridge.Lua {
             }
 
             private void WriteUsingDeclaration() {
+                bool useLinq = types_.Any(i => TransformCtx.UseLinqClasses.Contains(i.Type.Type));
+                if(useLinq) {
+                    sb_.AppendLine("local Linq = System.Linq");
+                }
                 usings_.Remove(kSystem);
                 if(usings_.Count > 0) {
                     List<string> usings = usings_.ToList();

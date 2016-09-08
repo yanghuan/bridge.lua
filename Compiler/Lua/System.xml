@@ -226,6 +226,14 @@
                 <arg type="System.Object" />
             </method>
         </class>
+        <class name="Enum">
+            <method name="TryParse" ArgCount="2" Template="System.Enum.TryParse({^0}, {0})" />
+            <method name="TryParse" ArgCount="3" Template="System.Enum.TryParse({^0}, {0}, {1})" />
+            <method name="CompareTo" Name="CompareToObj" />
+            <method name="Equals" Name="EqualsObj" />
+            <method name="GetHashCode" Template="System.Enum.GetHashCode({this})" />
+            <method name="ToString" Template="System.Enum.toString({this}, {class})" />
+        </class>
         <class name="Object">
             <method name="Equals" Template="System.Object.Equals({this, {0}})" >
                 <arg type="System.Object" />
@@ -280,7 +288,7 @@
         </class>
     </namespace>
     <namespace name="System.Linq">
-        <class name="Enumerable" Name="Linq" >
+        <class name="Enumerable" Name="Linq">
             <method name="Where" Template="Linq.Where({0}, {1})" />
             <method name="Select" Template="Linq.Select({0}, {1}, {^1})" />
             <method name="SelectMany" Template="Linq.SelectMany({0}, {1}, {^1})" />

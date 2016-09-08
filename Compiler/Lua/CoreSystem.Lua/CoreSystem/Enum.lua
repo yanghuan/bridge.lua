@@ -9,9 +9,9 @@ local tostring = tostring
 
 local Enum = {}
 
-Enum.compareTo = Int.compareTo
-Enum.equalsObj = Int.equalsObj
-Enum.getHashCode = Int.getHashCode
+Enum.CompareToObj = Int.CompareToObj
+Enum.EqualsObj = Int.EqualsObj
+Enum.GetHashCode = Int.GetHashCode
 Enum.__default__ = Int.__default__
 
 function Enum.toString(this, cls)
@@ -50,7 +50,7 @@ local function tryParseEnum(enumType, value, ignoreCase)
     end
 end
 
-function Enum.parse(enumType, value, ignoreCase)
+function Enum.Parse(enumType, value, ignoreCase)
    local result = tryParseEnum(enumType, value, ignoreCase)
    if result == nil then
        throw(ArgumentException("parse enum fail: ".. value))
@@ -58,8 +58,8 @@ function Enum.parse(enumType, value, ignoreCase)
    return result
 end
 
-function Enum.tryParse(TEnum, value, result, ignoreCase)
-    result = tryParseEnum(System.typeof(TEnum), value, ignoreCase)
+function Enum.TryParse(TEnum, value, ignoreCase)
+    local result = tryParseEnum(System.typeof(TEnum), value, ignoreCase)
     if result == nil then
         return false, 0
     end

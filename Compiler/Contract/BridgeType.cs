@@ -244,6 +244,9 @@ namespace Bridge.Contract
         }
 
         public static string ToNameIgnoreEnum(IType type, IEmitter emitter, ToNameTypeEnum kind = ToNameTypeEnum.None) {
+            if(type.Kind == TypeKind.Enum) {
+                return "System.Int";
+            }
             return ToJsName(type, emitter, false, false, kind);
         }
 
@@ -338,10 +341,6 @@ namespace Bridge.Contract
                 name += "(" + BridgeTypes.ToNameIgnoreEnum(((ICSharpCode.NRefactory.TypeSystem.ArrayType)type).ElementType, emitter) + ")";
             }
 
-            if(kind != ToNameTypeEnum.Definition && type.Kind == TypeKind.Enum) {
-                TransformCtx.ExportEnums.Add(type);
-            }
-
             return name;
         }
 
@@ -385,11 +384,7 @@ namespace Bridge.Contract
             }
 
             var resolveResult = emitter.Resolver.ResolveNode(astType, emitter);
-            if(resolveResult.Type.Kind == TypeKind.Enum) {
-                return "System.Int";
-            }
-
-            return BridgeTypes.ToJsName(resolveResult.Type, emitter, false, false, kind);
+            return BridgeTypes.ToNameIgnoreEnum(resolveResult.Type, emitter, kind);
         }
 
         public static string AddModule(string name, BridgeType type, out bool isCustomName)

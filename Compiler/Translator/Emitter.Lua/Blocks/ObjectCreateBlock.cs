@@ -126,10 +126,22 @@ namespace Bridge.Translator.Lua
                     new InlineArgumentsBlock(this.Emitter, argsInfo, inlineCode).Emit();
                 }
                 else
-                { 
+                {
+                    bool isMutilCtor = false;
+                    if(!isTypeParam && !this.Emitter.Validator.IsIgnoreType(type)) {
+                        bool isFromCode = this.Emitter.BridgeTypes.Get(type).IsFromCode;
+                        if(isFromCode) {
+                            isMutilCtor = type.Methods.Count(m => m.IsConstructor && !m.IsStatic) > (type.IsValueType ? 0 : 1);
+                        }
+                    }
+
                     if (String.IsNullOrEmpty(customCtor))
                     {
                         objectCreateExpression.Type.AcceptVisitor(this.Emitter);
+                        if(isMutilCtor) {
+                            this.WriteObjectColon();
+                            this.Write(LuaHelper.MutilNew);
+                        }
                         this.WriteOpenParentheses();
                     }
                     else
@@ -137,17 +149,12 @@ namespace Bridge.Translator.Lua
                         this.Write(customCtor);
                     }
 
-                    if (!isTypeParam && !this.Emitter.Validator.IsIgnoreType(type))  {
-                        bool isFromCode = this.Emitter.BridgeTypes.Get(type).IsFromCode;
-                        if(isFromCode) {
-                            if(type.Methods.Count(m => m.IsConstructor && !m.IsStatic) > (type.IsValueType ? 0 : 1)) {
-                                string name = OverloadsCollection.Create(this.Emitter, ((InvocationResolveResult)this.Emitter.Resolver.ResolveNode(objectCreateExpression, this.Emitter)).Member).GetOverloadName();
-                                int index = ConstructorBlock.GetCtorIndex(name);
-                                this.Write(index);
-                                if(argsExpressions.Length > 0) {
-                                    this.WriteComma();
-                                }
-                            }
+                    if(isMutilCtor) {
+                        string name = OverloadsCollection.Create(this.Emitter, ((InvocationResolveResult)this.Emitter.Resolver.ResolveNode(objectCreateExpression, this.Emitter)).Member).GetOverloadName();
+                        int index = ConstructorBlock.GetCtorIndex(name);
+                        this.Write(index);
+                        if(argsExpressions.Length > 0) {
+                            this.WriteComma();
                         }
                     }
 

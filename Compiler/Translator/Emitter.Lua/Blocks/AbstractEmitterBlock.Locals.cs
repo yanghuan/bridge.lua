@@ -12,6 +12,8 @@ namespace Bridge.Translator.Lua
         public const string Root = Emitter.ROOT;
         public const string Nil = "nil";
         public const string MergeVar = "t";
+        public const string MutilNew = "new";
+        public const string Typeof = Root + ".typeof";
 
         public static string Ident(this string s) {
             return "__" + s + "__";
