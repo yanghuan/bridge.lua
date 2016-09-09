@@ -30,15 +30,6 @@ local function new(cls, ...)
     return this
 end
 
-local function multiNew(cls, inx, ...) 
-    local this = setmetatable({}, cls)
-    cls.__ctor__[inx](this, ...)
-    return this
-end
-
-Object.__call = new
-Object.new = multiNew
-
 local function throw(e, lv)
     e:traceback(lv)
     error(e)
@@ -131,6 +122,7 @@ local function def(name, kind, cls, generic)
         if generic then
             generic.__index = generic
             generic.__call = new
+            setmetatable(generic, Object)
         end
         local id = getId()
         local fn = function(...)
@@ -176,6 +168,9 @@ local function def(name, kind, cls, generic)
                     local baseCtor = base.__ctor__
                     cls.__ctor__ = type(baseCtor) == "table" and baseCtor[1] or baseCtor
                 end 
+            else
+                cls.__interfaces__ = extends
+                cls.__inherits__ = nil
             end
         end    
         local super = getmetatable(cls)
@@ -226,7 +221,6 @@ System = {
 }
 
 local System = System
-defCls("System.Object", Object)
 
 System.bnot = bit.bnot
 System.band = bit.band
@@ -401,5 +395,32 @@ function System.namespace(name, f)
     f(namespace)
 end
 
+local function multiNew(cls, inx, ...) 
+    local this = setmetatable({}, cls)
+    cls.__ctor__[inx](this, ...)
+    return this
+end
 
+local function equals(a, b)
+    return a == b
+end
+
+Object.__call = new
+Object.new = multiNew
+Object.EqualsObj = equals
+Object.ReferenceEquals = equals
+Object.GetHashCode = identityFn
+Object.ToString = tostring
+
+function Object.EqualsStatic(x, y)
+    if x == y then
+        return true
+    end
+    if x == nil or y == nil then
+        return false
+    end
+    return x:EqualsObj(y)
+end
+
+defCls("System.Object", Object)
 

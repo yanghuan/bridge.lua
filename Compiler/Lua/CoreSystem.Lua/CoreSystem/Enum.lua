@@ -11,7 +11,6 @@ local Enum = {}
 
 Enum.CompareToObj = Int.CompareToObj
 Enum.EqualsObj = Int.EqualsObj
-Enum.GetHashCode = Int.GetHashCode
 Enum.__default__ = Int.__default__
 
 function Enum.toString(this, cls)

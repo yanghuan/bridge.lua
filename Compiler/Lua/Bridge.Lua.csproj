@@ -88,7 +88,6 @@
     <None Include="CoreSystem.Lua\CoreSystem\Int.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Interfaces.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Math.lua" />
-    <None Include="CoreSystem.Lua\CoreSystem\Object.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\String.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Text\StringBuilder.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\TimeSpan.lua" />
@@ -108,6 +107,7 @@
   <ItemGroup>
     <Content Include="System.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

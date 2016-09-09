@@ -45,7 +45,7 @@ local function getType(obj)
     return typeof(cls)
 end
 
-System.getType = getType
+System.Object.GetType = getType
 System.typeof = typeof
 
 local function isGenericName(name)

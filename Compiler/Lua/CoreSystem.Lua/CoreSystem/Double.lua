@@ -9,6 +9,8 @@ local type = type
 local tonumber = tonumber
 
 local Double = {}
+debug.setmetatable(0, Double)
+
 local nan = 0 / 0
 local posInf = 1 / 0
 local negInf = - 1 / 0

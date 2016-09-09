@@ -4,144 +4,31 @@
         <class name="Byte" Name="System.Int">
             <method name="Parse" Name="ParseByte" />
             <method name="TryParse" Name="TryParseByte" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.Byte" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Byte" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
         <class name="Int16" Name="System.Int" >
             <method name="Parse" Name="ParseInt16" />
             <method name="TryParse" Name="TryParseInt16" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.Int16" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Int16" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
-        <class name="Int32" Name="System.Int" >
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.Int32" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Int32" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
-        </class>
+        <class name="Int32" Name="System.Int" />
         <class name="Int64" Name="System.Int" >
             <method name="Parse" Name="ParseInt64" />
             <method name="TryParse" Name="TryParseInt64" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.Int64" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Int64" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
         <class name="SByte" Name="System.Int" >
             <method name="Parse" Name="ParseSByte" />
             <method name="TryParse" Name="TryParseSByte" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.SByte" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.SByte" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
         <class name="UInt16" Name="System.Int" >
             <method name="Parse" Name="ParseUInt16" />
             <method name="TryParse" Name="TryParseUInt16" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.UInt16" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.UInt16" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
         <class name="UInt32" Name="System.Int" >
             <method name="Parse" Name="ParseUInt32" />
             <method name="TryParse" Name="TryParseUInt32" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.UInt32" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.UInt32" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
         <class name="UInt64" Name="System.Int" >
             <method name="Parse" Name="ParseUInt64" />
             <method name="TryParse" Name="TryParseUInt64" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.UInt64" />
-            </method>
-            <method name="CompareTo" Template="System.Int.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.UInt64" />
-            </method>
-            <method name="Equals" Template="System.Int.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Int.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
         <class name="Single" Name="System.Double" >
             <field name="NaN" Template="System.NaN" />
@@ -149,110 +36,38 @@
             <field name="PositiveInfinity" Template="System.PosInf" />
             <method name="Parse" Name="ParseSingle" />
             <method name="TryParse" Name="TryParseSingle" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.Single" />
-            </method>
-            <method name="CompareTo" Template="System.Double.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Single" />
-            </method>
-            <method name="Equals" Template="System.Double.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Double.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
         <class name="Double">
             <field name="NaN" Template="System.NaN" />
             <field name="NegativeInfinity" Template="System.NegInf" />
             <field name="PositiveInfinity" Template="System.PosInf" />
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.Double" />
-            </method>
-            <method name="CompareTo" Template="System.Double.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Double" />
-            </method>
-            <method name="Equals" Template="System.Double.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Double.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
         </class>
-        <class name="Boolean">
-            <method name="CompareTo" Template="System.Boolean.CompareTo({this}, {0})" >
-                <arg type="System.Boolean" />
-            </method>
-            <method name="CompareTo" Name="System.Boolean.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Boolean" />
-            </method>
-            <method name="Equals" Template="System.Boolean.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Boolean.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
-        </class>
-        <class name="Char">
-            <method name="CompareTo" Template="({this} - {0})" >
-                <arg type="System.Char" />
-            </method>
-            <method name="CompareTo" Name="System.Char.CompareToObj({this}, {0})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Template="({this} == {0})">
-                <arg type="System.Char" />
-            </method>
-            <method name="Equals" Template="System.Char.EqualsObj({this, {0}})" >
-                <arg type="System.Object" />
-            </method>
-            <method name="GetHashCode" Template="System.Char.GetHashCode({this})" />
-            <method name="ToString" Template="tostring({this})" />
-        </class>   
         <class name="String">
             <property name="Length">
                 <get Template="#{this}" />
             </property>
-            <method name="CompareTo" Name="CompareToObj" >
-                <arg type="System.Object" />
-            </method>
-            <method name="Equals" Name="EqualsObj" >
-                <arg type="System.Object" />
-            </method>
         </class>
         <class name="Enum">
             <method name="TryParse" ArgCount="2" Template="System.Enum.TryParse({^0}, {0})" />
             <method name="TryParse" ArgCount="3" Template="System.Enum.TryParse({^0}, {0}, {1})" />
-            <method name="CompareTo" Name="CompareToObj" />
-            <method name="Equals" Name="EqualsObj" />
-            <method name="GetHashCode" Template="System.Enum.GetHashCode({this})" />
             <method name="ToString" Template="System.Enum.toString({this}, {class})" />
         </class>
         <class name="Object">
-            <method name="Equals" Template="System.Object.Equals({this, {0}})" >
+            <method name="Equals" Name="EqualsObj" >
                 <arg type="System.Object" />
             </method>
             <method name="Equals" Name="EqualsStatic" >
                 <arg type="System.Object" />
                 <arg type="System.Object" />
             </method>
-            <method name="GetHashCode" Template="System.Object.GetHashCode({this})" />
-            <method name="GetType" Template="System.GetType({this})" />
-            <method name="ToString" Template="System.Object.ToString({this})" />
         </class>
         <class name="Array" Name="System.Array">
             <property name="Length">
                 <get Template="#{this}" />
             </property>
         </class>
-        <class name="IComparable^1">
-            <method name="CompareTo" Template="System.CompareT({this}, {0}, {^0})" />
+        <class name="IComparable">
+            <method name="CompareTo" Name="CompareToObj" />
         </class>
     </namespace>
     <namespace name="System.Collections" Name="System" />
@@ -279,13 +94,6 @@
             <property name="List" IsFAutoield="true" />
         </class>
         <class name="HashSet^1" Name="System.HashSet" />
-        <class name="EqualityComparer^1" >
-            <method name="Equals" Template="{this}.Equals({0}, {1})" />
-            <method name="GetHashCode" Template="{this}.GetHashCode({0})" />
-        </class>
-        <class name="Comparer^1">
-            <method name="Compare" Template="{this}.Compare({0}, {1})" />
-        </class>
     </namespace>
     <namespace name="System.Linq">
         <class name="Enumerable" Name="Linq">

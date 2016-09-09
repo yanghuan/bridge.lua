@@ -260,10 +260,12 @@ namespace Bridge.Translator.Lua
             var baseType = this.Emitter.GetBaseTypeDefinition();
             var typeDef = this.Emitter.GetTypeDefinition();
             if(typeDef.IsValueType) {
-                this.TypeInfo.Ctors.Add(new ConstructorDeclaration {
-                    Modifiers = Modifiers.Public,
-                    Body = new BlockStatement()
-                });
+                if(!typeDef.IsEnum) {
+                    this.TypeInfo.Ctors.Add(new ConstructorDeclaration {
+                        Modifiers = Modifiers.Public,
+                        Body = new BlockStatement()
+                    });
+                }
             }
             else {
                 if(TypeInfo.Ctors.Count == 0 && isInitExists_) {

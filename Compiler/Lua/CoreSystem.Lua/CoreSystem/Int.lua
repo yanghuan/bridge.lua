@@ -38,8 +38,6 @@ function Int.EqualsObj(this, v)
     return this == v
 end
 
-Int.GetHashCode = System.identityFn
-
 local function parse(s, min, max)
     if s == nil then
         return nil, 1        

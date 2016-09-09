@@ -259,7 +259,7 @@ namespace Bridge.Translator.Lua
                             if(csharpInvocation.TargetResult.Type.Kind == TypeKind.Enum) {
                                 if(targetMember.MemberName == "GetType") {
                                     var type = csharpInvocation.TargetResult.Type;
-                                    TransformCtx.ExportEnums.Add(type);
+                                    TransformCtx.ExportEnums.Add(csharpInvocation.TargetResult.Type);
 
                                     this.Write(LuaHelper.Typeof);
                                     this.WriteOpenParentheses();
@@ -267,6 +267,10 @@ namespace Bridge.Translator.Lua
                                     this.Write(name);
                                     this.WriteCloseParentheses();
                                     return;
+                                }
+                                else if(targetMember.MemberName == "ToString") {
+                                    var type = csharpInvocation.TargetResult.Type;
+                                    TransformCtx.ExportEnums.Add(csharpInvocation.TargetResult.Type);
                                 }
                             }
                             else if(csharpInvocation.TargetResult.Type.FullName == "System.Enum") {

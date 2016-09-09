@@ -7,7 +7,7 @@ local ipairs = ipairs
 local assert = assert
 
 local Delegate = {}
-Delegate.__index = Delegate
+debug.setmetatable(System.emptyFn, Delegate)
 
 local multicast = setmetatable({}, Delegate)
 local memberMethod = setmetatable({}, Delegate)

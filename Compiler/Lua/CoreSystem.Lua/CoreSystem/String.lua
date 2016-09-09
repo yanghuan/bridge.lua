@@ -106,8 +106,6 @@ function String.EqualsObj(this, v)
     return false
 end
 
-String.GetHashCode = System.identityFn
-
 function String.get(this, index)
     if index < 0 or index >= #this then
         throw(IndexOutOfRangeException())

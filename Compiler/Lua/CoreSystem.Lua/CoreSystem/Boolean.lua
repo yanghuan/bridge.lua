@@ -7,6 +7,7 @@ local FormatException = System.FormatException
 local type = type
 
 local Boolean = {}
+debug.setmetatable(false, Double)
 
 local function compare(this, v)
     if this == v then
@@ -37,8 +38,6 @@ function Boolean.EqualsObj(this, v)
     end
     return this == v
 end
-
-Boolean.GetHashCode = System.identityFn
 
 local function parse(s)
     if s == nil then

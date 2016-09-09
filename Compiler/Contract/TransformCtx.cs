@@ -565,12 +565,29 @@ namespace Bridge.Contract {
                 return null;
             }
 
+            string inline = null;
             MethodDefinition methodDefinition = GetMethodDefinition(method);
             if(methodDefinition != null) {
                 var info = methods_.GetOrDefault(methodDefinition);
-                return info != null ? info.Template : null;
+                if(info != null) {
+                    inline = info.Template;
+                }
             }
-            return null;
+            if(inline == null) {
+                if(method.IsOverride) {
+                    IMethod baseMethod = (IMethod)InheritanceHelper.GetBaseMember(method);
+                    inline = GetMethodInline(baseMethod);
+                }
+                else if(method.ImplementedInterfaceMembers.Count > 0) {
+                    foreach(IMethod baseMethod in method.ImplementedInterfaceMembers) {
+                        inline = GetMethodInline(baseMethod);
+                        if(inline != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return inline;
         }
 
         public static string GetMethodName(IMethod method) {
@@ -578,12 +595,29 @@ namespace Bridge.Contract {
                 return null;
             }
 
+            string name = null;
             MethodDefinition methodDefinition = GetMethodDefinition(method);
             if(methodDefinition != null) {
                 var info = methods_.GetOrDefault(methodDefinition);
-                return info != null ? info.Name : null;
+                if(info != null) {
+                    name = info.Name;
+                }
             }
-            return null;
+            if(name == null) {
+                if(method.IsOverride) {
+                    IMethod baseMethod = (IMethod)InheritanceHelper.GetBaseMember(method);
+                    name = GetMethodName(baseMethod);
+                }
+                else if(method.ImplementedInterfaceMembers.Count > 0) {
+                    foreach(IMethod baseMethod in method.ImplementedInterfaceMembers) {
+                        name = GetMethodName(baseMethod);
+                        if(name != null) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return name;
         }
     }
 }
