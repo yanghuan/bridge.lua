@@ -1,28 +1,26 @@
-package.path = package.path .. ";D:/Project/Bridge.lua/Compiler/Lua/CoreSystem.Lua/?.lua"
+package.path = package.path .. ";D:/Project/Bridge.Lua - avoid/Compiler/Lua/CoreSystem.Lua/?.lua"
 
-require("All")("");
+require("All")()
 
 print("-----------------", "dateTime & timeSpan")
 
 local date = System.DateTime.getNow()
 print(date, date:getYear(), date:getMonth(), date:getDay(), date:getMinute(), date:getSecond())
 
-local ts = System.TimeSpan.fromSeconds(20)
+local ts = System.TimeSpan.FromSeconds(20)
 print(ts)
 
-date = date + System.TimeSpan.fromDays(2)
+date = date + System.TimeSpan.FromDays(2)
 print(date)
 
 local baseTime = System.DateTime(1970, 1, 1) 
-print(baseTime:addMilliseconds(1458032204643))
+print(baseTime:AddMilliseconds(1458032204643))
 
 
 print("-----------------", "array")
-
 local arr = System.Array(System.Int)(10)
 print(getmetatable(arr).set)
 print(#arr)
-
 arr:set(0, nil)
 arr:set(1, nil)
 print(arr:get(0))
@@ -198,7 +196,7 @@ print("-----------------", "Type")
 local ins = 2
 ins = System.DateTime.getNow()
 ins = System.Dictionary(System.Int, System.String)()
-local t = System.getType(ins)
+local t = ins:GetType()
 print(t:getName())
 print(System.is(2, System.String))
 print(System.as("yang", System.String))
@@ -219,4 +217,4 @@ ProtoBuf.IExtensible = {}
 require "manifest" ()--]]
 
 
-
+--]]

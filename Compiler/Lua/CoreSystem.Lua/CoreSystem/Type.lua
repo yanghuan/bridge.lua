@@ -2,7 +2,6 @@ local System = System
 local throw = System.throw
 local Int = System.Int
 local Double = System.Double
-local NullReferenceException = System.NullReferenceException
 local InvalidCastException = System.InvalidCastException
 
 local type = type
@@ -27,22 +26,8 @@ local function typeof(cls)
     return type
 end
 
-local baseTable = {
-    number = Double,
-    string = System.String,
-    boolean = System.Boolean,
-    ["function"] = System.Delegate
-}
-
 local function getType(obj)
-    if obj == nil then
-        throw(NullReferenceException())
-    end
-    local cls = baseTable[type(obj)]
-    if cls == nil then
-        cls = getmetatable(obj)
-    end
-    return typeof(cls)
+    return typeof(getmetatable(obj))
 end
 
 System.Object.GetType = getType

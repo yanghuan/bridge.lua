@@ -7,7 +7,7 @@ local FormatException = System.FormatException
 local type = type
 
 local Boolean = {}
-debug.setmetatable(false, Double)
+debug.setmetatable(false, Boolean)
 
 local function compare(this, v)
     if this == v then

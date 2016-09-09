@@ -280,7 +280,6 @@ namespace Bridge.Translator.Lua
                 binaryOperatorExpression.Operator == BinaryOperatorType.Subtract)
             {
                 var add = binaryOperatorExpression.Operator == BinaryOperatorType.Add;
-
                 if (this.Emitter.Validator.IsDelegateOrLambda(leftResolverResult) || this.Emitter.Validator.IsDelegateOrLambda(rightResolverResult))
                 {
                     delegateOperator = true;

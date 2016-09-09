@@ -106,6 +106,10 @@ function String.EqualsObj(this, v)
     return false
 end
 
+function String.GetType(this)
+    return System.typeof(String)
+end
+
 function String.get(this, index)
     if index < 0 or index >= #this then
         throw(IndexOutOfRangeException())

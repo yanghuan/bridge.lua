@@ -1,5 +1,6 @@
 local System = System
 local throw = System.throw
+
 local setmetatable = setmetatable
 local getmetatable = getmetatable
 local insert = table.insert
@@ -10,7 +11,10 @@ local Delegate = {}
 debug.setmetatable(System.emptyFn, Delegate)
 
 local multicast = setmetatable({}, Delegate)
+multicast.__index = multicast
+
 local memberMethod = setmetatable({}, Delegate)
+memberMethod.__index = memberMethod
 
 function multicast.__call(t, ...)
     local result
@@ -167,10 +171,7 @@ end
 multicast.__eq = equals
 memberMethod.__eq = equals
 
-function Delegate.equalsObj(this, obj)
-    if this == nil then
-        throw(System.NullReferenceException())
-    end
+function Delegate.EqualsObj(this, obj)
     local typename = type(obj)
     if typename == "function" then
         return equals(this, obj)
@@ -182,6 +183,10 @@ function Delegate.equalsObj(this, obj)
         end
     end
     return false
+end
+
+function Delegate.GetType(this)
+    return System.typeof(Delegate)
 end
 
 System.fn = Delegate

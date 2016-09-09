@@ -53,7 +53,6 @@
     <Compile Include="CoreSystem.Lua\CoreSystem\Int.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Interfaces.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Math.lua" />
-    <Compile Include="CoreSystem.Lua\CoreSystem\Object.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\String.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Text\StringBuilder.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\TimeSpan.lua" />

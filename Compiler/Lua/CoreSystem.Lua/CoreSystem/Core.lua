@@ -122,7 +122,6 @@ local function def(name, kind, cls, generic)
         if generic then
             generic.__index = generic
             generic.__call = new
-            setmetatable(generic, Object)
         end
         local id = getId()
         local fn = function(...)
@@ -130,13 +129,15 @@ local function def(name, kind, cls, generic)
             local t = genericCache[trueId]
             if t == nil then
                 local obj = cls(...) or {}
-                setmetatable(obj, generic)
                 t = def(nil, kind, obj, genericName(name, ...))
+                if generic then
+                    setmetatable(t, generic)
+                end
                 genericCache[trueId] = t
             end
             return t
         end
-        return set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end }))
+        return set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end, __index = Object }))
     end
     cls = cls or {}
     if name ~= nil then
@@ -169,22 +170,18 @@ local function def(name, kind, cls, generic)
                     cls.__ctor__ = type(baseCtor) == "table" and baseCtor[1] or baseCtor
                 end 
             else
+                setmetatable(cls, Object)
                 cls.__interfaces__ = extends
                 cls.__inherits__ = nil
             end
+        elseif cls ~= Object then
+             setmetatable(cls, Object)
         end    
-        local super = getmetatable(cls)
-        if super == nil then
-            setmetatable(cls, Object)
-        end
         if cls.__default__ == nil then
             cls.__default__ = emptyFn
         end
         if cls.__ctor__ == nil then
             cls.__ctor__ = emptyFn
-        end
-        if cls.toString ~= nil and rawget(cls, "__tostring") == nil then
-            cls.__tostring = cls.toString
         end
         tinsert(class, cls)
     elseif kind == "I" then
