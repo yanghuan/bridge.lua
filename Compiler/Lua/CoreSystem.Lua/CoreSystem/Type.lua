@@ -1,6 +1,5 @@
 local System = System
 local throw = System.throw
-local Int = System.Int
 local Double = System.Double
 local InvalidCastException = System.InvalidCastException
 
@@ -12,7 +11,8 @@ local ipairs = ipairs
 local Type = {}
 local numberType = setmetatable({ c = Double, name = "Number", fullName = "System.Number" }, Type)
 local types = {
-    [Int] = numberType,
+    [System.Char] = numberType,
+    [System.Int] = numberType,
     [Double] = numberType,
 }
 
@@ -103,7 +103,7 @@ local function isSubclassOf(this, c)
     end
 end
 
-Type.isSubclassOf = isSubclassOf
+Type.IsSubclassOf = isSubclassOf
 
 local function getIsInterface(this)
     return this.c.__kind__ == "I"
@@ -166,16 +166,16 @@ local function isAssignableFrom(this, c)
     return false
 end 
 
-Type.isAssignableFrom = isAssignableFrom
+Type.IsAssignableFrom = isAssignableFrom
 
-function Type.isInstanceOfType(this, obj)
+function Type.IsInstanceOfType(this, obj)
     if obj == nil then
         return false 
     end
     return isAssignableFrom(this, getType(obj));
 end
 
-function Type.toString(this)
+function Type.ToString(this)
     return this.c.__name__
 end
 

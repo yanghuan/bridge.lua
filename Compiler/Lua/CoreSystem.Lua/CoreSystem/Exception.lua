@@ -19,7 +19,7 @@ System.define("System.Exception", {
         return this.errorStack
     end,
 
-    toString = function(this) 
+    ToString = function(this) 
         return this.message .. this.errorStack
     end,
 

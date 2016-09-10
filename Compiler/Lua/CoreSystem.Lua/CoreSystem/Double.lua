@@ -16,6 +16,10 @@ local posInf = 1 / 0
 local negInf = - 1 / 0
 local nanHashCode = {}
 
+Double.NaN = nan
+Double.NegInf = negInf
+Double.PosInf = posInf
+
 --http://lua-users.org/wiki/InfAndNanComparisons
 local function isNaN(v)
     return v ~= v
@@ -111,10 +115,6 @@ end
 function Double.__default__()
    return 0.0
 end
-
-System.NaN = nan
-System.NegInf = negInf
-System.PosInf = posInf
 
 function Double.ParseSingle(s)
     local v = parseWithException(s)

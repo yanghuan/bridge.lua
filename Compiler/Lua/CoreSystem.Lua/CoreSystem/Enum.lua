@@ -13,7 +13,7 @@ Enum.CompareToObj = Int.CompareToObj
 Enum.EqualsObj = Int.EqualsObj
 Enum.__default__ = Int.__default__
 
-function Enum.toString(this, cls)
+local function toString(this, cls)
     for k, v in pairs(cls) do
         if v == this then
            return k
@@ -21,6 +21,9 @@ function Enum.toString(this, cls)
     end
     return tostring(this)
 end
+
+Enum.ToString = toString
+System.Double.ToEnumString = toString
 
 local function tryParseEnum(enumType, value, ignoreCase)
     if enumType == nil then 

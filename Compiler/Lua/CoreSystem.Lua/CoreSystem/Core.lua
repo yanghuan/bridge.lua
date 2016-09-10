@@ -407,7 +407,6 @@ Object.new = multiNew
 Object.EqualsObj = equals
 Object.ReferenceEquals = equals
 Object.GetHashCode = identityFn
-Object.ToString = tostring
 
 function Object.EqualsStatic(x, y)
     if x == y then
@@ -417,6 +416,10 @@ function Object.EqualsStatic(x, y)
         return false
     end
     return x:EqualsObj(y)
+end
+
+function Object.ToString(this)
+    return this.__name__
 end
 
 defCls("System.Object", Object)
