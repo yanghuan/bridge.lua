@@ -627,8 +627,15 @@ namespace Bridge.Contract
 
             if (typeDef != null)
             {
+                bool isFromCode = this.Emitter.BridgeTypes.Get(typeDef).IsFromCode;
                 var methods = typeDef.Methods.Where(m =>
                 {
+                    if(!isFromCode) {
+                        if(m.IsPrivate || m.IsInternal) {
+                            return false;
+                        }
+                    }
+
                     if (!this.IncludeInline)
                     {
                         var inline = this.Emitter.GetInline(m);
@@ -659,11 +666,9 @@ namespace Bridge.Contract
                 });
 
                 list.AddRange(methods);
-
                 if (this.Inherit)
                 {
                     var baseTypeDefinitions = typeDef.DirectBaseTypes.Where(t => t.Kind == typeDef.Kind || (typeDef.Kind == TypeKind.Struct && t.Kind == TypeKind.Class));
-
                     foreach (var baseTypeDef in baseTypeDefinitions)
                     {
                         var result = this.GetMethodOverloads(list, baseTypeDef.GetDefinition());
@@ -683,8 +688,15 @@ namespace Bridge.Contract
 
             if (typeDef != null)
             {
+                bool isFromCode = this.Emitter.BridgeTypes.Get(typeDef).IsFromCode;
                 var properties = typeDef.Properties.Where(p =>
                 {
+                    if(!isFromCode) {
+                        if(p.IsPrivate || p.IsInternal) {
+                            return false;
+                        }
+                    }
+
                     if (!this.IncludeInline)
                     {
                         var inline = p.Getter != null ? XmlMetaMaker.GetPropertyInline(p, true) : null;

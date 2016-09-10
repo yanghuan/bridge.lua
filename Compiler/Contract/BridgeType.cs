@@ -46,6 +46,8 @@ namespace Bridge.Contract
             get;
             set;
         }
+
+        public bool IsFromCode { get; set; }
     }
 
     public class BridgeTypes

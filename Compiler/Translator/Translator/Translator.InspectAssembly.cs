@@ -106,7 +106,8 @@ namespace Bridge.Translator
                 this.TypeDefinitions.Add(key, type);
                 this.BridgeTypes.Add(key, new BridgeType(key)
                 {
-                    TypeDefinition = type
+                    TypeDefinition = type,
+                    IsFromCode = isCodeAssembly,
                 });
 
                 if (type.HasNestedTypes)
