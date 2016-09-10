@@ -35,7 +35,7 @@ local function tryParseEnum(enumType, value, ignoreCase)
     if value == nil then
         return
     end
-    value = System.String.trim(value)
+    value = value:Trim()
     if #value == 0 then
         return
     end
