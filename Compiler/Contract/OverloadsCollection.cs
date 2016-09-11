@@ -687,13 +687,13 @@ namespace Bridge.Contract
                 {
                     if (!this.IncludeInline)
                     {
-                        var inline = p.Getter != null ? this.Emitter.GetInline(p.Getter) : null;
+                        var inline = p.Getter != null ? XmlMetaMaker.GetPropertyInline(p, true) : null;
                         if (!string.IsNullOrWhiteSpace(inline))
                         {
                             return false;
                         }
 
-                        inline = p.Setter != null ? this.Emitter.GetInline(p.Setter) : null;
+                        inline = p.Setter != null ? XmlMetaMaker.GetPropertyInline(p, false) : null;
                         if (!string.IsNullOrWhiteSpace(inline))
                         {
                             return false;

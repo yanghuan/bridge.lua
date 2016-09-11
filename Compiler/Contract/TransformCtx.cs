@@ -141,7 +141,10 @@ namespace Bridge.Contract {
             private void Property() {
                 if(model_.Propertys != null) {
                     foreach(var propertyModel in model_.Propertys) {
-                        PropertyDefinition propertyDefinition = TypeDefinition.Properties.First(i => i.Name == propertyModel.name);
+                        PropertyDefinition propertyDefinition = TypeDefinition.Properties.FirstOrDefault(i => i.Name == propertyModel.name);
+                        if(propertyDefinition == null) {
+                            throw new ArgumentException(propertyModel.name + " is not found at " + TypeDefinition.FullName);
+                        }
                         PropertyMataInfo info = new PropertyMataInfo(propertyDefinition, propertyModel);
                         XmlMetaMaker.AddProperty(info);
                     }
@@ -251,6 +254,8 @@ namespace Bridge.Contract {
         private static Dictionary<MethodDefinition, MethodMateInfo> methods_ = new Dictionary<MethodDefinition, MethodMateInfo>();
 
         public static void Load(IEnumerable<string> files, IEmitter emitter) {
+            emitter_ = emitter;
+
             foreach(string file in files) {
                 XmlSerializer xmlSeliz = new XmlSerializer(typeof(XmlMetaModel));
                 try {
@@ -258,7 +263,7 @@ namespace Bridge.Contract {
                         XmlMetaModel model = (XmlMetaModel)xmlSeliz.Deserialize(stream);
                         if(model.Namespaces != null) {
                             foreach(var namespaceModel in model.Namespaces) {
-                                Load(namespaceModel, emitter);
+                                Load(namespaceModel);
                             }
                         }
                     }
@@ -273,9 +278,7 @@ namespace Bridge.Contract {
             name = name.Replace('^', '`');
         }
 
-        private static void Load(XmlMetaModel.NamespaceModel model, IEmitter emitter) {
-            emitter_ = emitter;
-
+        private static void Load(XmlMetaModel.NamespaceModel model) {
             string namespaceName = model.name;
             if(string.IsNullOrEmpty(namespaceName)) {
                 throw new ArgumentException("namespace's name is empty");
@@ -297,17 +300,15 @@ namespace Bridge.Contract {
 
                     string keyName = namespaceName + '.' + className;
                     FixName(ref keyName);
-                    var type = emitter.BridgeTypes.GetOrDefault(keyName);
-                    if(type == null) {
-                        throw new ArgumentException(string.Format("keyName[{0}] is not found", keyName));
-                    }
+                    var type = emitter_.BridgeTypes.GetOrDefault(keyName);
+                    if(type != null) {
+                        if(types_.ContainsKey(type.TypeDefinition)) {
+                            throw new ArgumentException(type.TypeDefinition.FullName + " is already has");
+                        }
 
-                    if(types_.ContainsKey(type.TypeDefinition)) {
-                        throw new ArgumentException(type.TypeDefinition.FullName + " is already has");
+                        TypeMetaInfo info = new TypeMetaInfo(type.TypeDefinition, classModel);
+                        types_.Add(info.TypeDefinition, info);
                     }
-
-                    TypeMetaInfo info = new TypeMetaInfo(type.TypeDefinition, classModel);
-                    types_.Add(info.TypeDefinition, info);
                 }
             }
         }

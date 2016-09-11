@@ -16,8 +16,8 @@ namespace Bridge.Translator
         public const string BridgeResourcesList = "Bridge.Resources.list";
         private static readonly Encoding OutputEncoding = System.Text.Encoding.UTF8;
         private static readonly string[] MinifierCodeSettingsInternalFileNames = new string[] { "bridge.js", "bridge.min.js", "bridge.collections.js", "bridge.collections.min.js" };
-        public string[] SearchPaths;
-        public string[] XmlMetaFiles;
+        public string[] SearchPaths = new string[0];
+        public string[] XmlMetaFiles = new string[0];
 
         private static readonly CodeSettings MinifierCodeSettingsSafe = new CodeSettings
         {

@@ -12,7 +12,7 @@ namespace Bridge.Translator
     public partial class Translator
     {
         private string GetAssemblyPath(string assemblyName) {
-            if(SearchPaths != null) {
+            if(SearchPaths != null && SearchPaths.Length > 0) {
                 foreach(string dir in SearchPaths) {
                     string path = Path.Combine(dir, assemblyName + ".dll");
                     if(File.Exists(path)) {

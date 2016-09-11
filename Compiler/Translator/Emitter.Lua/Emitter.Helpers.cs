@@ -512,7 +512,7 @@ namespace Bridge.Translator.Lua
             switch(entity.SymbolKind) {
                 case SymbolKind.Property: {
                         IProperty property = (IProperty)entity;
-                        bool isGetOrSet = !this.IsAssignment;
+                        bool isGetOrSet = !IsAssignment;
                         return XmlMetaMaker.GetPropertyInline(property, isGetOrSet);
                     }
                 case SymbolKind.Method: {
