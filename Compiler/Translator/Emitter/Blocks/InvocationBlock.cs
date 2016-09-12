@@ -57,12 +57,6 @@ namespace Bridge.Translator
         {
             InvocationExpression invocationExpression = this.InvocationExpression;
             int pos = this.Emitter.Output.Length;
-
-            if (this.Emitter.IsForbiddenInvocation(invocationExpression))
-            {
-                throw new EmitterException(invocationExpression, "This method cannot be invoked directly");
-            }
-
             var oldValue = this.Emitter.ReplaceAwaiterByVar;
             var oldAsyncExpressionHandling = this.Emitter.AsyncExpressionHandling;
 

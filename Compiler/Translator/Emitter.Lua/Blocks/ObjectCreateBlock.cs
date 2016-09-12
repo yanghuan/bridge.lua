@@ -285,9 +285,8 @@ namespace Bridge.Translator.Lua
                 {
                     return;
                 }
-                var itype = tinfo.Type as ITypeDefinition;
 
-                var mode = 0;
+                int mode = 0;
                 if (rr != null)
                 {
                     if (rr.Member.Parameters.Count == 1 &&
@@ -297,19 +296,6 @@ namespace Bridge.Translator.Lua
                         if (arg != null && arg.ConstantValue != null)
                         {
                             mode = (int)arg.ConstantValue;
-                        }
-                    }
-                    else if (itype != null)
-                    {
-                        var attr = this.Emitter.Validator.GetAttribute(itype.Attributes, Translator.Bridge_ASSEMBLY + ".ObjectLiteralAttribute");
-                        if (attr.PositionalArguments.Count > 0)
-                        {
-                            var value = attr.PositionalArguments.First().ConstantValue;
-
-                            if (value != null && value is int)
-                            {
-                                mode = (int)value;
-                            }
                         }
                     }
                 }

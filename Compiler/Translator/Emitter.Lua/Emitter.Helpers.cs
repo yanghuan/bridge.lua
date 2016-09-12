@@ -24,42 +24,6 @@ namespace Bridge.Translator.Lua
             return JsonConvert.SerializeObject(value);
         }
 
-        protected virtual ICSharpCode.NRefactory.CSharp.Attribute GetAttribute(AstNodeCollection<AttributeSection> attributes, string name)
-        {
-            string fullName = name + "Attribute";
-            foreach (var i in attributes)
-            {
-                foreach (var j in i.Attributes)
-                {
-                    if (j.Type.ToString() == name)
-                    {
-                        return j;
-                    }
-
-                    var resolveResult = this.Resolver.ResolveNode(j, this);
-                    if (resolveResult != null && resolveResult.Type != null && resolveResult.Type.FullName == fullName)
-                    {
-                        return j;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public virtual CustomAttribute GetAttribute(IEnumerable<CustomAttribute> attributes, string name)
-        {
-            foreach (var attr in attributes)
-            {
-                if (attr.AttributeType.FullName == name)
-                {
-                    return attr;
-                }
-            }
-
-            return null;
-        }
-
         public virtual IAttribute GetAttribute(IEnumerable<IAttribute> attributes, string name)
         {
             foreach (var attr in attributes)
@@ -95,18 +59,14 @@ namespace Bridge.Translator.Lua
             if(member == null) {
                 var resolveResult = this.Resolver.ResolveNode(node, this);
                 var memberResolveResult = resolveResult as MemberResolveResult;
-
                 if(memberResolveResult == null) {
                     return new Tuple<bool, bool, string>(false, false, null);
                 }
-
                 member = memberResolveResult.Member;
             }
-
-            bool isInlineMethod = this.IsInlineMethod(member);
-            var inlineCode = isInlineMethod ? null : this.GetInline(member);
+            var inlineCode = this.GetInline(member);
             var isStatic = member.IsStatic;
-            return new Tuple<bool, bool, string>(isStatic, isInlineMethod, inlineCode);
+            return new Tuple<bool, bool, string>(isStatic, false, inlineCode);
         }
 
         private IMember LiftNullableMember(MemberReferenceExpression target)
@@ -135,48 +95,6 @@ namespace Bridge.Translator.Lua
                 }
             }
             return member;
-        }
-
-        public virtual bool IsForbiddenInvocation(InvocationExpression node)
-        {
-            var resolveResult = this.Resolver.ResolveNode(node, this);
-            var memberResolveResult = resolveResult as MemberResolveResult;
-
-            if (memberResolveResult == null)
-            {
-                return false;
-            }
-
-            var member = memberResolveResult.Member;
-
-            string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".InitAttribute";
-
-            if (member != null)
-            {
-                var attr = member.Attributes.FirstOrDefault(a =>
-                {
-                    return a.AttributeType.FullName == attrName;
-                });
-
-                if (attr != null)
-                {
-                    if (attr.PositionalArguments.Count > 0)
-                    {
-                        var argExpr = attr.PositionalArguments.First();
-                        if (argExpr.ConstantValue is int)
-                        {
-                            var value = (int)argExpr.ConstantValue;
-
-                            if (value > 0)
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
         }
 
         public virtual IEnumerable<string> GetScript(EntityDeclaration method)
@@ -288,16 +206,12 @@ namespace Bridge.Translator.Lua
 
         public Tuple<bool, string> IsGlobalTarget(IMember member)
         {
-            var attr = this.GetAttribute(member.Attributes, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".GlobalTargetAttribute");
-
-            return attr != null ? new Tuple<bool, string>(true, (string)attr.PositionalArguments.First().ConstantValue) : null;
+            throw new NotSupportedException();
         }
 
         public virtual string GetInline(ICustomAttributeProvider provider)
         {
-            var attr = this.GetAttribute(provider.CustomAttributes, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".TemplateAttribute");
-
-            return attr != null && attr.ConstructorArguments.Count > 0 ? ((string)attr.ConstructorArguments.First().Value) : null;
+            throw new NotSupportedException();
         }
 
         public virtual string GetInline(EntityDeclaration method)
@@ -323,28 +237,6 @@ namespace Bridge.Translator.Lua
                     }
             }
             return null;
-        }
-
-        private bool IsInlineMethod(IEntity entity) {
-            return false;
-        }
-
-        protected virtual IEnumerable<string> GetScriptArguments(ICSharpCode.NRefactory.CSharp.Attribute attr)
-        {
-            if (attr == null)
-            {
-                return null;
-            }
-
-            var result = new List<string>();
-
-            foreach (var arg in attr.Arguments)
-            {
-                PrimitiveExpression expr = (PrimitiveExpression)arg;
-                result.Add((string)expr.Value);
-            }
-
-            return result;
         }
 
         public virtual bool IsNativeMember(string fullName)

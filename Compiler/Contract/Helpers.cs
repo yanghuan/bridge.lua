@@ -662,33 +662,22 @@ namespace Bridge.Contract
                 }
 
                 string enumStringName = member.Name;
-                var attr = emitter.GetAttribute(member.Attributes, "Bridge.NameAttribute");
+                switch(enumMode) {
+                    case 3:
+                        enumStringName = member.Name.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + member.Name.Substring(1);
+                        break;
 
-                if (attr != null)
-                {
-                    enumStringName = emitter.GetEntityName(member);
+                    case 4:
+                        break;
+
+                    case 5:
+                        enumStringName = enumStringName.ToLowerInvariant();
+                        break;
+
+                    case 6:
+                        enumStringName = enumStringName.ToUpperInvariant();
+                        break;
                 }
-                else
-                {
-                    switch (enumMode)
-                    {
-                        case 3:
-                            enumStringName = member.Name.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + member.Name.Substring(1);
-                            break;
-
-                        case 4:
-                            break;
-
-                        case 5:
-                            enumStringName = enumStringName.ToLowerInvariant();
-                            break;
-
-                        case 6:
-                            enumStringName = enumStringName.ToUpperInvariant();
-                            break;
-                    }
-                }
-
                 return enumStringName;
             }
 
