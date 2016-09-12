@@ -10,7 +10,7 @@ local emptys = {}
 Array.__ctor__ = buildArray
 Array.set = Collection.setArray
 Array.get = Collection.getArray
-Array.getEnumerator = arrayEnumerator
+Array.GetEnumerator = arrayEnumerator
 
 function Array.getLength(this)
     return #this
@@ -33,23 +33,23 @@ function Array.Empty(T)
     return t
 end
 
-Array.exists = Collection.existsOfArray
-Array.find = Collection.findOfArray
+Array.Exists = Collection.existsOfArray
+Array.Find = Collection.findOfArray
 
 local findAll = Collection.findAllOfArray
-function Array.findAll(t, match)
+function Array.FindAll(t, match)
     return findAll(t, match):toArray()
 end
 
-Array.findIndex = Collection.findIndexOfArray
-Array.findLast = Collection.findLastOfArray
-Array.findLastIndex = Collection.findLastIndexOfArray
-Array.indexOf = Collection.indexOfArray
-Array.lastIndexOf = Collection.lastIndexOfArray
-Array.reverse = Collection.reverseArray
-Array.sort = Collection.sortArray
-Array.trueForAll = Collection.trueForAllOfArray
-Array.copy = Collection.copyArray
+Array.FindIndex = Collection.findIndexOfArray
+Array.FindLast = Collection.findLastOfArray
+Array.FindLastIndex = Collection.findLastIndexOfArray
+Array.IndexOf = Collection.indexOfArray
+Array.LastIndexOf = Collection.lastIndexOfArray
+Array.Reverse = Collection.reverseArray
+Array.Sort = Collection.sortArray
+Array.TrueForAll = Collection.trueForAllOfArray
+Array.Copy = Collection.copyArray
 
 System.define("System.Array", function(T) 
     local cls = { 

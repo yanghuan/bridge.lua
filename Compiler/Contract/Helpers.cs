@@ -666,14 +666,11 @@ namespace Bridge.Contract
                     case 3:
                         enumStringName = member.Name.Substring(0, 1).ToLower(CultureInfo.InvariantCulture) + member.Name.Substring(1);
                         break;
-
                     case 4:
                         break;
-
                     case 5:
                         enumStringName = enumStringName.ToLowerInvariant();
                         break;
-
                     case 6:
                         enumStringName = enumStringName.ToUpperInvariant();
                         break;

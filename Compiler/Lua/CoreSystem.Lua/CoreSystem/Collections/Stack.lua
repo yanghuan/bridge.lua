@@ -2,6 +2,7 @@ local System = System
 local Collection = System.Collection
 local removeAtArray = Collection.removeAtArray
 local getArray = Collection.getArray
+local insertRangeArray = Collection.insertRangeArray
 
 local Stack = {}
 
@@ -10,16 +11,16 @@ function Stack.__ctor__(this, ...)
     if len == 0 then return end
     local collection = ...
     if type(collection) == "number" then return end
-    Collection.insertRangeArray(this, 0, collection)
+    insertRangeArray(this, 0, collection)
 end
 
 function Stack.getCount(this)
     return #this
 end
 
-Stack.clear = Collection.removeArrayAll
-Stack.push = Collection.pushArray
-Stack.contains = Collection.contains
+Stack.Clear = Collection.removeArrayAll
+Stack.Push = Collection.pushArray
+Stack.Contains = Collection.contains
 
 local function peek(t)
     if #t == 0 then
@@ -28,9 +29,9 @@ local function peek(t)
     return getArray(t, #this - 1)
 end
 
-Stack.peek = peek
+Stack.Peek = peek
 
-function Stack.pop(this)
+function Stack.Pop(this)
     local v = peek(this)
     removeAtArray(t, #this -1)
     return v
