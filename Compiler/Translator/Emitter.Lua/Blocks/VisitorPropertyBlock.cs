@@ -82,21 +82,9 @@ namespace Bridge.Translator.Lua
                 this.WriteSpace();
                 this.BeginFunctionBlock();
 
-                var script = this.Emitter.GetScript(accessor);
-                if (script == null)
-                {
-                    MarkTempVars();
-                    accessor.Body.AcceptVisitor(this.Emitter);
-                    EmitTempVars();
-                }
-                else
-                {
-                    foreach (var line in script)
-                    {
-                        this.Write(line);
-                        this.WriteNewLine();
-                    }
-                }
+                MarkTempVars();
+                accessor.Body.AcceptVisitor(this.Emitter);
+                EmitTempVars();
 
                 this.EndFunctionBlock();
                 this.ClearLocalsMap(prevMap);

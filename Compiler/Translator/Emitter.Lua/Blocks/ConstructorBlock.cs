@@ -320,34 +320,21 @@ namespace Bridge.Translator.Lua
                         }
                     }
 
-                    var script = this.Emitter.GetScript(ctor);
-                    if(script == null) {
-                        if(ctor.Body.HasChildren) {
-                            var beginPosition = this.Emitter.Output.Length;
-                            if(requireNewLine) {
-                                this.WriteNewLine();
-                            }
-
-                            this.ConvertParamsToReferences(ctor.Parameters);
-                            ctor.Body.AcceptChildren(this.Emitter);
-
-                            if(!this.Emitter.IsAsync) {
-                                this.EmitTempVars(beginPosition, true);
-                            }
-                        }
-                        else {
-                            if(requireNewLine) {
-                                this.WriteNewLine();
-                            }
-                        }
-                    }
-                    else {
+                    if(ctor.Body.HasChildren) {
+                        var beginPosition = this.Emitter.Output.Length;
                         if(requireNewLine) {
                             this.WriteNewLine();
                         }
 
-                        foreach(var line in script) {
-                            this.Write(line);
+                        this.ConvertParamsToReferences(ctor.Parameters);
+                        ctor.Body.AcceptChildren(this.Emitter);
+
+                        if(!this.Emitter.IsAsync) {
+                            this.EmitTempVars(beginPosition, true);
+                        }
+                    }
+                    else {
+                        if(requireNewLine) {
                             this.WriteNewLine();
                         }
                     }

@@ -1,4 +1,4 @@
-﻿using Bridge.Contract;
+using Bridge.Contract;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace Bridge.Translator.Lua
@@ -47,24 +47,7 @@ namespace Bridge.Translator.Lua
                 this.WriteCloseParentheses();
                 this.WriteSpace();
 
-                var script = this.Emitter.GetScript(accessor);
-
-                if (script == null)
-                {
-                    accessor.Body.AcceptVisitor(this.Emitter);
-                }
-                else
-                {
-                    this.BeginFunctionBlock();
-
-                    foreach (var line in script)
-                    {
-                        this.Write(line);
-                        this.WriteNewLine();
-                    }
-
-                    this.EndFunctionBlock();
-                }
+                accessor.Body.AcceptVisitor(this.Emitter);
 
                 this.ClearLocalsMap(prevMap);
                 this.ClearLocalsNamesMap(prevNamesMap);

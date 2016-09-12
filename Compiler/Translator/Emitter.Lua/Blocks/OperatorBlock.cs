@@ -70,21 +70,9 @@ namespace Bridge.Translator.Lua
             this.EmitMethodParameters(operatorDeclaration.Parameters, operatorDeclaration);
             this.WriteSpace();
             this.BeginFunctionBlock();
-            var script = this.Emitter.GetScript(operatorDeclaration);
-            if (script == null)
-            {
-                MarkTempVars();
-                operatorDeclaration.Body.AcceptVisitor(this.Emitter);
-                EmitTempVars();
-            }
-            else
-            {
-                foreach (var line in script)
-                {
-                    this.Write(line);
-                    this.WriteNewLine();
-                }
-            }
+            MarkTempVars();
+            operatorDeclaration.Body.AcceptVisitor(this.Emitter);
+            EmitTempVars();
             this.EndFunctionBlock();
 
             this.ClearLocalsMap(prevMap);

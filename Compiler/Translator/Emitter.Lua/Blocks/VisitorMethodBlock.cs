@@ -106,62 +106,43 @@ namespace Bridge.Translator.Lua
 
             this.WriteSpace();
 
-            var script = this.Emitter.GetScript(methodDeclaration);
-
-            if (script == null)
-            {
-                if (methodDeclaration.HasModifier(Modifiers.Async))
-                {
-                    new AsyncBlock(this.Emitter, methodDeclaration).Emit();
+            if(methodDeclaration.HasModifier(Modifiers.Async)) {
+                new AsyncBlock(this.Emitter, methodDeclaration).Emit();
+            }
+            else {
+                this.BeginFunctionBlock();
+                bool isYieldExists = YieldBlock.HasYield(methodDeclaration.Body);
+                if(isYieldExists) {
+                    YieldBlock.EmitYield(this, null);
                 }
-                else
-                {
-                    this.BeginFunctionBlock();
-                    bool isYieldExists = YieldBlock.HasYield(methodDeclaration.Body);
-                    if(isYieldExists) {
-                        YieldBlock.EmitYield(this, null);
-                    }
-                    else {
-                        this.ConvertParamsToReferences(methodDeclaration.Parameters);
-                    }
+                else {
+                    this.ConvertParamsToReferences(methodDeclaration.Parameters);
+                }
 
-                    MarkTempVars();
-                    methodDeclaration.Body.AcceptVisitor(this.Emitter);
-                    EmitTempVars();
+                MarkTempVars();
+                methodDeclaration.Body.AcceptVisitor(this.Emitter);
+                EmitTempVars();
 
-                    if(isYieldExists) {
-                        var returnResolveResult = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
-                        YieldBlock.EmitYieldReturn(this, returnResolveResult.Type);
-                    }
-                    else {
-                        PrimitiveType returnType = methodDeclaration.ReturnType as PrimitiveType;
-                        if(returnType != null) {
-                            if(returnType.KnownTypeCode == ICSharpCode.NRefactory.TypeSystem.KnownTypeCode.Void) {
-                                string refArgsString = GetRefArgsString(this.Emitter, methodDeclaration);
-                                if(refArgsString != null) {
-                                    this.WriteReturn(true);
-                                    this.Write(refArgsString);
-                                    this.WriteNewLine();
-                                }
+                if(isYieldExists) {
+                    var returnResolveResult = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
+                    YieldBlock.EmitYieldReturn(this, returnResolveResult.Type);
+                }
+                else {
+                    PrimitiveType returnType = methodDeclaration.ReturnType as PrimitiveType;
+                    if(returnType != null) {
+                        if(returnType.KnownTypeCode == ICSharpCode.NRefactory.TypeSystem.KnownTypeCode.Void) {
+                            string refArgsString = GetRefArgsString(this.Emitter, methodDeclaration);
+                            if(refArgsString != null) {
+                                this.WriteReturn(true);
+                                this.Write(refArgsString);
+                                this.WriteNewLine();
                             }
                         }
                     }
-                    this.EndFunctionBlock();
                 }
+                this.EndFunctionBlock();
             }
-            else
-            {
-                this.BeginBlock();
 
-                foreach (var line in script)
-                {
-                    this.Write(line);
-                    this.WriteNewLine();
-                }
-
-                this.EndBlock();
-            }
-            
             /*
             if (methodDeclaration.TypeParameters.Count > 0)
             {
