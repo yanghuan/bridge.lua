@@ -44,7 +44,7 @@ namespace Bridge.Translator.Lua
                 return;
             }
 
-            if (!accessor.IsNull && this.Emitter.GetInline(accessor) == null)
+            if (!accessor.IsNull)
             {
                 //this.EnsureComma();
                 this.EnsureNewLine();

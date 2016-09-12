@@ -26,7 +26,7 @@ namespace Bridge.Translator.Lua
 
         protected virtual void EmitIndexerMethod(IndexerDeclaration indexerDeclaration, Accessor accessor, bool setter)
         {
-            if (!accessor.IsNull && this.Emitter.GetInline(accessor) == null)
+            if (!accessor.IsNull)
             {
                 this.EnsureNewLine();
 

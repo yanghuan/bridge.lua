@@ -14,50 +14,6 @@ namespace Bridge.Translator.Lua
 {
     public partial class Emitter
     {
-        protected virtual HashSet<string> CreateNamespaces()
-        {
-            var result = new HashSet<string>();
-
-            foreach (string typeName in this.TypeDefinitions.Keys)
-            {
-                int index = typeName.LastIndexOf('.');
-
-                if (index >= 0)
-                {
-                    this.RegisterNamespace(typeName.Substring(0, index), result);
-                }
-            }
-
-            return result;
-        }
-
-        protected virtual void RegisterNamespace(string ns, ICollection<string> repository)
-        {
-            if (String.IsNullOrEmpty(ns) || repository.Contains(ns))
-            {
-                return;
-            }
-
-            string[] parts = ns.Split('.');
-            StringBuilder builder = new StringBuilder();
-
-            foreach (string part in parts)
-            {
-                if (builder.Length > 0)
-                {
-                    builder.Append('.');
-                }
-
-                builder.Append(part);
-                string item = builder.ToString();
-
-                if (!repository.Contains(item))
-                {
-                    repository.Add(item);
-                }
-            }
-        }
-
         public static bool IsReservedStaticName(string name)
         {
             return Emitter.reservedStaticNames.Any(n => String.Equals(name, n, StringComparison.InvariantCultureIgnoreCase));
@@ -115,11 +71,6 @@ namespace Bridge.Translator.Lua
             }
 
             return null;
-        }
-
-        protected virtual bool HasDelegateAttribute(MethodDeclaration method)
-        {
-            return this.GetAttribute(method.Attributes, "Delegate") != null;
         }
 
         public virtual Tuple<bool, bool, string> GetInlineCode(MemberReferenceExpression node)
@@ -230,8 +181,7 @@ namespace Bridge.Translator.Lua
 
         public virtual IEnumerable<string> GetScript(EntityDeclaration method)
         {
-            var attr = this.GetAttribute(method.Attributes, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".Script");
-            return this.GetScriptArguments(attr);
+            throw new System.NotSupportedException();
         }
 
         private string GetMetaName(IEntity member) {
@@ -299,36 +249,10 @@ namespace Bridge.Translator.Lua
         public virtual string GetEntityName(ParameterDeclaration entity, bool forcePreserveMemberCase = false)
         {
             var name = entity.Name;
-
-            if (entity.Parent != null && entity.GetParent<SyntaxTree>() != null)
-            {
-                var rr = this.Resolver.ResolveNode(entity, this) as LocalResolveResult;
-                if (rr != null)
-                {
-                    var iparam = rr.Variable as IParameter;
-
-                    if (iparam != null && iparam.Attributes != null)
-                    {
-                        var attr = iparam.Attributes.FirstOrDefault(a => a.AttributeType.FullName == Bridge.Translator.Translator.Bridge_ASSEMBLY + ".NameAttribute");
-
-                        if (attr != null)
-                        {
-                            var value = attr.PositionalArguments.First().ConstantValue;
-                            if (value is string)
-                            {
-                                name = value.ToString();
-                                FixBridgePrefix(ref name);
-                            }
-                        }
-                    }
-                }
-            }
-
             if (Helpers.IsReservedWord(name))
             {
                 name = Helpers.ChangeReservedWord(name);
             }
-
             return name;
         }
 
@@ -378,18 +302,7 @@ namespace Bridge.Translator.Lua
 
         public virtual string GetInline(EntityDeclaration method)
         {
-            var attr = this.GetAttribute(method.Attributes, Bridge.Translator.Translator.Bridge_ASSEMBLY + ".Template");
-
-            return attr != null && attr.Arguments.Count > 0 ? ((string)((PrimitiveExpression)attr.Arguments.First()).Value) : null;
-        }
-
-        public static void FixBridgePrefix(ref string s) {
-            if(!string.IsNullOrEmpty(s)) {
-                string bridgePrefix = Bridge.Translator.Translator.Bridge_ASSEMBLY + '.';
-                if(s.StartsWith(bridgePrefix)) {
-                    s = "System." + s.Substring(bridgePrefix.Length);
-                }
-            }
+            throw new NotSupportedException();
         }
 
         public virtual string GetInline(IEntity entity)
@@ -409,20 +322,6 @@ namespace Bridge.Translator.Lua
                         return XmlMetaMaker.GetMethodInline(method);
                     }
             }
-
-            string attrName = Bridge.Translator.Translator.Bridge_ASSEMBLY + ".TemplateAttribute";
-            if (entity != null)
-            {
-                var attr = entity.Attributes.FirstOrDefault(a =>
-                {
-                    return a.AttributeType.FullName == attrName;
-                });
-
-                string code = attr != null && attr.PositionalArguments.Count > 0 ? attr.PositionalArguments[0].ConstantValue.ToString() : null;
-                FixBridgePrefix(ref code);
-                return code;
-            }
-
             return null;
         }
 

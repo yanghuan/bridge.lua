@@ -161,20 +161,6 @@ namespace Bridge.Translator.Lua
             set;
         }
 
-        private HashSet<string> namespaces;
-
-        protected virtual HashSet<string> Namespaces
-        {
-            get
-            {
-                if (this.namespaces == null)
-                {
-                    this.namespaces = this.CreateNamespaces();
-                }
-                return this.namespaces;
-            }
-        }
-
         public virtual IEnumerable<AssemblyDefinition> References
         {
             get;

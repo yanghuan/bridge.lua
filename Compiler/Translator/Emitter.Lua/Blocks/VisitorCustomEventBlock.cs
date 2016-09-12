@@ -26,7 +26,7 @@ namespace Bridge.Translator.Lua
 
         protected virtual void EmitPropertyMethod(CustomEventDeclaration customEventDeclaration, Accessor accessor, bool remover)
         {
-            if (!accessor.IsNull && this.Emitter.GetInline(accessor) == null)
+            if (!accessor.IsNull)
             {
                 this.EnsureComma();
 
