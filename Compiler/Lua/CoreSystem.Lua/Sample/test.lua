@@ -32,14 +32,14 @@ end
 print("-----------------", "list")
 
 local list = System.List(System.Object)()
-list:add(12)
-list:add(4)
-list:add(3)
-list:add(123234)
-list:add(123)
-list:add(10)
+list:Add(12)
+list:Add(4)
+list:Add(3)
+list:Add(123234)
+list:Add(123)
+list:Add(10)
 
-list:removeAll(function(i) return i >= 4 end)
+list:RemoveAll(function(i) return i >= 4 end)
 
 for _, i in System.each(list) do
     print(i)

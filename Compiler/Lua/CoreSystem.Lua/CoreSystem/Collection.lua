@@ -531,18 +531,18 @@ end
 Collection.arrayEnumerator = arrayEnumerator
 
 local function isArrayLike(t)
-    return t.getEnumerator == arrayEnumerator
+    return t.GetEnumerator == arrayEnumerator
 end
 
 Collection.isArrayLike = isArrayLike
 
 function Collection.isEnumerableLike(t)
-    return type(t) == "table" and t.getEnumerator ~= nil
+    return type(t) == "table" and t.GetEnumerator ~= nil
 end
 
 local function eachFn(en)
-    if en:moveNext() then
-        return true, en:getCurrent()
+    if en:MoveNext() then
+        return true, en:GetCurrent()
     end
     return nil
 end
@@ -551,7 +551,7 @@ local function each(t)
     if isArrayLike(t) then
         return ipairsArray(t)
     end
-    local en = t:getEnumerator()
+    local en = t:GetEnumerator()
     return eachFn, en
 end
 
@@ -625,7 +625,7 @@ end
 local LinkedListEnumerator = {}
 LinkedListEnumerator.__index = LinkedListEnumerator
 
-function LinkedListEnumerator.moveNext(this)
+function LinkedListEnumerator.MoveNext(this)
     local list = this.list
     local node = this.node
     checkVersion(list, this.version)
@@ -641,11 +641,11 @@ function LinkedListEnumerator.moveNext(this)
     return true 
 end
 
-function LinkedListEnumerator.getCurrent(this)
+function LinkedListEnumerator.GetCurrent(this)
     return this.current
 end
 
-function Collection.LinkedListEnumerator(t)
+function Collection.linkedListEnumerator(t)
     local en = {
         list = t,
         version = getVersion(t),

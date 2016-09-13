@@ -279,9 +279,7 @@ function LinkedList.RemoveLast(this)
     remvoeNode(this, head.prev)
 end
 
-function LinkedList.GetEnumerator(this)
-    return Collection.LinkedListEnumerator(this)
-end
+LinkedList.GetEnumerator = Collection.linkedListEnumerator
 
 System.define("System.LinkedList", function(T) 
    local cls = { 

@@ -11,9 +11,11 @@ local assert = assert
 local table = table
 local tinsert = table.insert
 local tremove = table.remove
+local tconcat = table.concat
 local rawget = rawget
 local floor = math.floor
 local error = error
+local select = select
 
 local emptyFn = function() end
 local identityFn = function(x) return x end
@@ -93,28 +95,40 @@ local function defaultValOfZero()
     return 0
 end
 
+local idCreator = {}
+
 local function genericId(id, ...) 
-    for i = 1, select("#", ...) do
+    idCreator[1] = id
+    local len = select("#", ...)
+    for i = 1, len do
         local cls = select(i, ...)
-        id = id .. "." .. cls.__id__
+        idCreator[i + 1] = cls.__id__
     end
-    return id
+    return tconcat(idCreator, ".", 1, len + 1)
 end
 
+local nameCreator = {}
+
 local function genericName(name, ...)
-    name = name .. "["
-    local comma
+    nameCreator[1] = name
+    nameCreator[2] = "["
+    local comma, offset
+    offset = 2
     for i = 1, select("#", ...) do
         local cls = select(i, ...)
         if comma then
-            name = name .. "," .. cls.__name__
+            nameCreator[offset + 1] = ","
+            nameCreator[offset + 2] = cls.__name__
+            offset = offset + 2
         else
-            name = name .. cls.__name__
+            nameCreator[offset + 1] = cls.__name__
+            offset = offset + 1
             comma = true
         end
     end
-    name = name .. "]"
-    return name
+    offset = offset + 1
+    nameCreator[offset] = "]"
+    return tconcat(nameCreator, nil, 1, offset)
 end
 
 local function def(name, kind, cls, generic)

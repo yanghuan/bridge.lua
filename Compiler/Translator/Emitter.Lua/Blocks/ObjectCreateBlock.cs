@@ -207,7 +207,7 @@ namespace Bridge.Translator.Lua
                         else if (item is ArrayInitializerExpression)
                         {
                             var arrayInitializer = (ArrayInitializerExpression)item;
-                            this.Write(varName, ":add");
+                            this.Write(varName, ":Add");
                             this.WriteOpenParentheses();
 
                             foreach(var el in arrayInitializer.Elements) {
