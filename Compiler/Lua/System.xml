@@ -96,7 +96,7 @@
         <class name="HashSet^1" Name="System.HashSet" />
     </namespace>
     <namespace name="System.Linq">
-        <class name="Enumerable" Name="Linq">
+        <class name="Enumerable">
             <method name="Where" Template="Linq.Where({0}, {1})" />
             <method name="Select" Template="Linq.Select({0}, {1}, {^1})" />
             <method name="SelectMany" Template="Linq.SelectMany({0}, {1}, {^1})" />

@@ -16,9 +16,6 @@ local select = select
 local tinser = table.insert
 local getmetatable = getmetatable
 
-local Enumerable = {}
-Enumerable.__index = Enumerable
-
 local function createInternal(T, getEnumerator)
     assert(T)
     return setmetatable({ __genericT__ = T, getEnumerator = getEnumerator }, Enumerable)
@@ -63,26 +60,11 @@ local function IEnumerator(source, tryGetNext, init)
     }
 end
 
-local function sampleNext(en)
-    if en:moveNext() then
-      return true, en:getCurrent()
-    end
-    return false
-end
-
-local function from(_, source)
-    if source == nil then throw(ArgumentNullException("source")) end
-    if getmetatable(source) == Enumerable then
-        return source
-    end
-    return create(source, function() 
-        return IEnumerator(source, sampleNext)
-    end)
-end
-
-System.Linq = setmetatable({}, { __call = from })
+local Enumerable = {}
+System.define("System.Linq.Enumerable", Enumerable)
 
 function Enumerable.where(source, predicate)
+    if source == nil then throw(ArgumentNullException("source")) end
     if predicate == nil then throw(ArgumentNullException("predicate")) end
     return create(source, function() 
         local index = -1
