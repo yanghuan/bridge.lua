@@ -19,6 +19,7 @@ local select = select
 
 local emptyFn = function() end
 local identityFn = function(x) return x end
+local equals = function(x, y) return x == y end
 local genericCache = {}
 local class = {}
 local modules = {}
@@ -410,10 +411,6 @@ local function multiNew(cls, inx, ...)
     local this = setmetatable({}, cls)
     cls.__ctor__[inx](this, ...)
     return this
-end
-
-local function equals(a, b)
-    return a == b
 end
 
 Object.__call = new

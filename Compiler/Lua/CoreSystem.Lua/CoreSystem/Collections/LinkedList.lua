@@ -188,11 +188,11 @@ end
 function LinkedList.Find(this, value)     
     local head = this.head
     local node = head
-    local equals = EqualityComparer_1(this.__genericT__).getDefault().equals
+    local equals = EqualityComparer_1(this.__genericT__).getDefault().Equals
     if node ~= nil then
          if value ~= nil then
              repeat
-                 if equals(nil, node.Value, value) then
+                 if equals(node.Value, value) then
                      return node
                  end
                  node = node.next
@@ -214,11 +214,11 @@ function LinkedList.FindLast(this, value)
     if head == nil then return nil end
     local last = head.prev
     local node = last
-    local equals = EqualityComparer_1(this.__genericT__).getDefault().equals
+    local equals = EqualityComparer_1(this.__genericT__).getDefault().Equals
     if node ~= nil then
         if value ~= nil then
             repeat
-                if equals(nil, node.Value, value) then
+                if equals(node.Value, value) then
                     return node
                 end
                 node = node.prev

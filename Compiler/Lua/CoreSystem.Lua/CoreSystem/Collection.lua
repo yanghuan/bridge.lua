@@ -9,6 +9,7 @@ local Comparer_1 = System.Comparer_1
 
 local tinsert = table.insert
 local tremove = table.remove
+local tsore = table.sort
 local setmetatable = setmetatable
 local select = select
 local type = type
@@ -183,16 +184,17 @@ end
 
 local function binarySearchArray(t, index, count, v, comparer)
     checkIndexAndCount(t, index, count)
+    local compare
     if comparer == nil then
-        comparer = Comparer_1(t.__genericT__).getDefault().compare 
-    elseif type(comparer) ~= "function" then    
-        comparer = comparer.compare
+        compare = Comparer_1(t.__genericT__).getDefault().Compare 
+    else    
+        compare = comparer.compare
     end
     local lo = index
     local hi = index + count - 1
     while lo <= hi do
         local i = lo + sr(hi - lo, 1)
-        local order = comparer(unWrap(t[i + 1]), v);
+        local order = compare(unWrap(t[i + 1]), v);
         if order == 0 then return i end
         if order < 0 then
             lo = i + 1
@@ -326,7 +328,7 @@ end
 
 local function indexOfArray(t, v, index, count)
     checkIndexAndCount(t, index, count)
-    local equals = EqualityComparer_1(t.__genericT__).getDefault().equals
+    local equals = EqualityComparer_1(t.__genericT__).getDefault().Equals
     for i = index + 1, index + count do 
         if equals(unWrap(t[i]), v) then
             return i - 1
@@ -360,7 +362,7 @@ local function lastIndexOfArray(t, v, index, count)
         throw(ArgumentOutOfRangeException("count"))
     end
     checkIndex(t, index - count)
-    local equals = EqualityComparer_1(t.__genericT__).getDefault().equals
+    local equals = EqualityComparer_1(t.__genericT__).getDefault().Equals
     for i = index + 1, index - count, -1 do 
         if equals(unWrap(t[i]), v) then
             return i - 1
@@ -403,22 +405,25 @@ end
 local function sortArray(t, index, count, comparer)
     if count > 1 then
         checkIndexAndCount(t, index, count)
+        local compare
         if comparer == nil then
-            comparer = Comparer_1(t.__genericT__).getDefault().compare 
-        elseif type(comparer) ~= "function" then    
-            comparer = comparer.compare
+            compare = Comparer_1(t.__genericT__).getDefault().Compare 
+        elseif comparer.Compare then    
+            compare = comparer.Compare
+        else
+            compare = comparer
         end
         local comp = function(x, y) 
-            return comparer(unWrap(x), unWrap(y)) < 0
+            return compare(unWrap(x), unWrap(y)) < 0
         end
         if index == 0 and count == #t then
-            table.sort(t, comp)
+            tsort(t, comp)
         else
             local arr = {}
             for i = index + 1, index + count do
                 tinsert(arr, t[i])
             end
-            table.sort(arr, comp)
+            tsort(arr, comp)
             for i = index + 1, index + count do
                 t[i] = arr[i - index]
             end

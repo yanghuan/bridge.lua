@@ -94,6 +94,13 @@
             <property name="List" IsFAutoield="true" />
         </class>
         <class name="HashSet^1" Name="System.HashSet" />
+        <class name="EqualityComparer^1">
+            <method name="Equals" Template="{this}.Equals({0}, {1})" />
+            <method name="GetHashCode" Template="{this}.GetHashCode({0})" />
+        </class>
+        <class name="Comparer^1">
+            <method name="Compare" Template="{this}.Compare({0}, {1})" />
+        </class>
     </namespace>
     <namespace name="System.Linq">
         <class name="Enumerable" Name="Linq">
