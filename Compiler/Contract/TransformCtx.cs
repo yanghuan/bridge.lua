@@ -188,7 +188,20 @@ namespace Bridge.Contract {
                     return typeReference.Name == argument.type;
                 }
                 else if(typeReference.IsGenericInstance) {
-                    throw new NotSupportedException();
+                    GenericInstanceType genericInstanceType = (GenericInstanceType)typeReference;
+                    int pos = argument.type.IndexOf('^');
+                    if(pos != -1) {
+                        int count = int.Parse(argument.type.Substring(pos + 1));
+                        if(genericInstanceType.GenericArguments.Count == count) {
+                            string name = argument.type;
+                            XmlMetaMaker.FixName(ref name);
+                            string fullName = genericInstanceType.Namespace + '.' + genericInstanceType.Name;
+                            if(fullName == name) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
                 }
                 else if(typeReference.IsNested) {
                     return typeReference.FullName.Replace("/", ".") == argument.type;
