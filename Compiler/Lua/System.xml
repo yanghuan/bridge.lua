@@ -162,6 +162,40 @@
             <method name="SequenceEqual" Template="Linq.SequenceEqual({0}, {1})" />
             <method name="ToArray" Template="Linq.ToArray({0})" />
             <method name="ToList" Template="Linq.ToList({0})" />
+            <method name="ToDictionary" ArgCount="2" Template="Linq.ToDictionary({0}, {1}, {^1})" />
+            <method name="ToDictionary" Template="Linq.ToDictionary({0}, {1}, {2}, {^1})" >
+                <arg type="System.Collections.Generic.IEnumerable^1" />
+                <arg type="System.Func^2" />
+                <arg type="System.Collections.Generic.IEqualityComparer^1" />
+            </method>
+            <method name="ToDictionary" Template="Linq.ToDictionary({0}, {1}, {2}, {^1}, {^2})" >
+                <arg type="System.Collections.Generic.IEnumerable^1" />
+                <arg type="System.Func^2" />
+                <arg type="System.Func^2" />
+            </method>
+            <method name="ToDictionary" Template="Linq.ToDictionary({0}, {1}, {2}, {3}, {^1}, {^2})" >
+                <arg type="System.Collections.Generic.IEnumerable^1" />
+                <arg type="System.Func^2" />
+                <arg type="System.Func^2" />
+                <arg type="System.Collections.Generic.IEqualityComparer^1" />
+            </method>
+            <method name="ToLookup" ArgCount="2" Template="Linq.ToLookup({0}, {1}, {^1})" />
+            <method name="ToLookup" Template="Linq.ToLookup({0}, {1}, {2}, {^1})" >
+                <arg type="System.Collections.Generic.IEnumerable^1" />
+                <arg type="System.Func^2" />
+                <arg type="System.Collections.Generic.IEqualityComparer^1" />
+            </method>
+            <method name="ToLookup" Template="Linq.ToLookup({0}, {1}, {2}, {^1}, {^2})" >
+                <arg type="System.Collections.Generic.IEnumerable^1" />
+                <arg type="System.Func^2" />
+                <arg type="System.Func^2" />
+            </method>
+            <method name="ToLookup" Template="Linq.ToLookup({0}, {1}, {2}, {3}, {^1}, {^2})" >
+                <arg type="System.Collections.Generic.IEnumerable^1" />
+                <arg type="System.Func^2" />
+                <arg type="System.Func^2" />
+                <arg type="System.Collections.Generic.IEqualityComparer^1" />
+            </method>
             <method name="First" Template="Linq.First({0}, {1})" />
             <method name="FirstOrDefault" Template="Linq.FirstOrDefault({0}, {1})" />
             <method name="Last" Template="Linq.Last({0}, {1})" />

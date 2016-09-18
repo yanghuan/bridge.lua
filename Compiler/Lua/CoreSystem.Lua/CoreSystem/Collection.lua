@@ -590,7 +590,7 @@ end
 local DictionaryEnumerator = {}
 DictionaryEnumerator.__index = DictionaryEnumerator
 
-function DictionaryEnumerator.moveNext(this)
+function DictionaryEnumerator.MoveNext(this)
     local t = this.dict
     checkVersion(t, this.version)
     local k, v = pairsFn(t, this.index)
@@ -612,7 +612,7 @@ function DictionaryEnumerator.moveNext(this)
     return false
 end
 
-function DictionaryEnumerator.getCurrent(this)
+function DictionaryEnumerator.GetCurrent(this)
     return this.current
 end
 
@@ -663,11 +663,11 @@ end
 local YieldEnumerator = {}
 YieldEnumerator.__index = YieldEnumerator
 
-function YieldEnumerator.getEnumerator(this)
+function YieldEnumerator.GetEnumerator(this)
     return this
 end
 
-function YieldEnumerator.moveNext(this)
+function YieldEnumerator.MoveNext(this)
     local co = this.co
     if coroutine.status(co) == "dead" then
         this.current = nil
@@ -687,7 +687,7 @@ function YieldEnumerator.moveNext(this)
     end
 end
 
-function YieldEnumerator.getCurrent(this)
+function YieldEnumerator.GetCurrent(this)
     return this.current
 end
 

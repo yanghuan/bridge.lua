@@ -525,6 +525,7 @@ function Enumerable.ToList(source)
 end
 
 local function toDictionary(source, keySelector, elementSelector, comparer, TKey, TValue)
+    if source == nil then throw(ArgumentNullException("source")) end
     if keySelector == nil then throw(ArgumentNullException("keySelector")) end
     if elementSelector == nil then throw(ArgumentNullException("elementSelector")) end
     local dict = System.Dictionary(TKey, TValue)(comparer)
@@ -534,7 +535,7 @@ local function toDictionary(source, keySelector, elementSelector, comparer, TKey
     return dict
 end
 
-function Enumerable.toDictionary(source, ...)
+function Enumerable.ToDictionary(source, ...)
     local len = select("#", ...)
     if len == 2 then
         local keySelector, TKey = ...
@@ -551,12 +552,13 @@ function Enumerable.toDictionary(source, ...)
 end
 
 local function toLookup(source, keySelector, elementSelector, comparer, TKey, TElement )
+    if source == nil then throw(ArgumentNullException("source")) end
     if keySelector == nil then throw(ArgumentNullException("keySelector")) end
     if elementSelector == nil then throw(ArgumentNullException("elementSelector")) end
     return createLookup(source, keySelector, elementSelector, comparer, TKey, TElement)
 end
 
-function Enumerable.toLookup(source, ...)
+function Enumerable.ToLookup(source, ...)
     local len = select("#", ...)
     if len == 2 then
         local keySelector, TKey = ...
@@ -568,11 +570,12 @@ function Enumerable.toLookup(source, ...)
         local keySelector, elementSelector, TKey, TElement = ...
         return toLookup(source, keySelector, elementSelector, nil, TKey, TElement)
     else
-        return toDictionary(source, ...)
+        return toLookup(source, ...)
     end
 end
 
 local function first(source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then  
         local en = source:GetEnumerator()
@@ -592,7 +595,7 @@ local function first(source, ...)
     end
 end
 
-function Enumerable.first(source, ...)
+function Enumerable.First(source, ...)
     local ok, result = first(source, ...)
     if ok then return result end
     if result == 0 then
@@ -601,12 +604,13 @@ function Enumerable.first(source, ...)
     throw(InvalidOperationException("NoMatch"))
 end
 
-function Enumerable.firstOrDefault(source, ...)
+function Enumerable.FirstOrDefault(source, ...)
     local ok, result = first(source, ...)
     return ok and result or source.__genericT__.__default__()
 end
 
 local function last(source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local en = source:GetEnumerator()
@@ -633,7 +637,7 @@ local function last(source, ...)
     end
 end
 
-function Enumerable.last(source, ...)
+function Enumerable.Last(source, ...)
     local ok, result = last(source, ...)
     if ok then return result end
     if result == 0 then
@@ -642,12 +646,13 @@ function Enumerable.last(source, ...)
     throw(InvalidOperationException("NoMatch"))
 end
 
-function Enumerable.lastOrDefault(source, ...)
+function Enumerable.LastOrDefault(source, ...)
     local ok, result = last(source, ...)
     return ok and result or source.__genericT__.__default__()
 end
 
 local function single(source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local en = source:GetEnumerator()
@@ -675,7 +680,7 @@ local function single(source, ...)
     end
 end
 
-function Enumerable.single(source, ...)
+function Enumerable.Single(source, ...)
     local ok, result = single(source, ...)
     if ok then return result end
     if result == 0 then
@@ -684,12 +689,13 @@ function Enumerable.single(source, ...)
     throw(InvalidOperationException("MoreThanOneMatch"))
 end
 
-function Enumerable.singleOrDefault(source, ...)
+function Enumerable.SingleOrDefault(source, ...)
     local ok, result = single(source, ...)
     return ok and result or source.__genericT__.__default__()
 end
 
 local function elementAt(source, index)
+    if source == nil then throw(ArgumentNullException("source")) end
     if index < 0 then return false end
     local en = source:GetEnumerator()
     while true do
@@ -699,18 +705,18 @@ local function elementAt(source, index)
     end
 end
 
-function Enumerable.elementAt(source, index)
+function Enumerable.ElementAt(source, index)
     local ok, result = elementAt(source, index)
     if ok then return result end
     throw(ArgumentOutOfRangeException("index"))
 end
 
-function Enumerable.elementAtOrDefault(source, index)
+function Enumerable.ElementAtOrDefault(source, index)
     local ok, result = elementAt(source, index)
     return ok and result or source.__genericT__.__default__()
 end
 
-function Enumerable.range(start, count)
+function Enumerable.Range(start, count)
     if count < 0 then throw(ArgumentOutOfRangeException("count")) end
     return createInternal(System.Int, function()
         local index = -1
@@ -724,7 +730,7 @@ function Enumerable.range(start, count)
     end)
 end
 
-function Enumerable.repeat_(element, count, T)
+function Enumerable.Repeat(element, count, T)
     if count < 0 then throw(ArgumentOutOfRangeException("count")) end
     return createInternal(T, function()
         local index = -1
@@ -738,7 +744,8 @@ function Enumerable.repeat_(element, count, T)
     end)
 end
 
-function Enumerable.any(source, ...)
+function Enumerable.Any(source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local en = source:GetEnumerator()
@@ -755,7 +762,8 @@ function Enumerable.any(source, ...)
     end
 end
 
-function Enumerable.all(source, predicate)
+function Enumerable.All(source, predicate)
+    if source == nil then throw(ArgumentNullException("source")) end
     if predicate == nil then throw(ArgumentNullException("predicate")) end
     for _, v in each(source) do
         if not predicate(v) then
@@ -765,7 +773,8 @@ function Enumerable.all(source, predicate)
     return true
 end
 
-function Enumerable.count(source, ...)
+function Enumerable.Count(source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local count = 0
@@ -787,7 +796,8 @@ function Enumerable.count(source, ...)
     end
 end
 
-function Enumerable.contains(source, value, comparer)
+function Enumerable.Contains(source, value, comparer)
+    if source == nil then throw(ArgumentNullException("source")) end
     local equals = getComparer(source, comparer).equals
     for _, v in each(source) do
         if equals(v, value) then
@@ -797,7 +807,8 @@ function Enumerable.contains(source, value, comparer)
     return false
 end
 
-function Enumerable.aggregate(source, ...)
+function Enumerable.Aggregate(source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...);
     if len == 1 then
         local func = ...
@@ -829,7 +840,8 @@ function Enumerable.aggregate(source, ...)
     end
 end
 
-function Enumerable.sum(source, ...)
+function Enumerable.Sum(source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     if len == 0 then
         local sum = 0
@@ -849,6 +861,7 @@ function Enumerable.sum(source, ...)
 end
 
 local function minOrMax(compareFn, source, ...)
+    if source == nil then throw(ArgumentNullException("source")) end
     local len = select("#", ...)
     local selector, T 
     if len == 0 then
@@ -885,19 +898,17 @@ local function minOrMax(compareFn, source, ...)
     end
 end
 
-local function minFn(compare, x, y)
-    return compare(x, y) < 0
-end
-
-function Enumerable.min(source, ...)
+function Enumerable.Min(source, ...)
+    local function minFn(compare, x, y)
+        return compare(x, y) < 0
+    end
     return minOrMax(minFn, source, ...)
 end
 
-local function maxFn(compare, x, y)
-    return compare(x, y) > 0
-end
-
-function Enumerable.max(source, ...)
+function Enumerable.Max(source, ...)
+    local function maxFn(compare, x, y)
+        return compare(x, y) > 0
+    end
     return minOrMax(maxFn, source, ...)
 end
 
