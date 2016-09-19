@@ -241,8 +241,8 @@ namespace Bridge.Translator.Lua
                                 }
                                 else if (prm.IsParams)
                                 {
-                                    string typeName = BridgeTypes.ToJsName(prm.Type, this.Emitter);
-                                    this.Write(string.Format("if {0} == nil then {0} = {1}(0) end", prm.Name, typeName));
+                                    string typeName = BridgeTypes.ToJsName(((ArrayType)prm.Type).ElementType, this.Emitter);
+                                    this.Write(string.Format("if {0} == nil then {0} = System.Array.Empty({1}) end", prm.Name, typeName));
                                     this.WriteNewLine();
                                 }
                             }

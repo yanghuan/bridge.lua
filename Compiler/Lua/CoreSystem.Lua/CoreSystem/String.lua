@@ -16,8 +16,7 @@ local setmetatable = setmetatable
 local select = select
 local type = type
 
-local String = {}
-setmetatable(string, String)
+local String = string
 
 local function check(s, startIndex, count)
     local len = #s
@@ -224,10 +223,10 @@ end
 function String.Format(format, ...)
     local len = select("#", ...)
     if len == 1 then
-        local v = ...
+        local args = ...
         if System.isArrayLike(v) then
             return format:gsub("{(%d)}", function(n) 
-                local v = v:get(n + 0)   -- make n to number
+                local v = args:get(n + 0)   -- make n to number
                 if v == nil then
                     throw(FormatException())
                 end
@@ -235,9 +234,9 @@ function String.Format(format, ...)
             end)
         end 
     end
-    local arg = { ... }
+    local args = { ... }
     return format:gsub("{(%d)}", function(n)
-        local v = arg[n + 1]
+        local v = args[n + 1]
         if v == nil then
             throw(FormatException())
         end
@@ -305,7 +304,7 @@ end
 
 function String.Insert(this, startIndex, value) 
     if value == nil then
-        error(System.new(System.ArgumentNullException, "value"))
+        throw(ArgumentNullException("value"))
     end
     startIndex = check(this, startIndex)
     return this:sub(1, startIndex) .. value .. this:sub(startIndex + 1)
