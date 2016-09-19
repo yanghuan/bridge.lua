@@ -1,5 +1,6 @@
 local System = System
 local throw = System.throw
+local ArgumentNullException = System.ArgumentNullException
 
 local setmetatable = setmetatable
 local getmetatable = getmetatable
@@ -38,7 +39,7 @@ local function appendFn(t, f)
     end
 end
 
-local function combine(fn1, fn2)    
+local function combineImpl(fn1, fn2)    
     local t = {}
     setmetatable(t, multicast)
     appendFn(t, fn1)
@@ -46,10 +47,10 @@ local function combine(fn1, fn2)
     return t
 end
 
-function Delegate.combine(fn1, fn2)
+local function combine(fn1, fn2)
      if fn1 ~= nil then
         if fn2 ~= nil then 
-            return combine(fn1, fn2) 
+            return combineImpl(fn1, fn2) 
         end
         return fn1 
     end
@@ -57,9 +58,12 @@ function Delegate.combine(fn1, fn2)
     return nil
 end
 
-function Delegate.bind(target, method)
+Delegate.Combine = combine
+System.combine = combine
+
+local function bind(target, method)
     if target == nil then
-        throw(System.ArgumentNullException())
+        throw(ArgumentNullException())
     end
     assert(method)
     local t = {
@@ -69,6 +73,9 @@ function Delegate.bind(target, method)
     setmetatable(t, memberMethod)
     return t
 end
+
+Delegate.bind = bind
+System.bind = bind
 
 local function equalsSingle(fn1, fn2)
     if getmetatable(fn1) == memberMethod then
@@ -102,7 +109,7 @@ local function delete(fn, count, deleteIndex, deleteCount)
     return t
 end
 
-local function remove(fn1, fn2) 
+local function removeImpl(fn1, fn2) 
     if getmetatable(fn2) ~= multicast then
         if getmetatable(fn1) ~= multicast then
             if equalsSingle(fn1, fn2) then
@@ -138,14 +145,30 @@ local function remove(fn1, fn2)
     return fn1
 end
 
-function Delegate.remove(fn1, fn2)
+local function remove(fn1, fn2)
     if fn1 ~= nil then
         if fn2 ~= nil then
-            return remove(fn1, fn2)
+            return removeImpl(fn1, fn2)
         end
         return fn1
     end
     return nil
+end
+
+Delegate.Remove = remove
+System.remove = remove
+
+function Delegate.RemoveAll(source, value)
+    local newDelegate
+    repeat
+        newDelegate = source
+        source = remove(source, value)
+    until newDelegate == source
+    return newDelegate
+end
+
+function Delegate.DynamicInvoke(this, ...)
+    return this(...)
 end
 
 local function equals(fn1, fn2)
@@ -189,5 +212,4 @@ function Delegate.GetType(this)
     return System.typeof(Delegate)
 end
 
-System.fn = Delegate
 System.define("System.Delegate", Delegate);

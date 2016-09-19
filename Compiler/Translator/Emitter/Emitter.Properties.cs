@@ -11,10 +11,10 @@ namespace Bridge.Translator
     public partial class Emitter : Visitor
     {
         public const string ROOT = "System";
-        public const string DELEGATE_BIND = "fn.bind";
+        public const string DELEGATE_BIND = "bind";
         public const string DELEGATE_BIND_SCOPE = "fn.bindScope";
-        public const string DELEGATE_COMBINE = "fn.combine";
-        public const string DELEGATE_REMOVE = "fn.remove";
+        public const string DELEGATE_COMBINE = "combine";
+        public const string DELEGATE_REMOVE = "remove";
         public const string CAST = "cast";
         public const string AS = "as";
         public const string IS = "is";
