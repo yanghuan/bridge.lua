@@ -2,13 +2,16 @@ package.path = package.path .. ";D:/Project/Bridge.Lua - avoid/Compiler/Lua/Core
 
 require("All")()
 
+local n = 123
+print(n:ToString())
+
 print("-----------------", "dateTime & timeSpan")
 
 local date = System.DateTime.getNow()
-print(date, date:getYear(), date:getMonth(), date:getDay(), date:getMinute(), date:getSecond())
+print(date:ToString(), date:getYear(), date:getMonth(), date:getDay(), date:getMinute(), date:getSecond())
 
 local ts = System.TimeSpan.FromSeconds(20)
-print(ts)
+print(ts:ToString())
 
 date = date + System.TimeSpan.FromDays(2)
 print(date)

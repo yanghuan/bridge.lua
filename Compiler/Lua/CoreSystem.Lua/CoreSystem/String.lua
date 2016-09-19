@@ -6,7 +6,6 @@ local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
 local FormatException = System.FormatException
 local IndexOutOfRangeException = System.IndexOutOfRangeException
 
-local tostring = tostring
 local unpack = unpack
 local string = string
 local schar = string.char
@@ -110,6 +109,8 @@ function String.GetType(this)
     return System.typeof(String)
 end
 
+String.ToString = tostring
+
 function String.get(this, index)
     if index < 0 or index >= #this then
         throw(IndexOutOfRangeException())
@@ -124,15 +125,15 @@ function String.Concat(...)
         local v = ...
         if System.isEnumerableLike(v) then
             for _, v in System.each(array) do
-                tinsert(t, tostring(v))
+                tinsert(t, v:ToString())
             end
         else 
-            return tostring(v)
+            return v:ToString()
         end
     else
         for i = 1, len do
             local v = select(i, ...)
-        tinsert(t, tostring(v))
+        tinsert(t, v:ToString())
         end
     end
     return tconcat(t)
@@ -230,7 +231,7 @@ function String.Format(format, ...)
                 if v == nil then
                     throw(FormatException())
                 end
-                return tostring(v) 
+                return v:ToString() 
             end)
         end 
     end
@@ -240,7 +241,7 @@ function String.Format(format, ...)
         if v == nil then
             throw(FormatException())
         end
-        return tostring(v) 
+        return v:ToString() 
     end)
 end
 

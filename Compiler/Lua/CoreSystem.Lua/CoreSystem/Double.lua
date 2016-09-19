@@ -66,6 +66,8 @@ function Double.GetHashCode(this)
     return isNaN(this) and nanHashCode or this
 end
 
+Double.ToString = tostring
+
 local function parse(s)
     if s == nil then
         return nil, 1

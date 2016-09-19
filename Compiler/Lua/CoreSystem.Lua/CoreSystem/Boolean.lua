@@ -39,6 +39,8 @@ function Boolean.EqualsObj(this, v)
     return this == v
 end
 
+Boolean.ToString = tostring
+
 local function parse(s)
     if s == nil then
         return nil, 1

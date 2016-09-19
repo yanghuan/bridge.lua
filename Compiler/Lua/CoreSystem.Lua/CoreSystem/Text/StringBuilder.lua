@@ -7,6 +7,7 @@ local clearCount = Collection.clearCount
 local ArgumentNullException = System.ArgumentNullException
 
 local tinsert = table.insert
+local tconcat = table.concat
 
 local StringBuilder = {}
 
@@ -37,12 +38,12 @@ end
 
 StringBuilder.getLength = Collection.getCount
 
-function StringBuilder.append(this, ...)
+function StringBuilder.Append(this, ...)
     local len = select("#", "...")
     if len == 1 then
         local value = ...
         if value ~= nil then
-            value = tostring(value)
+            value = value:ToString()
             tinsert(this, value)
             addCount(this, #value) 
         end
@@ -51,21 +52,21 @@ function StringBuilder.append(this, ...)
         if value == nil then
             throw(ArgumentNullException("value"))
         end
-        value = System.String.substring(value, startIndex, length)
+        value = value:Substring(startIndex, length)
         tinsert(this, value)
         addCount(this, #value) 
     end
     return this
 end
 
-function StringBuilder.appendFormat(this, format, ...)
-    local value = System.String.format(format, ...)
+function StringBuilder.AppendFormat(this, format, ...)
+    local value = format:Format(...)
     tinsert(this, this)
     addCount(this, #value) 
     return this
 end
 
-function StringBuilder.appendLine(this, value)
+function StringBuilder.AppendLine(this, value)
     local count = 1;
     if value ~= nil then
         tinsert(this, value)
@@ -76,18 +77,15 @@ function StringBuilder.appendLine(this, value)
     return this
 end
 
-function StringBuilder.clear(this)
+function StringBuilder.Clear(this)
     removeArrayAll(this)
     clearCount(this)
     return this
 end
 
-function StringBuilder.toString(this)
-    return table.concat(this)
-end
-
-StringBuilder.__tostring = StringBuilder.toString
-StringBuilder.__len = StringBuilder.getLength
+StringBuilder.ToString = tconcat
+StringBuilder.__tostring = StringBuilder.ToString
+StringBuilder.__len = StringBuilder.GetLength
 
 System.define("System.StringBuilder", StringBuilder)
  
