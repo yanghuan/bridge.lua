@@ -1,9 +1,5 @@
 package.path = package.path .. ";D:/Project/Bridge.Lua - avoid/Compiler/Lua/CoreSystem.Lua/?.lua"
-
 require("All")()
-
-local n = 123
-print(n:ToString())
 
 print("-----------------", "dateTime & timeSpan")
 
@@ -18,7 +14,6 @@ print(date)
 
 local baseTime = System.DateTime(1970, 1, 1) 
 print(baseTime:AddMilliseconds(1458032204643))
-
 
 print("-----------------", "array")
 local arr = System.Array(System.Int)(10)

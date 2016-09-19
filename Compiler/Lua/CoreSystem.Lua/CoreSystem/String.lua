@@ -418,6 +418,6 @@ function String.Trim(this, chars)
 end
 
 System.define("System.String", String)
-setmetatable(String, { __call = ctor })
+setmetatable(String, { __index = System.Object, __call = ctor })
 
 

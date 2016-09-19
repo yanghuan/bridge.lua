@@ -29,25 +29,19 @@ namespace Bridge.Lua {
             "System.dll",
             "System.Core.dll",
         };
+        private const string kSystemMeta = "System.xml";
 
         private string folder_;
         private string output_;
         private string[] libs_;
+        private string[] metas_;
         private string tempDirectory_;
 
-        public Worker(string folder, string output, string lib) {
+        public Worker(string folder, string output, string lib, string meta) {
             folder_ = folder;
             output_ = output;
-            if(!string.IsNullOrEmpty(lib)) {
-                List<string> list = new List<string>();
-                string[] libs = lib.Split(';');
-                foreach(string path in libs) {
-                    if(path.EndsWith(".dll")) {
-                        list.Add(Utility.GetCurrentDirectory(path));
-                    }
-                }
-                libs_ = list.ToArray();
-            }
+            libs_ = Utility.SplitPaths(lib);
+            metas_ = Utility.SplitPaths(meta);
         }
 
         public void Do() {
@@ -82,9 +76,7 @@ namespace Bridge.Lua {
             cp.TreatWarningsAsErrors = false;
             cp.OutputAssembly = Path.Combine(tempDirectory_, kOutDllName);
             cp.ReferencedAssemblies.AddRange(SystemDlls);
-            if(libs_ != null) {
-                cp.ReferencedAssemblies.AddRange(libs_);
-            }
+            cp.ReferencedAssemblies.AddRange(libs_);
 
             CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerResults cr = provider.CompileAssemblyFromFile(cp, files);
@@ -103,9 +95,7 @@ namespace Bridge.Lua {
         private string[] GetSearchPaths() {
             List<string> paths = new List<string>();
             paths.Add(RuntimeEnvironment.GetRuntimeDirectory());
-            if(libs_ != null) {
-                paths.AddRange(libs_.Select(Path.GetDirectoryName));
-            }
+            paths.AddRange(libs_.Select(Path.GetDirectoryName));
             return paths.Distinct().ToArray();
         }
 
@@ -144,8 +134,9 @@ namespace Bridge.Lua {
 
         private void ToLua(string outDllPath) {
             var translator = new LuaTranslater(folder_, output_, outDllPath);
-            translator.SearchPaths = GetSearchPaths();
-            translator.XmlMetaFiles = new string[] { "System.xml" };
+            translator.SearchPaths.AddRange(GetSearchPaths());
+            translator.XmlMetaFiles.Add(kSystemMeta);
+            translator.XmlMetaFiles.AddRange(metas_);
             translator.Translate();
             Save(translator);
         }

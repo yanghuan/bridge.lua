@@ -6,17 +6,15 @@ using System.Threading.Tasks;
 
 namespace Bridge.Lua {
     class Program {
-       private const string HelpCmdString = @"Usage: Bridge.Lua [-f srcfolder] [-p outfolder]
+       private const string HelpCmdString = @"Usage: Bridge.Lua [-s srcfolder] [-d dstfolder]
 Arguments 
--f              : intput directory, all *.cs files whill be compiled
--p              : out directory, will put the out lua files
+-s              : source directory, all *.cs files whill be compiled
+-d              : destination  directory, will put the out lua files
 
 Options
--b [option]     : the path of bridge.all, defalut will use bridge.all under the same directory of Bridge.Lua.exe
--l [option]     : third-party libraries referenced, use ';' to separate
--lb [option]    : blacklist of third-party libraries, use ';' to separate,
-                  E.g '#System.Collections;System.Text.StringBuilder', except class named System.Text.StringBuilder, namespace named System.Collections
--lw [option]    : whitelist of third-party libraries, use ';' to separate           
+-l [option]     : libraries referenced, use ';' to separate      
+-m [option]     : meta files, like System.xml, use ';' to separate     
+-h [option]     : show the help message    
 ";
         static void Main(string[] args) {
             if(args.Length > 0) {
@@ -27,10 +25,11 @@ Options
                         return;
                     }
 
-                    string folder = cmds.GetArgument("-f");
-                    string output = cmds.GetArgument("-p");
+                    string folder = cmds.GetArgument("-s");
+                    string output = cmds.GetArgument("-d");
                     string lib = cmds.GetArgument("-l", true);
-                    Worker w = new Worker(folder, output, lib);
+                    string meta = cmds.GetArgument("-m", true);
+                    Worker w = new Worker(folder, output, lib, meta);
                     w.Do();
                     Console.WriteLine("all operator success");
                 }

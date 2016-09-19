@@ -98,7 +98,7 @@ function MultiArray.getLength(this, dimension)
     if dimension == nil then
         return #this
     end
-    local rank = thiss.__rank__
+    local rank = this.__rank__
     checkIndex(rank, dimension)
     return this.__rank__[dimension + 1]
 end

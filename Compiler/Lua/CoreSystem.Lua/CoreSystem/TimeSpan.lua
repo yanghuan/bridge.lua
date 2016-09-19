@@ -5,6 +5,8 @@ local ArgumentException = System.ArgumentException
 
 local getmetatable = getmetatable
 local select = select
+local format = string.format
+local tostring = tostring
 
 local TimeSpan = {}
 
@@ -122,7 +124,7 @@ end
 function TimeSpan.ToString(this) 
     local day = this:getDays()
     local daysStr = day == 0 and "" or (tostring(day) .. ".")
-    return string.format("%s%02d:%02d:%02d.%03d", daysStr, this:getHours(), this:getMinutes(), this:getSeconds(), this:getMilliseconds())
+    return format("%s%02d:%02d:%02d.%03d", daysStr, this:getHours(), this:getMinutes(), this:getSeconds(), this:getMilliseconds())
 end
 
 TimeSpan.__add = TimeSpan.Add

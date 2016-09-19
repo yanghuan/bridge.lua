@@ -85,5 +85,16 @@ namespace Bridge.Lua {
             File.Copy(lib, path, true);
             return path;
         }
+
+        public static string[] SplitPaths(string path) {
+            HashSet<string> list = new HashSet<string>();
+            if(!string.IsNullOrEmpty(path)) {
+                string[] paths = path.Split(';');
+                foreach(string file in paths) {
+                    list.Add(Utility.GetCurrentDirectory(path));
+                }
+            }
+            return list.ToArray();
+        }
     }
 }

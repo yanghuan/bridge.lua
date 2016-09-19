@@ -9,6 +9,7 @@ local ArgumentException = System.ArgumentException
 
 local getmetatable = getmetatable
 local select = select
+local format = string.format
 
 --http://referencesource.microsoft.com/#mscorlib/system/datetime.cs
 local DateTime = {}
@@ -303,7 +304,7 @@ function DateTime.ToUniversalTime(this)
 end
 
 function DateTime.ToString(this)
-    return string.format("%d/%d/%d %02d:%02d:%02d.%03d", 
+    return format("%d/%d/%d %02d:%02d:%02d.%03d", 
         this:getYear(), this:getMonth(), this:getDay(), 
         this:getHour(), this:getMinute(), this:getSecond(), this:getMillisecond())
 end
