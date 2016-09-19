@@ -233,7 +233,7 @@ namespace Bridge.Translator.Lua
                         }
 
                         if(csharpInvocation.TargetResult.IsCompileTimeConstant) {
-                            if(csharpInvocation.Member.Name == "ToString") {
+                            if(csharpInvocation.IsCompileTimeConstantToString()) {
                                 if(invocationExpression.IsSingleExpression()) {
                                     this.Write("--");
                                 }
@@ -242,7 +242,7 @@ namespace Bridge.Translator.Lua
                                     this.Write("\"", reslut.Member.Name, "\"");
                                 }
                                 else {
-                                    this.Write(csharpInvocation.TargetResult.ConstantValue);
+                                    this.Write("\"", csharpInvocation.TargetResult.ConstantValue, "\"");
                                 }
                                 this.Emitter.ReplaceAwaiterByVar = oldValue;
                                 this.Emitter.AsyncExpressionHandling = oldAsyncExpressionHandling;

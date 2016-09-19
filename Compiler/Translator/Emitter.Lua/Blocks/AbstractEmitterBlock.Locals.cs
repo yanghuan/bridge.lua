@@ -54,6 +54,10 @@ namespace Bridge.Translator.Lua
                 index += cells.Length;
             }
         }
+
+        public static bool IsCompileTimeConstantToString(this MemberResolveResult result) {
+            return result.TargetResult.IsCompileTimeConstant && result.Member.Name == "ToString";
+        }
     }
 
     public partial class AbstractEmitterBlock

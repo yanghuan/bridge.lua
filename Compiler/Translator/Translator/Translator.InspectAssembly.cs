@@ -20,12 +20,11 @@ namespace Bridge.Translator
                     }
                 }
             }
-            else {
-                string dir = RuntimeEnvironment.GetRuntimeDirectory();
-                string path = Path.Combine(dir, assemblyName + ".dll");
-                if(File.Exists(path)) {
-                    return path;
-                }
+
+            string runtimeDir = RuntimeEnvironment.GetRuntimeDirectory();
+            string file = Path.Combine(runtimeDir, assemblyName + ".dll");
+            if(File.Exists(file)) {
+                return file;
             }
 
             throw new System.Exception("not found assembly " + assemblyName);

@@ -147,6 +147,7 @@ namespace Bridge.Builder
                 translator.Log = logger;
                 translator.Configuration = cfg;
                 translator.XmlMetaFiles.Add("../../../Lua/System.xml");
+                translator.SearchPaths.Add(Path.GetDirectoryName(lib));
                 if (def != null)
                 {
                     translator.DefineConstants.AddRange(def.Split(';').Select(s => s.Trim()).Where(s => s != ""));

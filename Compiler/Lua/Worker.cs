@@ -95,7 +95,7 @@ namespace Bridge.Lua {
         private string[] GetSearchPaths() {
             List<string> paths = new List<string>();
             paths.Add(RuntimeEnvironment.GetRuntimeDirectory());
-            paths.AddRange(libs_.Select(Path.GetDirectoryName));
+            paths.AddRange(libs_.Select(Path.GetDirectoryName).Where(i => i != null));
             return paths.Distinct().ToArray();
         }
 

@@ -48,8 +48,13 @@ namespace Bridge.Translator.Lua {
             }
 
             var memberTargetrr = targetrr as MemberResolveResult;
-            if(memberTargetrr != null && memberTargetrr.Type.Kind == TypeKind.Enum && memberTargetrr.Member is DefaultResolvedField && this.Emitter.Validator.EnumEmitMode(memberTargetrr.Type) == 2) {
-                isConstTarget = true;
+            if(memberTargetrr != null) {
+                if(memberTargetrr.Type.Kind == TypeKind.Enum && memberTargetrr.Member is DefaultResolvedField) {
+                    isConstTarget = true;
+                }
+                else if(memberTargetrr.IsCompileTimeConstantToString()) {
+                    isConstTarget = true;
+                }
             }
 
             if(memberReferenceExpression.Parent is InvocationExpression && (((InvocationExpression)(memberReferenceExpression.Parent)).Target == memberReferenceExpression)) {
