@@ -116,6 +116,7 @@ namespace Ice.Utils {
 You will get the equivalent, the possibility of a good lua code.
 ```lua
 local System = System
+local Linq = System.Linq.Enumerable
 local IceUtilsTimeoutQueue
 
 System.usingDeclare(function()
@@ -124,8 +125,8 @@ end)
 
 System.namespace("Ice.Utils", function(namespace)
     namespace.class("TimeoutQueue", function ()
-        local getNextId, getNextExpiration, getIsEmpty, insert, add, addRepeating, addRepeating_1, erase
-        local runOnce, runLoop, contains, runInternal
+        local getNextId, getNextExpiration, getIsEmpty, Insert, Add, AddRepeating, AddRepeating_1, Erase
+        local RunOnce, RunLoop, Contains, RunInternal
         local __init__, __ctor1__
         __init__ = function (this) 
             this.ids_ = System.Dictionary(System.Int, IceUtilsTimeoutQueue.Event)()
@@ -141,73 +142,79 @@ System.namespace("Ice.Utils", function(namespace)
             return __t__
         end
         getNextExpiration = function (this) 
-            return System.ternary(#this.events_ > 0, this.events_:getFirst().value.expiration, 9007199254740991)
+            local __t__
+            if this.events_:getCount() > 0 then
+                __t__ = this.events_:getFirst().Value.Expiration
+            else
+                __t__ = 9223372036854775807
+            end
+            return __t__
         end
         getIsEmpty = function (this) 
             return this.ids_:getCount() == 0
         end
-        insert = function (this, e) 
-            this.ids_:add(e.id, e)
-            local next = System.Linq(this.events_):firstOrDefault(function (i) 
-                return i.expiration > e.expiration
+        Insert = function (this, e) 
+            this.ids_:Add(e.Id, e)
+            local next = Linq.FirstOrDefault(this.events_, function (i) 
+                return i.Expiration > e.Expiration
             end)
             if next ~= nil then
-                e.linkNode = this.events_:addBefore(next.linkNode, e)
+                e.LinkNode = this.events_:AddBefore(next.LinkNode, e)
             else
-                e.linkNode = this.events_:addLast(e)
+                e.LinkNode = this.events_:AddLast(e)
             end
         end
-        add = function (this, now, delay, callback) 
-            return addRepeating_1(this, now, delay, 0, callback)
+        Add = function (this, now, delay, callback) 
+            return AddRepeating_1(this, now, delay, 0, callback)
         end
-        addRepeating = function (this, now, interval, callback) 
-            return addRepeating_1(this, now, interval, interval, callback)
+        AddRepeating = function (this, now, interval, callback) 
+            return AddRepeating_1(this, now, interval, interval, callback)
         end
-        addRepeating_1 = function (this, now, delay, interval, callback) 
+        AddRepeating_1 = function (this, now, delay, interval, callback) 
             local id = getNextId(this)
-            insert(this, System.merge(IceUtilsTimeoutQueue.Event(), function (t)
-                t.id = id
-                t.expiration = now + delay
-                t.repeatInterval = interval
-                t.callback = callback
+            Insert(this, System.merge(IceUtilsTimeoutQueue.Event(), function (t)
+                t.Id = id
+                t.Expiration = now + delay
+                t.RepeatInterval = interval
+                t.Callback = callback
             end))
             return id
         end
-        erase = function (this, id) 
+        Erase = function (this, id) 
             local __t__
             local e
-            __t__, e = this.ids_:tryGetValue(id, e)
+            __t__, e = this.ids_:TryGetValue(id, e)
             if __t__ then
-                this.ids_:remove(id)
-                this.events_:remove(e.linkNode)
+                this.ids_:Remove(id)
+                this.events_:Remove(e.LinkNode)
                 return true
             end
             return false
         end
-        runOnce = function (this, now) 
-            return runInternal(this, now, true)
+        RunOnce = function (this, now) 
+            return RunInternal(this, now, true)
         end
-        runLoop = function (this, now) 
-            return runInternal(this, now, false)
+        RunLoop = function (this, now) 
+            return RunInternal(this, now, false)
         end
-        contains = function (this, id) 
-            return this.ids_:containsKey(id)
+        Contains = function (this, id) 
+            return this.ids_:ContainsKey(id)
         end
-        runInternal = function (this, now, onceOnly) 
+        RunInternal = function (this, now, onceOnly) 
             local nextExp
             repeat 
-                local expired = System.Linq(this.events_):takeWhile(function (i) 
-                    return i.expiration <= now
-                end):toList()
+                local expired = Linq.ToList(Linq.TakeWhile(this.events_, function (i) 
+                    return i.Expiration <= now
+                end))
                 for _, e in System.each(expired) do
-                    erase(this, e.id)
-                    if e.repeatInterval > 0 then
-                        e.expiration = e.expiration + e.repeatInterval
-                        insert(this, e)
+                    Erase(this, e.Id)
+                    if e.RepeatInterval > 0 then
+                        e.Expiration = e.Expiration + e.RepeatInterval
+                        Insert(this, e)
                     end
                 end
                 for _, e in System.each(expired) do
-                    e.callback(e.id, now)
+                    e.Callback(e.Id, now)
                 end
                 nextExp = getNextExpiration(this)
             until not(not onceOnly and nextExp <= now)
@@ -218,28 +225,26 @@ System.namespace("Ice.Utils", function(namespace)
             __ctor__ = __ctor1__,
             getNextExpiration = getNextExpiration,
             getIsEmpty = getIsEmpty,
-            add = add,
-            addRepeating = addRepeating,
-            addRepeating_1 = addRepeating_1,
-            erase = erase,
-            runOnce = runOnce,
-            runLoop = runLoop,
-            contains = contains
+            Add = Add,
+            AddRepeating = AddRepeating,
+            AddRepeating_1 = AddRepeating_1,
+            Erase = Erase,
+            RunOnce = RunOnce,
+            RunLoop = RunLoop,
+            Contains = Contains
         }
     end)
     namespace.class("TimeoutQueue.Event", function ()
         local __init__, __ctor1__
         __init__ = function (this) 
-            this.expiration = 0
-            this.repeatInterval = 0
+            this.Expiration = 0
+            this.RepeatInterval = 0
         end
         __ctor1__ = function (this) 
             __init__(this)
         end
         return {
-            id = 0,
-            callback = nil,
-            linkNode = nil,
+            Id = 0,
             __ctor__ = __ctor1__
         }
     end)
@@ -250,17 +255,15 @@ end)
 ###Command Line Parameters
 ```cmd
 D:\bridge>Bridge.Lua.exe -h
-Usage: Bridge.Lua [-f srcfolder] [-p outfolder]
+Usage: Bridge.Lua [-s srcfolder] [-d dstfolder]
 Arguments 
--f              : intput directory, all *.cs files whill be compiled
--p              : out directory, will put the out lua files
+-s              : source directory, all *.cs files whill be compiled
+-d              : destination  directory, will put the out lua files
 
 Options
--b [option]     : the path of bridge.all, defalut will use bridge.all under the same directory of Bridge.Lua.exe
--l [option]     : third-party libraries referenced, use ';' to separate
--lb [option]    : blacklist of third-party libraries, use ';' to separate,
-                  E.g '#System.Collections;System.Text.StringBuilder', except class named System.Text.StringBuilder, namespace named System.Collections
--lw [option]    : whitelist of third-party libraries, use ';' to separate         
+-l [option]     : libraries referenced, use ';' to separate      
+-m [option]     : meta files, like System.xml, use ';' to separate     
+-h [option]     : show the help message          
 ```
 ###Download
 [bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)
