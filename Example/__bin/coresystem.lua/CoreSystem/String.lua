@@ -6,14 +6,17 @@ local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
 local FormatException = System.FormatException
 local IndexOutOfRangeException = System.IndexOutOfRangeException
 
-local tostring = tostring
 local unpack = unpack
 local string = string
 local schar = string.char
+local table = table
 local tinsert = table.insert
 local tconcat = table.concat
+local setmetatable = setmetatable
+local select = select
+local type = type
 
-local String = {}
+local String = string
 
 local function check(s, startIndex, count)
     local len = #s
@@ -28,7 +31,7 @@ local function check(s, startIndex, count)
     return startIndex, count, len
 end
 
-function String.build(...)
+local function ctor(_, ...)
     local len = select("#", ...)
     if len == 2 then
         local c, count = ...
@@ -76,15 +79,13 @@ local function compare(strA, strB, ignoreCaseOrType, cultureInfo)
     return 0
 end
 
-String.compare = compare
+String.Compare = compare
 
-function String.compareTo(this, v)
+function String.CompareTo(this, v)
     return compare(this, v)
 end
 
-string.compareTo = String.compareTo
-
-function String.compareToObj(this, v)
+function String.CompareToObj(this, v)
     if v == nil then return 1 end
     if type(v) ~= "string" then
         throw(ArgumentException("Arg_MustBeString"))
@@ -92,28 +93,22 @@ function String.compareToObj(this, v)
     return compare(this, v)
 end
 
-string.compareToObj = String.compareToObj
-
-function String.equals(this, v, comparisonType)
+function String.Equals(this, v, comparisonType)
     return compare(this, v, comparisonType) == 0
 end
 
-string.equals = String.equals
-
-function String.equalsObj(this, v)
+function String.EqualsObj(this, v)
     if type(v) == "string" then
         return this == v
     end
     return false
 end
 
-string.equalsObj = String.equalsObj
-
-function String.getHashCode(this)
-    return this
+function String.GetType(this)
+    return System.typeof(String)
 end
 
-string.getHashCode = String.getHashCode
+String.ToString = tostring
 
 function String.get(this, index)
     if index < 0 or index >= #this then
@@ -122,30 +117,28 @@ function String.get(this, index)
     return this:byte(index + 1)
 end
 
-string.get = String.get
-
-function String.concat(...)
+function String.Concat(...)
     local t = {}
     local len = select("#", ...)
     if len == 1 then
         local v = ...
         if System.isEnumerableLike(v) then
             for _, v in System.each(array) do
-                tinsert(t, tostring(v))
+                tinsert(t, v:ToString())
             end
         else 
-            return tostring(v)
+            return v:ToString()
         end
     else
         for i = 1, len do
             local v = select(i, ...)
-        tinsert(t, tostring(v))
+        tinsert(t, v:ToString())
         end
     end
     return tconcat(t)
 end
 
-function String.join(separator, value, startIndex, count)
+function String.Join(separator, value, startIndex, count)
     local t = {}
     local has
     if startIndex then  
@@ -189,7 +182,7 @@ local function checkIndexOf(str, value, startIndex, count, comparisonType)
     return str, value, startIndex
 end
 
-function String.lastIndexOf(str, value, startIndex, count, comparisonType)
+function String.LastIndexOf(str, value, startIndex, count, comparisonType)
     if type(value) == "number" then
         value = schar(value)
     end
@@ -201,8 +194,6 @@ function String.lastIndexOf(str, value, startIndex, count, comparisonType)
     return -1
 end
 
-string.get = String.lastIndexOf
-
 local function indexOfAny(str, chars, startIndex, count)
     if chars == nil then
         throw(ArgumentNullException("chars"))
@@ -212,7 +203,7 @@ local function indexOfAny(str, chars, startIndex, count)
     return str, "[" .. schar(unpack(chars)) .. "]", startIndex
 end
 
-function String.lastIndexOfAny(str, chars, startIndex, count)
+function String.LastIndexOfAny(str, chars, startIndex, count)
     str, chars, startIndex = indexOfAny(str, chars, startIndex, count)
     local index = str:match("^.*()" .. chars)
     if index then
@@ -221,62 +212,54 @@ function String.lastIndexOfAny(str, chars, startIndex, count)
     return -1
 end
 
-string.get = String.lastIndexOfAny
-
-function String.isNullOrWhiteSpace(value)
+function String.IsNullOrWhiteSpace(value)
     return value == nil or value:find("^%s*$") ~= nil
 end
 
-function String.isNullOrEmpty(value)
+function String.IsNullOrEmpty(value)
     return value == nil or #value == 0
 end
 
-function String.format(format, ...)
+function String.Format(format, ...)
     local len = select("#", ...)
     if len == 1 then
-        local v = ...
+        local args = ...
         if System.isArrayLike(v) then
             return format:gsub("{(%d)}", function(n) 
-                local v = v:get(n)
+                local v = args:get(n + 0)   -- make n to number
                 if v == nil then
                     throw(FormatException())
                 end
-                return tostring(v) 
+                return v:ToString() 
             end)
         end 
     end
-    local arg = { ... }
+    local args = { ... }
     return format:gsub("{(%d)}", function(n)
-        local v = arg[n + 1]
+        local v = args[n + 1]
         if v == nil then
             throw(FormatException())
         end
-        return tostring(v) 
+        return v:ToString() 
     end)
 end
 
-function String.startsWith(this, prefix)
+function String.StartsWith(this, prefix)
     return this:sub(1, #prefix) == prefix
 end
 
-string.startsWith = String.startsWith
-
-function String.endsWith(this, suffix)
+function String.EndsWith(this, suffix)
     return suffix == "" or this:sub(-#suffix) == suffix
 end
 
-string.endsWith = String.endsWith
-
-function String.contains(this, value)
+function String.Contains(this, value)
     if value == nil then
         throw(ArgumentNullException("value"))
     end
     return this:find(value) ~= nil
 end
 
-string.contains = String.contains
-
-function String.indexOfAny(str, chars, startIndex, count)
+function String.IndexOfAny(str, chars, startIndex, count)
     str, chars, startIndex = indexOfAny(str, chars, startIndex, count)
     local index = str:find(chars)
     if index then
@@ -285,9 +268,7 @@ function String.indexOfAny(str, chars, startIndex, count)
     return -1
 end
 
-string.indexOfAny = String.indexOfAny
-
-function String.indexOf(str, value, startIndex, count, comparisonType)
+function String.IndexOf(str, value, startIndex, count, comparisonType)
     if type(value) == "number" then
         value = schar(value)
     end
@@ -299,9 +280,7 @@ function String.indexOf(str, value, startIndex, count, comparisonType)
     return -1
 end
 
-string.get = String.indexOf
-
-function String.toCharArray(str, startIndex, count)
+function String.ToCharArray(str, startIndex, count)
     startIndex, count = check(str, startIndex, count)
     local t = { }
     for i = startIndex + 1, startIndex + count do
@@ -314,7 +293,7 @@ local function escape(s)
     return s:gsub("([%%%^%.])", "%%%1")
 end
 
-function String.replace(this, a, b)
+function String.Replace(this, a, b)
     if type(a) == "number" then
         a = schar(a)
         b = schar(b)
@@ -323,31 +302,23 @@ function String.replace(this, a, b)
     return this:gsub(a, b)
 end
 
-string.replace = String.replace
-
-function String.insert(this, startIndex, value) 
+function String.Insert(this, startIndex, value) 
     if value == nil then
-        error(System.new(System.ArgumentNullException, "value"))
+        throw(ArgumentNullException("value"))
     end
     startIndex = check(this, startIndex)
     return this:sub(1, startIndex) .. value .. this:sub(startIndex + 1)
 end
 
-string.insert = String.insert
-
-function String.remove(this, startIndex, count) 
+function String.Remove(this, startIndex, count) 
     startIndex, count = stringCheck(this, startIndex, count)
     return this:sub(1, startIndex) .. this:sub(startIndex + 1 + count)
 end
 
-string.remove = String.remove
-
-function String.substring(this, startIndex, count)
+function String.Substring(this, startIndex, count)
     startIndex, count = check(str, startIndex, count)
     return this:sub(startIndex + 1, startIndex + count)
 end
-
-string.substring = String.substring
 
 local function findAny(s, strings, startIndex)
     local findBegin, findEnd, findStr
@@ -363,9 +334,9 @@ local function findAny(s, strings, startIndex)
     return findBegin, findEnd, findStr
 end
 
-String.findAny = findAny
+String.FindAny = findAny
 
-function String.split(this, strings, count, options) 
+function String.Split(this, strings, count, options) 
     local t = {}
     local find = string.find
     if type(strings) == "table" then
@@ -409,9 +380,10 @@ function String.split(this, strings, count, options)
     return System.arrayFromTable(t, String) 
 end
 
-string.split = String.split
+String.ToLower = string.lower
+String.ToUpper = string.upper
 
-function String.trimEnd(this, chars)
+function String.TrimEnd(this, chars)
     if chars then
         chars = schar(unpack(chars))
         chars = escape(chars)
@@ -422,9 +394,7 @@ function String.trimEnd(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
-string.trimEnd = String.trimEnd
-
-function String.trimStart(this, chars) 
+function String.TrimStart(this, chars) 
     if chars then
         chars = schar(unpack(chars))
         chars = escape(chars)
@@ -435,9 +405,7 @@ function String.trimStart(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
-string.trimStart = String.trimStart
-
-function String.trim(this, chars) 
+function String.Trim(this, chars) 
     if chars then
         chars = schar(unpack(chars))
         chars = escape(chars)
@@ -448,8 +416,7 @@ function String.trim(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
-string.trim = String.trim
-
 System.define("System.String", String)
+setmetatable(String, { __index = System.Object, __call = ctor })
 
 

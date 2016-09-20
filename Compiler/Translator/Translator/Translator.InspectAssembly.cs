@@ -207,6 +207,12 @@ namespace Bridge.Translator
                 using (var reader = new StreamReader(fileName))
                 {
                     var parser = new ICSharpCode.NRefactory.CSharp.CSharpParser();
+                    if(!string.IsNullOrEmpty(Defines)) {
+                        string[] defs = Defines.Split(';');
+                        foreach(string def in defs) {
+                            parser.CompilerSettings.ConditionalSymbols.Add(def);
+                        }
+                    }
 
                     if (this.DefineConstants != null && this.DefineConstants.Count > 0)
                     {

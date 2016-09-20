@@ -6,7 +6,6 @@ local unWrap = Collection.unWrap
 local checkIndex = Collection.checkIndex
 local checkIndexAndCount = Collection.checkIndexAndCount
 local copyArray = Collection.copyArray
-
 local ArgumentNullException = System.ArgumentNullException
 local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
 
@@ -19,7 +18,7 @@ function List.__ctor__(this, ...)
     if type(collection) == "number" then 
         return 
     end
-    this:addRange(collection)
+    this:AddRange(collection)
 end
 
 function List.getCapacity(this)
@@ -38,24 +37,19 @@ function List.getIsReadOnly(this)
     return false
 end
 
-local getArray = Collection.getArray
-local setArray = Collection.setArray
+List.get = Collection.getArray
+List.set = Collection.setArray
+List.Add = Collection.pushArray
 
-List.get = getArray
-List.set = setArray
-List.getItem = getArray
-List.setItem = setArray
-List.add = Collection.pushArray
-
-function List.addRange(this, collection)
-    this:insertRange(0, collection)
+function List.AddRange(this, collection)
+    this:InsertRange(#this, collection)
 end
 
-List.binarySearch = Collection.binarySearchArray
-List.clear = Collection.removeArrayAll
-List.contains = Collection.contains
+List.BinarySearch = Collection.binarySearchArray
+List.Clear = Collection.removeArrayAll
+List.Contains = Collection.contains
 
-function List.copyTo(this, ...)
+function List.CopyTo(this, ...)
     local len = select("#", ...)
     if len == 1 then
         local array = ...
@@ -65,16 +59,16 @@ function List.copyTo(this, ...)
     end
 end 
 
-List.exists = Collection.existsOfArray
-List.find = Collection.findOfArray
-List.findAll = Collection.findAllOfArray
-List.findIndex = Collection.findIndexOfArray
-List.findLast = Collection.findLastOfArray
-List.findLastIndex = Collection.findLastIndexOfArray
-List.forEach = Collection.forEachArray
-List.getEnumerator = Collection.arrayEnumerator
+List.Exists = Collection.existsOfArray
+List.Find = Collection.findOfArray
+List.FindAll = Collection.findAllOfArray
+List.FindIndex = Collection.findIndexOfArray
+List.FindLast = Collection.findLastOfArray
+List.FindLastIndex = Collection.findLastIndexOfArray
+List.ForEach = Collection.forEachArray
+List.GetEnumerator = Collection.arrayEnumerator
 
-function List.getRange(this, index, count)
+function List.GetRange(this, index, count)
     checkIndexAndCount(this, index, count)
     local list = System.List(this.__genericT__)()
     copy(list, index, this, 0, count)
@@ -85,12 +79,12 @@ local indexOf = Collection.indexOfArray
 local removeAt = Collection.removeAtArray
 local removeArray = Collection.removeArray
 
-List.indexOf = indexOf
-List.insert = Collection.insertArray
-List.insertRange = Collection.insertRangeArray
-List.lastIndexOf = Collection.lastIndexOfArray
+List.IndexOf = indexOf
+List.Insert = Collection.insertArray
+List.InsertRange = Collection.insertRangeArray
+List.LastIndexOf = Collection.lastIndexOfArray
 
-function List.remove(this, item)
+function List.Remove(this, item)
     local index = indexOf(this, item)
     if index >= 0 then
         removeAt(this, index)
@@ -99,7 +93,7 @@ function List.remove(this, item)
     return false
 end
 
-function List.removeAll(this, match)
+function List.RemoveAll(this, match)
     if match == nil then
         throw(ArgumentNullException("match"))
     end
@@ -123,13 +117,13 @@ function List.removeAll(this, match)
     return count
 end
 
-List.removeAt = removeAt
-List.removeRange = removeArray
-List.reverse = Collection.reverseArray
-List.sort = Collection.sortArray
-List.trimExcess = System.emptyFn
-List.toArray = Collection.toArray
-List.trueForAll = Collection.trueForAllOfArray
+List.RemoveAt = removeAt
+List.RemoveRange = removeArray
+List.Reverse = Collection.reverseArray
+List.Sort = Collection.sortArray
+List.TrimExcess = System.emptyFn
+List.ToArray = Collection.toArray
+List.TrueForAll = Collection.trueForAllOfArray
 
 System.define("System.List", function(T) 
     local cls = { 

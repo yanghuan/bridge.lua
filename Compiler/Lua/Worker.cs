@@ -36,12 +36,14 @@ namespace Bridge.Lua {
         private string[] libs_;
         private string[] metas_;
         private string tempDirectory_;
+        private string defines_;
 
-        public Worker(string folder, string output, string lib, string meta) {
+        public Worker(string folder, string output, string lib, string meta, string defines) {
             folder_ = folder;
             output_ = output;
             libs_ = Utility.SplitPaths(lib);
             metas_ = Utility.SplitPaths(meta);
+            defines_ = defines;
         }
 
         public void Do() {
@@ -77,6 +79,9 @@ namespace Bridge.Lua {
             cp.OutputAssembly = Path.Combine(tempDirectory_, kOutDllName);
             cp.ReferencedAssemblies.AddRange(SystemDlls);
             cp.ReferencedAssemblies.AddRange(libs_);
+            if(!string.IsNullOrEmpty(defines_)) {
+                cp.CompilerOptions += "/define:" + defines_;
+            }
 
             CSharpCodeProvider provider = new CSharpCodeProvider();
             CompilerResults cr = provider.CompileAssemblyFromFile(cp, files);
@@ -137,6 +142,7 @@ namespace Bridge.Lua {
             translator.SearchPaths.AddRange(GetSearchPaths());
             translator.XmlMetaFiles.Add(Utility.GetCurrentDirectory(kSystemMeta));
             translator.XmlMetaFiles.AddRange(metas_);
+            translator.Defines = defines_;
             translator.Translate();
             Save(translator);
         }

@@ -261,9 +261,10 @@ Arguments
 -d              : destination  directory, will put the out lua files
 
 Options
--l [option]     : libraries referenced, use ';' to separate      
--m [option]     : meta files, like System.xml, use ';' to separate     
--h [option]     : show the help message          
+-l              : libraries referenced, use ';' to separate      
+-m              : meta files, like System.xml, use ';' to separate     
+-h              : show the help message    
+-def            : defines name as a conditional symbol, use ';' to separate     
 ```
 ###Download
 [bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)

@@ -107,7 +107,7 @@ function MultiArray.getRank(this)
    return #this.__rank__
 end
 
-MultiArray.getEnumerator = arrayEnumerator
+MultiArray.GetEnumerator = arrayEnumerator
 
 System.define("System.MultiArray", function(T) 
     local cls = { 

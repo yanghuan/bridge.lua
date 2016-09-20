@@ -107,7 +107,8 @@ namespace Bridge.Translator.Lua
             if(TransformCtx.GetEntityName != null) {
                 name = TransformCtx.GetEntityName(member);
             }
-            else {
+
+            if(name == null) {
                 switch(member.SymbolKind) {
                     case SymbolKind.Property: {
                             name = XmlMetaMaker.GetPropertyName((IProperty)member);

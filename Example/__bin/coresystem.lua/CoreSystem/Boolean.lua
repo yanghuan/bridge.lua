@@ -4,7 +4,10 @@ local ArgumentException = System.ArgumentException
 local ArgumentNullException = System.ArgumentNullException
 local FormatException = System.FormatException
 
+local type = type
+
 local Boolean = {}
+debug.setmetatable(false, Boolean)
 
 local function compare(this, v)
     if this == v then
@@ -15,9 +18,9 @@ local function compare(this, v)
     return 1
 end
 
-Boolean.compareTo = compare
+Boolean.CompareTo = compare
 
-function Boolean.compareToObj(this, v)
+function Boolean.CompareToObj(this, v)
    if v == null then return 1 end
    if type(v) ~= "boolean" then
        throw(ArgumentException("Arg_MustBeBoolean"))
@@ -25,27 +28,22 @@ function Boolean.compareToObj(this, v)
    return compare(this, v)
 end
 
-function Boolean.equals(this, v)
+function Boolean.Equals(this, v)
     return this == v
 end
 
-function Boolean.equalsObj(this, v)
+function Boolean.EqualsObj(this, v)
     if type(v) ~= "boolean" then
         return false
     end
     return this == v
 end
 
-function Boolean.getHashCode(this)
-    return this
-end
+Boolean.ToString = tostring
 
-local function parse(s, safe)
+local function parse(s)
     if s == nil then
-        if safe then return
-        else
-            throw(ArgumentNullException())
-        end
+        return nil, 1
     end
     s = s:lower()
     if s == "true" then
@@ -53,24 +51,32 @@ local function parse(s, safe)
     elseif s == "false" then
         return false
     end
-    if not safe then
-        throw(FormatException())
+    return nil, 2
+end
+
+function Boolean.Parse(s)
+    local v, err = parse(s)
+    if v == nil then
+        if err == 1 then
+            throw(ArgumentNullException()) 
+        else
+            throw(FormatException())
+        end
     end
+    return v
 end
 
-function Boolean.parse(s)
-    return parse(s)
-end
-
-function Boolean.tryParse(s)
-    local v = parse(s, true)
+function Boolean.TryParse(s)
+    local v = parse(s)
     if v ~= nil then
         return true, v
     end
     return false, false
 end
 
-Boolean.__defaultVal__ = false
+function Boolean.__default__()
+    return false
+end
 
 System.defStc("System.Boolean", Boolean)
 Boolean.__inherits__ = { System.IComparable, System.IComparable_1(Boolean), System.IEquatable_1(Boolean) }

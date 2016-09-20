@@ -9,6 +9,7 @@ local Comparer_1 = System.Comparer_1
 
 local tinsert = table.insert
 local tremove = table.remove
+local tsort = table.sort
 local setmetatable = setmetatable
 local select = select
 local type = type
@@ -117,7 +118,7 @@ function Collection.buildArray(t, size, ...)
         tinsert(t, wrap(v))
     end
     if len < size then
-        local default = t.__genericT__.__defaultVal__
+        local default = t.__genericT__.__default__()
         if default == nil then
             default = null
         end
@@ -183,16 +184,17 @@ end
 
 local function binarySearchArray(t, index, count, v, comparer)
     checkIndexAndCount(t, index, count)
+    local compare
     if comparer == nil then
-        comparer = Comparer_1(t.__genericT__).getDefault().compare 
-    elseif type(comparer) ~= "function" then    
-        comparer = comparer.compare
+        compare = Comparer_1(t.__genericT__).getDefault().Compare 
+    else    
+        compare = comparer.compare
     end
     local lo = index
     local hi = index + count - 1
     while lo <= hi do
         local i = lo + sr(hi - lo, 1)
-        local order = comparer(unWrap(t[i + 1]), v);
+        local order = compare(unWrap(t[i + 1]), v);
         if order == 0 then return i end
         if order < 0 then
             lo = i + 1
@@ -264,7 +266,7 @@ function Collection.findOfArray(t, match)
             return item
         end
     end
-    return t.__genericT__.__defaultVal__
+    return t.__genericT__.__default__()
 end
 
 function Collection.findAllOfArray(t, match)
@@ -291,7 +293,7 @@ function Collection.findLastOfArray(t, match)
             return item
         end
     end
-    return t.__genericT__.__defaultVal__
+    return t.__genericT__.__default__()
 end
 
 function Collection.findLastIndexOfArray(t, ...)
@@ -326,7 +328,7 @@ end
 
 local function indexOfArray(t, v, index, count)
     checkIndexAndCount(t, index, count)
-    local equals = EqualityComparer_1(t.__genericT__).getDefault().equals
+    local equals = EqualityComparer_1(t.__genericT__).getDefault().Equals
     for i = index + 1, index + count do 
         if equals(unWrap(t[i]), v) then
             return i - 1
@@ -360,7 +362,7 @@ local function lastIndexOfArray(t, v, index, count)
         throw(ArgumentOutOfRangeException("count"))
     end
     checkIndex(t, index - count)
-    local equals = EqualityComparer_1(t.__genericT__).getDefault().equals
+    local equals = EqualityComparer_1(t.__genericT__).getDefault().Equals
     for i = index + 1, index - count, -1 do 
         if equals(unWrap(t[i]), v) then
             return i - 1
@@ -403,22 +405,25 @@ end
 local function sortArray(t, index, count, comparer)
     if count > 1 then
         checkIndexAndCount(t, index, count)
+        local compare
         if comparer == nil then
-            comparer = Comparer_1(t.__genericT__).getDefault().compare 
-        elseif type(comparer) ~= "function" then    
-            comparer = comparer.compare
+            compare = Comparer_1(t.__genericT__).getDefault().Compare 
+        elseif comparer.Compare then    
+            compare = comparer.Compare
+        else
+            compare = comparer
         end
         local comp = function(x, y) 
-            return comparer(unWrap(x), unWrap(y)) < 0
+            return compare(unWrap(x), unWrap(y)) < 0
         end
         if index == 0 and count == #t then
-            table.sort(t, comp)
+            tsort(t, comp)
         else
             local arr = {}
             for i = index + 1, index + count do
                 tinsert(arr, t[i])
             end
-            table.sort(arr, comp)
+            tsort(arr, comp)
             for i = index + 1, index + count do
                 t[i] = arr[i - index]
             end
@@ -495,7 +500,7 @@ end
 local ArrayEnumerator = {}
 ArrayEnumerator.__index = ArrayEnumerator
 
-function ArrayEnumerator.moveNext(this)
+function ArrayEnumerator.MoveNext(this)
     local t = this.list
     checkVersion(t, this.verson)
     local index = this.index
@@ -509,11 +514,11 @@ function ArrayEnumerator.moveNext(this)
     return false
 end
 
-function ArrayEnumerator.getCurrent(this)
+function ArrayEnumerator.GetCurrent(this)
     return this.current
 end
 
-function ArrayEnumerator.reset(this)
+function ArrayEnumerator.Reset(this)
     this.index = 0
     this.current = nil
 end
@@ -531,18 +536,18 @@ end
 Collection.arrayEnumerator = arrayEnumerator
 
 local function isArrayLike(t)
-    return t.getEnumerator == arrayEnumerator
+    return t.GetEnumerator == arrayEnumerator
 end
 
 Collection.isArrayLike = isArrayLike
 
 function Collection.isEnumerableLike(t)
-    return type(t) == "table" and t.getEnumerator ~= nil
+    return type(t) == "table" and t.GetEnumerator ~= nil
 end
 
 local function eachFn(en)
-    if en:moveNext() then
-        return true, en:getCurrent()
+    if en:MoveNext() then
+        return true, en:GetCurrent()
     end
     return nil
 end
@@ -551,7 +556,7 @@ local function each(t)
     if isArrayLike(t) then
         return ipairsArray(t)
     end
-    local en = t:getEnumerator()
+    local en = t:GetEnumerator()
     return eachFn, en
 end
 
@@ -585,7 +590,7 @@ end
 local DictionaryEnumerator = {}
 DictionaryEnumerator.__index = DictionaryEnumerator
 
-function DictionaryEnumerator.moveNext(this)
+function DictionaryEnumerator.MoveNext(this)
     local t = this.dict
     checkVersion(t, this.version)
     local k, v = pairsFn(t, this.index)
@@ -607,7 +612,7 @@ function DictionaryEnumerator.moveNext(this)
     return false
 end
 
-function DictionaryEnumerator.getCurrent(this)
+function DictionaryEnumerator.GetCurrent(this)
     return this.current
 end
 
@@ -625,14 +630,14 @@ end
 local LinkedListEnumerator = {}
 LinkedListEnumerator.__index = LinkedListEnumerator
 
-function LinkedListEnumerator.moveNext(this)
+function LinkedListEnumerator.MoveNext(this)
     local list = this.list
     local node = this.node
     checkVersion(list, this.version)
     if node == nil then
         return false
     end
-    this.current = node.value
+    this.current = node.Value
     node = node.next
     if node == list.head then
         node = nil
@@ -641,11 +646,11 @@ function LinkedListEnumerator.moveNext(this)
     return true 
 end
 
-function LinkedListEnumerator.getCurrent(this)
+function LinkedListEnumerator.GetCurrent(this)
     return this.current
 end
 
-function Collection.LinkedListEnumerator(t)
+function Collection.linkedListEnumerator(t)
     local en = {
         list = t,
         version = getVersion(t),
@@ -658,11 +663,11 @@ end
 local YieldEnumerator = {}
 YieldEnumerator.__index = YieldEnumerator
 
-function YieldEnumerator.getEnumerator(this)
+function YieldEnumerator.GetEnumerator(this)
     return this
 end
 
-function YieldEnumerator.moveNext(this)
+function YieldEnumerator.MoveNext(this)
     local co = this.co
     if coroutine.status(co) == "dead" then
         this.current = nil
@@ -682,7 +687,7 @@ function YieldEnumerator.moveNext(this)
     end
 end
 
-function YieldEnumerator.getCurrent(this)
+function YieldEnumerator.GetCurrent(this)
     return this.current
 end
 

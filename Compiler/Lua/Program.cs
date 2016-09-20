@@ -12,9 +12,10 @@ Arguments
 -d              : destination  directory, will put the out lua files
 
 Options
--l [option]     : libraries referenced, use ';' to separate      
--m [option]     : meta files, like System.xml, use ';' to separate     
--h [option]     : show the help message    
+-l              : libraries referenced, use ';' to separate      
+-m              : meta files, like System.xml, use ';' to separate     
+-h              : show the help message    
+-def            : defines name as a conditional symbol, use ';' to separate
 ";
         static void Main(string[] args) {
             if(args.Length > 0) {
@@ -29,7 +30,8 @@ Options
                     string output = cmds.GetArgument("-d");
                     string lib = cmds.GetArgument("-l", true);
                     string meta = cmds.GetArgument("-m", true);
-                    Worker w = new Worker(folder, output, lib, meta);
+                    string defines = cmds.GetArgument("-def", true);
+                    Worker w = new Worker(folder, output, lib, meta, defines);
                     w.Do();
                     Console.WriteLine("all operator success");
                 }

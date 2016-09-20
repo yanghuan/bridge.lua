@@ -1,5 +1,4 @@
 local System = System
-local new = System.new
 local throw = System.throw
 local Collection = System.Collection
 local wrap = Collection.wrap
@@ -7,6 +6,7 @@ local unWrap = Collection.unWrap
 local changeVersion = Collection.changeVersion
 local addCount = Collection.addCount
 local clearCount = Collection.clearCount
+local dictionaryEnumerator = Collection.dictionaryEnumerator
 local ArgumentNullException = System.ArgumentNullException
 local ArgumentException = System.ArgumentException
 local KeyNotFoundException = System.KeyNotFoundException
@@ -65,7 +65,7 @@ local function checkKey(key)
     end
 end
 
-function Dictionary.add(this, key, value)
+function Dictionary.Add(this, key, value)
     checkKey(key)
     if this[key] then
         throw(ArgumentException("key already exists"))
@@ -75,7 +75,7 @@ function Dictionary.add(this, key, value)
     changeVersion(this)
 end
 
-function Dictionary.clear(this)
+function Dictionary.Clear(this)
     for k, v in pairs(this) do
         this[k] = nil
     end
@@ -83,12 +83,12 @@ function Dictionary.clear(this)
     changeVersion(this)
 end
 
-function Dictionary.containsKey(this, key)
+function Dictionary.ContainsKey(this, key)
     checkKey(key)
     return this[key] ~= nil 
 end
 
-function Dictionary.containsValue(this, value)
+function Dictionary.ContainsValue(this, value)
     if value == nil then
         for _, v in pairs(this) do
             if unWrap(v) == nil then
@@ -96,9 +96,9 @@ function Dictionary.containsValue(this, value)
             end
         end    
     else    
-        local c = EqualityComparer_1(this.__genericTValue__).getDefault()
+        local equals = EqualityComparer_1(this.__genericTValue__).getDefault().equals
         for _, v in pairs(this) do
-            if c.equals(value, unWrap(v)) then
+            if equals(nil, value, unWrap(v)) then
                 return true
             end
         end
@@ -106,7 +106,7 @@ function Dictionary.containsValue(this, value)
     return false
 end
 
-function Dictionary.remove(this, key)
+function Dictionary.Remove(this, key)
     checkKey(key)
     if this[key] then
         this[key] = nil
@@ -118,10 +118,10 @@ function Dictionary.remove(this, key)
 end
 
 local function getValueDefault(this)
-    return this.__genericTValue__.__defaultVal__
+    return this.__genericTValue__.__default__()
 end
 
-function Dictionary.tryGetValue(this, key)
+function Dictionary.TryGetValue(this, key)
     checkKey(key)
     local value = this[key]
     if value == nil then
@@ -136,7 +136,7 @@ end
 
 Dictionary.getCount = Collection.getCount
 
-function Dictionary.getItem(this, key)
+function Dictionary.get(this, key)
     checkKey(key)
     local value = this[key]
     if value == nil then
@@ -145,21 +145,17 @@ function Dictionary.getItem(this, key)
     return unWrap(value) 
 end
 
-function Dictionary.setItem(this, key, value)
+function Dictionary.set(this, key, value)
     checkKey(key)
     this[key] = wrap(value)
     changeVersion(this)
 end
 
-Dictionary.get = Dictionary.getItem
-Dictionary.set = Dictionary.setItem
-
-function Dictionary.getEnumerator(this)
-    return Collection.dictionaryEnumerator(this, 0)
+function Dictionary.GetEnumerator(this)
+    return dictionaryEnumerator(this, 0)
 end 
 
 local DictionaryCollection = {}
-DictionaryCollection.__index = DictionaryCollection
 
 function DictionaryCollection.__ctor__(this, dict, isKey, T)
     this.dict = dict
@@ -168,19 +164,21 @@ function DictionaryCollection.__ctor__(this, dict, isKey, T)
 end
 
 function DictionaryCollection.getCount(this)
-    return #this.dict
+    return this.dict:getCount()
 end
 
-function DictionaryCollection.getEnumerator(this)
-    return Collection.dictionaryEnumerator(this.dict, this.isKey and 1 or 2)
+function DictionaryCollection.GetEnumerator(this)
+    return dictionaryEnumerator(this.dict, this.isKey and 1 or 2)
 end
+
+System.define("System.DictionaryCollection", DictionaryCollection)
 
 function Dictionary.getKeys(this)
-    return new(DictionaryCollection, this, true, this.__genericTKey__)
+    return DictionaryCollection(this, true, this.__genericTKey__)
 end
 
 function Dictionary.getValues(this)
-    return new(DictionaryCollection, this, false, this.__genericTValue__)
+    return DictionaryCollection(this, false, this.__genericTValue__)
 end
 
 System.define("System.Dictionary", function(TKey, TValue) 
@@ -192,7 +190,4 @@ System.define("System.Dictionary", function(TKey, TValue)
     }
     return cls
 end, Dictionary)
-
-
-
 

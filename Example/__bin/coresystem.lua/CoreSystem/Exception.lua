@@ -1,4 +1,5 @@
 local System = System
+local traceback = debug.traceback
 
 System.define("System.Exception", {
     __ctor__ = function(this, message, innerException) 
@@ -18,12 +19,12 @@ System.define("System.Exception", {
         return this.errorStack
     end,
 
-    toString = function(this) 
+    ToString = function(this) 
         return this.message .. this.errorStack
     end,
 
     traceback = function(this, lv)
-        this.errorStack = debug.traceback("", lv and lv + 3 or 3)
+        this.errorStack = traceback("", lv and lv + 3 or 3)
     end,
 })
 

@@ -1,8 +1,6 @@
 local System = System
 local throw = System.throw
-local Int = System.Int
 local Double = System.Double
-local NullReferenceException = System.NullReferenceException
 local InvalidCastException = System.InvalidCastException
 
 local type = type
@@ -13,7 +11,8 @@ local ipairs = ipairs
 local Type = {}
 local numberType = setmetatable({ c = Double, name = "Number", fullName = "System.Number" }, Type)
 local types = {
-    [Int] = numberType,
+    [System.Char] = numberType,
+    [System.Int] = numberType,
     [Double] = numberType,
 }
 
@@ -27,25 +26,11 @@ local function typeof(cls)
     return type
 end
 
-local baseTable = {
-    number = Double,
-    string = System.String,
-    boolean = System.Boolean,
-    ["function"] = System.Delegate
-}
-
 local function getType(obj)
-    if obj == nil then
-        throw(NullReferenceException())
-    end
-    local cls = baseTable[type(obj)]
-    if cls == nil then
-        cls = getmetatable(obj)
-    end
-    return typeof(cls)
+    return typeof(getmetatable(obj))
 end
 
-System.getType = getType
+System.Object.GetType = getType
 System.typeof = typeof
 
 local function isGenericName(name)
@@ -118,7 +103,7 @@ local function isSubclassOf(this, c)
     end
 end
 
-Type.isSubclassOf = isSubclassOf
+Type.IsSubclassOf = isSubclassOf
 
 local function getIsInterface(this)
     return this.c.__kind__ == "I"
@@ -181,16 +166,16 @@ local function isAssignableFrom(this, c)
     return false
 end 
 
-Type.isAssignableFrom = isAssignableFrom
+Type.IsAssignableFrom = isAssignableFrom
 
-function Type.isInstanceOfType(this, obj)
+function Type.IsInstanceOfType(this, obj)
     if obj == nil then
         return false 
     end
-    return isAssignableFrom(this, getType(obj));
+    return isAssignableFrom(this, obj:GetType())
 end
 
-function Type.toString(this)
+function Type.ToString(this)
     return this.c.__name__
 end
 
@@ -198,7 +183,7 @@ System.define("System.Type", Type)
 
 function is(obj, cls)
     if obj ~= nil then 
-        return isAssignableFrom(typeof(cls), getType(obj))
+        return isAssignableFrom(typeof(cls), obj:GetType())
     end
     return false
 end

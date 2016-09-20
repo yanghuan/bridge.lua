@@ -8,31 +8,30 @@ local getmetatable = getmetatable
 local type = type
 local ipairs = ipairs
 local assert = assert
+local table = table
 local tinsert = table.insert
+local tremove = table.remove
+local tconcat = table.concat
+local rawget = rawget
+local floor = math.floor
+local error = error
+local select = select
 
 local emptyFn = function() end
+local identityFn = function(x) return x end
+local equals = function(x, y) return x == y end
 local genericCache = {}
 local class = {}
 local modules = {}
 local usings = {}
 local id = 0
+local Object = {}
 
-local function callMultiCtor(this, ctor, index, ...)
-    ctor[index](this, ...)
-end
-
-local function new(cls, ...) 
+local function new(cls, ...)
     local this = setmetatable({}, cls)
-    local ctor = cls.__ctor__
-    if type(ctor) == "table" then
-        callMultiCtor(this, ctor, ...)
-    else
-        ctor(this, ...)
-    end
+    cls.__ctor__(this, ...)
     return this
 end
-
-local newmetatable = { __call = new }
 
 local function throw(e, lv)
     e:traceback(lv)
@@ -45,7 +44,7 @@ local function try(try, catch, finally)
     if not ok then
         if catch then
             if type(err) == "string" then
-                err = new(System.Exception, err)
+                err = System.Exception(err)
             end
             local fine, result = pcall(catch, err)
             if not fine then
@@ -85,6 +84,7 @@ local function set(className, cls)
         end
         starInx = pos + 1
     end
+    return cls
 end
 
 local function getId()
@@ -92,28 +92,44 @@ local function getId()
     return id
 end
 
-local function genericId(id, ...) 
-    for i = 1, select("#", ...) do
-        local cls = select(i, ...)
-        id = id .. "." .. cls.__id__
-    end
-    return id
+local function defaultValOfZero()
+    return 0
 end
 
+local idCreator = {}
+
+local function genericId(id, ...) 
+    idCreator[1] = id
+    local len = select("#", ...)
+    for i = 1, len do
+        local cls = select(i, ...)
+        idCreator[i + 1] = cls.__id__
+    end
+    return tconcat(idCreator, ".", 1, len + 1)
+end
+
+local nameCreator = {}
+
 local function genericName(name, ...)
-    name = name .. "["
-    local comma
+    nameCreator[1] = name
+    nameCreator[2] = "["
+    local comma, offset
+    offset = 2
     for i = 1, select("#", ...) do
         local cls = select(i, ...)
         if comma then
-            name = name .. "," .. cls.__name__
+            nameCreator[offset + 1] = ","
+            nameCreator[offset + 2] = cls.__name__
+            offset = offset + 2
         else
-            name = name .. cls.__name__
+            nameCreator[offset + 1] = cls.__name__
+            offset = offset + 1
             comma = true
         end
     end
-    name = name .. "]"
-    return name
+    offset = offset + 1
+    nameCreator[offset] = "]"
+    return tconcat(nameCreator, nil, 1, offset)
 end
 
 local function def(name, kind, cls, generic)
@@ -128,16 +144,16 @@ local function def(name, kind, cls, generic)
             local t = genericCache[trueId]
             if t == nil then
                 local obj = cls(...) or {}
-                setmetatable(obj, generic)
                 t = def(nil, kind, obj, genericName(name, ...))
+                if generic then
+                    setmetatable(t, generic)
+                end
                 genericCache[trueId] = t
             end
             return t
         end
-        set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end }))
-        return fn
+        return set(name, setmetatable(generic or {}, { __call = function(_, ...) return fn(...) end, __index = Object }))
     end
-
     cls = cls or {}
     if name ~= nil then
         set(name, cls)
@@ -159,41 +175,56 @@ local function def(name, kind, cls, generic)
             if base.__kind__ == "C" then
                 cls.__base__ = base
                 setmetatable(cls, base)
-                table.remove(extends, 1)
+                tremove(extends, 1)
                 if #extends > 0 then
                     cls.__interfaces__ = extends
                 end
                 cls.__inherits__ = nil
+                if cls.__ctor__ == nil then
+                    local baseCtor = base.__ctor__
+                    cls.__ctor__ = type(baseCtor) == "table" and baseCtor[1] or baseCtor
+                end 
+            else
+                setmetatable(cls, Object)
+                cls.__interfaces__ = extends
+                cls.__inherits__ = nil
             end
+        elseif cls ~= Object then
+             setmetatable(cls, Object)
         end    
-        local super = getmetatable(cls)
-        if not super then
-            setmetatable(cls, newmetatable)
+        if cls.__default__ == nil then
+            cls.__default__ = emptyFn
         end
-        if cls.toString ~= nil and rawget(cls, "__tostring") == nil then
-            cls.__tostring = cls.toString
+        if cls.__ctor__ == nil then
+            cls.__ctor__ = emptyFn
         end
-        tinsert(class, cls);
+        tinsert(class, cls)
+    elseif kind == "I" then
+        cls.__default__ = emptyFn
+    elseif kind == "E" then
+        cls.__default__ = defaultValOfZero
+    else
+        assert(false)
     end
     return cls
 end
 
 local function defCls(name, cls, genericSuper)
-    def(name, "C", cls, genericSuper) 
+    return def(name, "C", cls, genericSuper) 
 end
 
 local function defInf(name, cls)
-    def(name, "I", cls)
+    return def(name, "I", cls)
 end
 
 local function defStc(name, cls, genericSuper)
-    def(name, "S", cls, genericSuper)
+    return def(name, "S", cls, genericSuper)
 end
 
 System = {
     null = null,
     emptyFn = emptyFn,
-    new = new,
+    identityFn = identityFn,
     try = try,
     throw = throw,
     define = defCls,
@@ -212,7 +243,7 @@ System.sr = bit.rshift
 System.srr = bit.arshift
 
 local function trunc(num) 
-    return num > 0 and math.floor(num) or math.ceil(num)
+    return num > 0 and floor(num) or floor(-num)
 end
 
 System.trunc = trunc
@@ -320,7 +351,7 @@ end
 
 function System.init(namelist)
     for _, name in ipairs(namelist) do
-       modules[name](name)
+       assert(modules[name], name)()
     end
     for _, f in ipairs(usings) do
         f()
@@ -334,13 +365,6 @@ function System.init(namelist)
         if staticCtor then
             staticCtor(cls)
             cls.__staticCtor__ = nil
-        end
-        if cls.__kind__ == "S" then
-            local getDefaultValue = cls.getDefaultValue
-            if getDefaultValue then
-                assert(cls.__defaultVal__ == nil)
-                cls.__defaultVal__ = getDefaultValue()
-            end
         end
     end
     modules = {}
@@ -383,5 +407,31 @@ function System.namespace(name, f)
     f(namespace)
 end
 
+local function multiNew(cls, inx, ...) 
+    local this = setmetatable({}, cls)
+    cls.__ctor__[inx](this, ...)
+    return this
+end
 
+Object.__call = new
+Object.new = multiNew
+Object.EqualsObj = equals
+Object.ReferenceEquals = equals
+Object.GetHashCode = identityFn
+
+function Object.EqualsStatic(x, y)
+    if x == y then
+        return true
+    end
+    if x == nil or y == nil then
+        return false
+    end
+    return x:EqualsObj(y)
+end
+
+function Object.ToString(this)
+    return this.__name__
+end
+
+defCls("System.Object", Object)
 

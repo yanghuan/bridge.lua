@@ -4,20 +4,20 @@ local Int = System.Int
 
 local Char = {}
 
-Char.compareTo = Int.compareTo
-Char.compareToObj = Int.compareToObj
-Char.equals = Int.equals
-Char.equalsObj = Int.equalsObj
-Char.getHashCode = Int.getHashCode
+Char.CompareTo = Int.CompareTo
+Char.CompareToObj = Int.CompareToObj
+Char.Equals = Int.Equals
+Char.EqualsObj = Int.EqualsObj
+Char.__default__ = Int.__default__
 
-function Char.isControl(c, index)
+function Char.IsControl(c, index)
     if index then
         c = c:get(index)
     end
     return (c >=0 and c <= 31) or (c >= 127 and c <= 159)
 end
 
-function Char.isDigit(c, index)
+function Char.IsDigit(c, index)
     if index then
         c = c:get(index)
     end
@@ -25,7 +25,7 @@ function Char.isDigit(c, index)
 end
 
 -- https://msdn.microsoft.com/zh-cn/library/yyxz6h5w(v=vs.110).aspx
-function Char.isLetter(c, index)    
+function Char.IsLetter(c, index)    
     if index then
         c = c:get(index) 
     end
@@ -43,28 +43,28 @@ function Char.isLetter(c, index)
     end
 end
 
-function Char.isLetterOrDigit(c, index)
+function Char.IsLetterOrDigit(c, index)
     if index then
         c = c:get(index)
     end
     return Char.isDigit(c) or Char.isLetter(c)
 end
 
-function Char.isLower(c, index)
+function Char.IsLower(c, index)
     if index then
         c = c:get(index)
     end
     return (c >= 97 and c <= 122) or (c >= 945 and c <= 969)
 end
 
-function Char.isNumber(c, index)
+function Char.IsNumber(c, index)
     if index then
         c = c:get(index)
     end
     return (c >= 48 and c <= 57) or c == 178 or c == 179 or c == 185 or c == 188 or c == 189 or c == 190
 end
 
-function Char.isPunctuation(c, index)
+function Char.IsPunctuation(c, index)
     if index then
         c = c:get(index)
     end
@@ -94,7 +94,7 @@ local isSeparatorTable = {
     [0x3000] = true,
 }
 
-function Char.isSeparator(c, index)
+function Char.IsSeparator(c, index)
     if index then
         c = c:get(index)
     end
@@ -119,7 +119,7 @@ local isSymbolTable = {
     [247] = true,
 }
 
-function Char.isSymbol(c, index)
+function Char.IsSymbol(c, index)
     if index then
         c = c:get(index)
     end
@@ -129,7 +129,7 @@ function Char.isSymbol(c, index)
     return false
 end 
 
-function Char.isUpper(c, index)
+function Char.IsUpper(c, index)
     if index then
         c = c:get(index)
     end
@@ -149,14 +149,14 @@ local isWhiteSpace = {
     [0x0085] = true,
 }
 
-function Char.isWhiteSpace(c, index)
+function Char.IsWhiteSpace(c, index)
     if index then
         c = c:get(index)
     end
     return (c >= 0x2000 and c <= 0x200A) or (c >= 0x0009 and c <= 0x000d) or isWhiteSpace[c] == true
 end
 
-function Char.parse(s)
+function Char.Parse(s)
     if s == nil then
         throw(System.ArgumentNullException())
     end
@@ -166,49 +166,47 @@ function Char.parse(s)
     return s:byte()
 end
 
-function Char.tryParse(s)
+function Char.TryParse(s)
     if s == nil or #s ~= 1 then
-        return false
+        return false, 0
     end 
     return true, s:byte()
 end
 
-function Char.toLower(c)
+function Char.ToLower(c)
     if (c >= 65 and c <= 90) or (c >= 913 and c <= 937) then
         return c + 32
     end
     return c
 end
 
-function Char.toUpper(c)
+function Char.ToUpper(c)
     if (c >= 97 and c <= 122) or (c >= 945 and c <= 969) then
         return c - 32
     end
     return c
 end
 
-function Char.isHighSurrogate(c, index) 
+function Char.IsHighSurrogate(c, index) 
     if index then
         c = c:get(index)
     end
     return c >= 0xD800 and c <= 0xDBFF
 end
         
-function Char.isLowSurrogate(c, index) 
+function Char.IsLowSurrogate(c, index) 
     if index then
         c = c:get(index)
     end
     return c >= 0xDC00 and c <= 0xDFFF
 end
 
-function Char.isSurrogate(c, index) 
+function Char.IsSurrogate(c, index) 
     if index then
         c = c:get(index)
     end
     return c >= 0xD800 and c <= 0xDFFF
 end
-
-Char.__defaultVal__ = 0
 
 System.defStc("System.Char", Char)
 Char.__inherits__ = { System.IComparable, System.IComparable_1(Char), System.IEquatable_1(Char) }

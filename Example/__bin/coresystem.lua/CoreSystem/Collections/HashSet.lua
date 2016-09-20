@@ -37,7 +37,7 @@ function HashSet.__ctor__(this, ...)
     end
 end 
 
-function HashSet.clear(this)
+function HashSet.Clear(this)
     for k, v in pairs(this) do
         this[k] = nil
     end
@@ -45,12 +45,12 @@ function HashSet.clear(this)
     changeVersion(this)
 end
 
-function HashSet.contains(this, item)
+function HashSet.Contains(this, item)
     item = wrap(item)
     return this[item] ~= nil
 end
 
-function HashSet.remove(this, item)
+function HashSet.Remove(this, item)
     item = wrap(item)
     if this[item] then
         this[item] = nil
@@ -67,11 +67,11 @@ function HashSet.getIsReadOnly(this)
     return false
 end
 
-function HashSet.getEnumerator(this)
+function HashSet.GetEnumerator(this)
     return Collection.dictionaryEnumerator(this, 1)
 end 
 
-function HashSet.add(this, v)
+function HashSet.Add(this, v)
     v = wrap(v)
     if this[v] == nil then
         this[v] = true
@@ -82,7 +82,7 @@ function HashSet.add(this, v)
     return false
 end
 
-function HashSet.unionWith(this, other)
+function HashSet.UnionWith(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -100,7 +100,7 @@ function HashSet.unionWith(this, other)
     end
 end  
 
-function HashSet.intersectWith(this, other)
+function HashSet.IntersectWith(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -124,7 +124,7 @@ function HashSet.intersectWith(this, other)
     end
 end
 
-function HashSet.exceptWith(this, other)
+function HashSet.ExceptWith(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -146,7 +146,7 @@ function HashSet.exceptWith(this, other)
     end
 end
 
-function HashSet.symmetricExceptWith(this, other)
+function HashSet.SymmetricExceptWith(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -203,7 +203,7 @@ local function checkUniqueAndUnfoundElements(this, other, returnIfUnfound)
     return uniqueCount, unfoundCount
 end
 
-function HashSet.isSubsetOf(this, other)
+function HashSet.IsSubsetOf(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -215,7 +215,7 @@ function HashSet.isSubsetOf(this, other)
     return uniqueCount == count and unfoundCount >= 0
 end
 
-function HashSet.isProperSubsetOf(this, other)
+function HashSet.IsProperSubsetOf(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -236,7 +236,7 @@ function HashSet.IsSupersetOf(this, other)
     return true
 end
 
-function HashSet.isProperSupersetOf(this, other)
+function HashSet.IsProperSupersetOf(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -248,7 +248,7 @@ function HashSet.isProperSupersetOf(this, other)
     return uniqueCount < count and unfoundCount == 0
 end
 
-function HashSet.overlaps(this, other)
+function HashSet.Overlaps(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -264,7 +264,7 @@ function HashSet.overlaps(this, other)
     return false
 end
 
-function HashSet.setEquals(this, other)
+function HashSet.SetEquals(this, other)
     if other == nil then
         throw(ArgumentNullException("other"))
     end
@@ -272,7 +272,7 @@ function HashSet.setEquals(this, other)
     return uniqueCount == #this and unfoundCount == 0
 end
 
-function HashSet.removeWhere(this, match)
+function HashSet.RemoveWhere(this, match)
     if match == nil then
         throw(ArgumentNullException("match"))
     end
@@ -290,7 +290,7 @@ function HashSet.removeWhere(this, match)
     return numRemoved
 end
 
-HashSet.trimExcess = System.emptyFn
+HashSet.TrimExcess = System.emptyFn
 
 System.define("System.HashSet", function(T) 
    local cls = { 

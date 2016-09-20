@@ -18,6 +18,7 @@ namespace Bridge.Translator
         private static readonly string[] MinifierCodeSettingsInternalFileNames = new string[] { "bridge.js", "bridge.min.js", "bridge.collections.js", "bridge.collections.min.js" };
         public readonly List<string> SearchPaths = new List<string>();
         public readonly List<string> XmlMetaFiles = new List<string>();
+        public string Defines;
 
         private static readonly CodeSettings MinifierCodeSettingsSafe = new CodeSettings
         {
