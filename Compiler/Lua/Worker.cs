@@ -29,7 +29,7 @@ namespace Bridge.Lua {
             "System.dll",
             "System.Core.dll",
         };
-        private const string kSystemMeta = "System.xml";
+        private const string kSystemMeta = "~/System.xml";
 
         private string folder_;
         private string output_;
@@ -135,7 +135,7 @@ namespace Bridge.Lua {
         private void ToLua(string outDllPath) {
             var translator = new LuaTranslater(folder_, output_, outDllPath);
             translator.SearchPaths.AddRange(GetSearchPaths());
-            translator.XmlMetaFiles.Add(kSystemMeta);
+            translator.XmlMetaFiles.Add(Utility.GetCurrentDirectory(kSystemMeta));
             translator.XmlMetaFiles.AddRange(metas_);
             translator.Translate();
             Save(translator);
