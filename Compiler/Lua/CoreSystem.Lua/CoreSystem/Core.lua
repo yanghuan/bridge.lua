@@ -351,7 +351,7 @@ end
 
 function System.init(namelist)
     for _, name in ipairs(namelist) do
-       modules[name](name)
+       assert(modules[name], name)()
     end
     for _, f in ipairs(usings) do
         f()
