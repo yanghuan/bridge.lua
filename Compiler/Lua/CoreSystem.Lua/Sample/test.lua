@@ -1,4 +1,3 @@
-package.path = package.path .. ";D:/Project/Bridge.Lua - avoid/Compiler/Lua/CoreSystem.Lua/?.lua"
 require("All")()
 
 local function test(f, name) 
