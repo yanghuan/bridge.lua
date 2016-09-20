@@ -210,8 +210,8 @@
             <method name="Contains" Template="Linq.Contains({0}, {1}, {2})" />
             <method name="Aggregate" Template="Linq.Aggregate({0}, {1}, {2})" />
             <method name="Sum" Template="Linq.Sum({0}, {1})" />
-            <method name="Min" Template="Linq.Min({0}, {1}, {^2})" />
-            <method name="Max" Template="Linq.Max({0}, {1}, {^2})" />
+            <method name="Min" Template="Linq.Min({0}, {1}, {^1})" />
+            <method name="Max" Template="Linq.Max({0}, {1}, {^1})" />
         </class>
     </namespace>
     <namespace name="System.Diagnostics">

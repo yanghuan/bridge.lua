@@ -9,7 +9,7 @@ local Comparer_1 = System.Comparer_1
 
 local tinsert = table.insert
 local tremove = table.remove
-local tsore = table.sort
+local tsort = table.sort
 local setmetatable = setmetatable
 local select = select
 local type = type
@@ -500,7 +500,7 @@ end
 local ArrayEnumerator = {}
 ArrayEnumerator.__index = ArrayEnumerator
 
-function ArrayEnumerator.moveNext(this)
+function ArrayEnumerator.MoveNext(this)
     local t = this.list
     checkVersion(t, this.verson)
     local index = this.index
@@ -514,11 +514,11 @@ function ArrayEnumerator.moveNext(this)
     return false
 end
 
-function ArrayEnumerator.getCurrent(this)
+function ArrayEnumerator.GetCurrent(this)
     return this.current
 end
 
-function ArrayEnumerator.reset(this)
+function ArrayEnumerator.Reset(this)
     this.index = 0
     this.current = nil
 end

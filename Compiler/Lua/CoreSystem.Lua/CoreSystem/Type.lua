@@ -172,7 +172,7 @@ function Type.IsInstanceOfType(this, obj)
     if obj == nil then
         return false 
     end
-    return isAssignableFrom(this, getType(obj));
+    return isAssignableFrom(this, obj:GetType())
 end
 
 function Type.ToString(this)
@@ -183,7 +183,7 @@ System.define("System.Type", Type)
 
 function is(obj, cls)
     if obj ~= nil then 
-        return isAssignableFrom(typeof(cls), getType(obj))
+        return isAssignableFrom(typeof(cls), obj:GetType())
     end
     return false
 end

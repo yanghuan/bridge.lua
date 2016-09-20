@@ -11,6 +11,7 @@ local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
 local InvalidOperationException = System.InvalidOperationException
 local EqualityComparer_1 = System.EqualityComparer_1
 local Comparer_1 = System.Comparer_1
+local Empty = System.Array.Empty
 
 local select = select
 local tinser = table.insert
@@ -228,6 +229,22 @@ function Lookup.__ctor__(this, comparer)
     this.count = 0
 end
 
+function Lookup.get(this, key)
+    local hashCode = this.comparer.GetHashCode(key)
+    local grouping = this.groups[hashCode]
+    if grouping ~= nil then return grouping end 
+    return Empty(this.__genericTElement__)
+end
+
+function Lookup.GetCount(this)
+    return this.count
+end
+
+function Lookup.Contains(this, key)
+    local hashCode = this.comparer.GetHashCode(key)
+    return this.groups[hashCode] ~= nil
+end
+
 function Lookup.GetEnumerator(this)
     return Collection.dictionaryEnumerator(this.groups, 2)
 end
@@ -245,19 +262,23 @@ local IGrouping = System.defInf("System.Linq.IGrouping")
 local Grouping = {}
 Grouping.GetEnumerator = Collection.arrayEnumerator 
 
-Grouping.getKey = function(this)
+function Grouping.getKey(this)
     return this.key
+end
+
+function Grouping.getCount(this)
+    return #this
 end
 
 Grouping.__inherits__ = { IGrouping }
 System.define("System.Linq.Grouping", Grouping)
 
 local function addToLookup(this, key, value)
-    key = this.comparer.getHashCode(key)
-    local group = this.groups[key]
+    local hashCode = this.comparer.GetHashCode(key)
+    local group = this.groups[hashCode]
     if group == nil then
         group = setmetatable({ key = key, __genericT__ = this.__genericTElement__ }, Grouping)
-        this.groups[key] = group        
+        this.groups[hashCode] = group        
         this.count = this.count + 1
     end
     tinser(group, wrap(value))
@@ -340,7 +361,7 @@ function Enumerable.Concat(first, second)
                 if en:MoveNext() then
                     return true, en:GetCurrent()
                 end
-                secondEn =  second:GetEnumerator()
+                secondEn = second:GetEnumerator()
             end
             if secondEn:MoveNext() then
                 return true, secondEn:GetCurrent()
@@ -870,9 +891,9 @@ local function minOrMax(compareFn, source, ...)
         selector, T = ...
         if selector == nil then throw(ArgumentNullException("selector")) end
     end
-    local compare = Comparer_1(T).getDefault().compare
+    local compare = Comparer_1(T).getDefault().Compare
     local value = T.__default__()
-    if value == nil  then
+    if value == nil then
         for _, x in each(source) do
             x = selector(x)
             if x ~= nil and (value == nil or compareFn(compare, x, value)) then
