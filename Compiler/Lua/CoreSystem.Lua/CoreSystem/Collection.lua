@@ -128,8 +128,14 @@ function Collection.buildArray(t, size, ...)
     end
 end
 
+local function checkInsertIndex(t, index)   
+    if index < 0 or index > #t then
+        throw(ArgumentOutOfRangeException("index"))
+    end
+end
+
 function Collection.insertArray(t, index, v)
-    checkIndex(t, index)
+    checkInsertIndex(t, index)
     tinsert(t, index + 1, wrap(v))
     changeVersion(t)
 end
@@ -566,6 +572,7 @@ function Collection.insertRangeArray(t, index, collection)
     if collection == nil then
         throw(ArgumentNullException("collection"))
     end
+    checkInsertIndex(t, index)
     for _, v in each(collection) do
         index = index + 1
         tinsert(t, index, wrap(v))
