@@ -429,6 +429,26 @@ namespace Bridge.Contract
             }
         }
 
+        private int GetKindPriority(IMember member) {
+            switch(member.SymbolKind) {
+                case SymbolKind.Indexer: {
+                        return 0;
+                    }
+                case SymbolKind.Field: {
+                        return 1;
+                    }
+                case SymbolKind.Event: {
+                        return 2;
+                    }
+                case SymbolKind.Method: {
+                        return 3;
+                    }
+                default: {
+                        return 4;
+                    }
+            }
+        }
+
         protected virtual void SortMembersOverloads()
         {
             this.Members.Sort((m1, m2) =>
@@ -500,9 +520,8 @@ namespace Bridge.Contract
                     return a1.CompareTo(a2);
                 }
 
-                var v1 = m1 is IField ? 1 : (m1 is IEvent ? 2 : (m1 is IMethod ? 3 : 4));
-                var v2 = m2 is IField ? 1 : (m2 is IEvent ? 2 : (m2 is IMethod ? 3 : 4));
-
+                var v1 = GetKindPriority(m1);
+                var v2 = GetKindPriority(m2);
                 if (v1 != v2)
                 {
                     return v1.CompareTo(v2);

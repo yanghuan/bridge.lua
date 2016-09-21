@@ -137,15 +137,23 @@ namespace Bridge.Translator.Lua
                 isMetaName = true;
                 return name;
             }
-           
-            if(member.SymbolKind == SymbolKind.Constructor) {
-                name = "constructor";
-            }
-            else {
-                name = member.Name;
+
+            switch(member.SymbolKind) {
+                case SymbolKind.Constructor: {
+                        name = "constructor";
+                        break;
+                    }
+                case SymbolKind.Indexer: {
+                        name = "";
+                        break;
+                    }
+                default: {
+                        name = member.Name;
+                        Helpers.FixReservedWord(ref name);
+                        break;
+                    }
             }
 
-            Helpers.FixReservedWord(ref name);
             return name;
         }
 

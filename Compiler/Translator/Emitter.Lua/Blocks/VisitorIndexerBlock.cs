@@ -44,10 +44,6 @@ namespace Bridge.Translator.Lua
                 var overloads = OverloadsCollection.Create(this.Emitter, indexerDeclaration, setter);
 
                 string name = overloads.GetOverloadName();
-                if(name == "Item") {
-                    name = "";
-                }
-
                 name = (setter ? "set" : "get") + name;
                 TransformCtx.CurClassMethodNames.Add(new TransformCtx.MethodInfo() {
                     Name = name,

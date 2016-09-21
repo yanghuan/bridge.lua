@@ -537,7 +537,6 @@ namespace Bridge.Contract
         public static string GetPropertyRef(IndexerDeclaration property, IEmitter emitter, bool isSetter = false, bool noOverload = false, bool ignoreInterface = false)
         {
             var name = emitter.GetEntityName(property, true, ignoreInterface);
-
             if (!noOverload)
             {
                 var overloads = OverloadsCollection.Create(emitter, property, isSetter);
@@ -565,19 +564,16 @@ namespace Bridge.Contract
         public static string GetPropertyRef(IMember property, IEmitter emitter, bool isSetter = false, bool noOverload = false, bool ignoreInterface = false)
         {
             string name = emitter.GetEntityName(property, true, ignoreInterface);
-            if(property.SymbolKind == SymbolKind.Indexer && name == "Item") {
-                name = "";
+
+            if(!noOverload) {
+                var overloads = OverloadsCollection.Create(emitter, property, isSetter);
+                name = overloads.HasOverloads ? overloads.GetOverloadName() : name;
+                noOverload = !overloads.HasOverloads;
             }
-            else {
-                if(!noOverload) {
-                    var overloads = OverloadsCollection.Create(emitter, property, isSetter);
-                    name = overloads.HasOverloads ? overloads.GetOverloadName() : name;
-                    noOverload = !overloads.HasOverloads;
-                }
-                if(Helpers.IsFieldProperty(property, emitter)) {
-                    return noOverload ? emitter.GetEntityName(property, false) : name;
-                }
+            if(Helpers.IsFieldProperty(property, emitter)) {
+                return noOverload ? emitter.GetEntityName(property, false) : name;
             }
+
             return (isSetter ? "set" : "get") + name;
         }
 
