@@ -262,7 +262,7 @@ namespace Bridge.Contract
             }
 
             BridgeType bridgeType = emitter.BridgeTypes.Get(type, true);
-            var name = excludens ? "" : XmlMetaMaker.GetNamespace(type.Namespace);
+            var name = excludens ? "" : XmlMetaMaker.GetNamespace(bridgeType != null ? bridgeType.Type.Namespace : type.Namespace);
 
             var hasTypeDef = bridgeType != null && bridgeType.TypeDefinition != null;
             if (hasTypeDef)
