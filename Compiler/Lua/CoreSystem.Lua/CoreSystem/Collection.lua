@@ -280,7 +280,7 @@ function Collection.findAllOfArray(t, match)
         throw(ArgumentNullException("match"))
     end
     local list = System.List(t.__genericT__)()
-      for _, i in ipairs(t) do
+    for _, i in ipairs(t) do
         local item = unWrap(i)
         if match(item) then
             list:add(item)
