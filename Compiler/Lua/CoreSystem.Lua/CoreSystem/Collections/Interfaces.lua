@@ -4,8 +4,16 @@ local emptyFn  = System.emptyFn
 local IEnumerable = System.defInf("System.IEnumerable")
 local IEnumerator = System.defInf("System.IEnumerator")
 
-System.defInf("System.ICollection", {
+local ICollection = System.defInf("System.ICollection", {
     __inherits__ = { IEnumerable }
+})
+
+System.defInf("System.IList", {
+    __inherits__ = { ICollection }
+})
+
+System.defInf("System.IDictionary", {
+    __inherits__ = { ICollection }
 })
 
 System.defInf("System.IEnumerator_1", function(T) 

@@ -127,7 +127,7 @@ List.TrueForAll = Collection.trueForAllOfArray
 
 System.define("System.List", function(T) 
     local cls = { 
-    __inherits__ = { System.ICollection_1(T), System.ICollection, System.IList_1(T) }, 
+    __inherits__ = { System.IList_1(T), System.IList }, 
     __genericT__ = T,
     }
     return cls

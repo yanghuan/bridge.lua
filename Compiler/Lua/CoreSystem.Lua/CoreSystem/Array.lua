@@ -53,7 +53,7 @@ Array.Copy = Collection.copyArray
 
 System.define("System.Array", function(T) 
     local cls = { 
-    __inherits__ = { System.ICollection_1(T), System.ICollection, System.IList_1(T) }, 
+    __inherits__ = { System.IList_1(T), System.IList }, 
     __genericT__ = T
     }
     return cls
@@ -111,7 +111,7 @@ MultiArray.GetEnumerator = arrayEnumerator
 
 System.define("System.MultiArray", function(T) 
     local cls = { 
-    __inherits__ = { System.ICollection_1(T), System.ICollection, System.IList_1(T) }, 
+    __inherits__ = { System.IList_1(T), System.IList }, 
     __genericT__ = T
     }
     return cls
