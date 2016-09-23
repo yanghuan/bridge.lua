@@ -539,7 +539,7 @@ function Enumerable.SequenceEqual(first, second, comparer)
     return true
 end
 
-Enumerable.toArray = Collection.toArray
+Enumerable.ToArray = Collection.toArray
 
 function Enumerable.ToList(source)
     return System.List(source.__genericT__)(source)
@@ -551,7 +551,7 @@ local function toDictionary(source, keySelector, elementSelector, comparer, TKey
     if elementSelector == nil then throw(ArgumentNullException("elementSelector")) end
     local dict = System.Dictionary(TKey, TValue)(comparer)
     for _, v in each(source) do
-        dict:add(keySelector(v), elementSelector(v))
+        dict:Add(keySelector(v), elementSelector(v))
     end
     return dict
 end

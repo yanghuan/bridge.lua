@@ -225,6 +225,7 @@ System = {
     null = null,
     emptyFn = emptyFn,
     identityFn = identityFn,
+    equals = equals,
     try = try,
     throw = throw,
     define = defCls,
