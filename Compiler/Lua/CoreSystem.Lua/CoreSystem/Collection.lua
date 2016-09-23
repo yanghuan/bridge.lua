@@ -520,7 +520,7 @@ function ArrayEnumerator.MoveNext(this)
     return false
 end
 
-function ArrayEnumerator.GetCurrent(this)
+function ArrayEnumerator.getCurrent(this)
     return this.current
 end
 
@@ -553,7 +553,7 @@ end
 
 local function eachFn(en)
     if en:MoveNext() then
-        return true, en:GetCurrent()
+        return true, en:getCurrent()
     end
     return nil
 end
@@ -619,7 +619,7 @@ function DictionaryEnumerator.MoveNext(this)
     return false
 end
 
-function DictionaryEnumerator.GetCurrent(this)
+function DictionaryEnumerator.getCurrent(this)
     return this.current
 end
 
@@ -653,7 +653,7 @@ function LinkedListEnumerator.MoveNext(this)
     return true 
 end
 
-function LinkedListEnumerator.GetCurrent(this)
+function LinkedListEnumerator.getCurrent(this)
     return this.current
 end
 
@@ -694,7 +694,7 @@ function YieldEnumerator.MoveNext(this)
     end
 end
 
-function YieldEnumerator.GetCurrent(this)
+function YieldEnumerator.getCurrent(this)
     return this.current
 end
 

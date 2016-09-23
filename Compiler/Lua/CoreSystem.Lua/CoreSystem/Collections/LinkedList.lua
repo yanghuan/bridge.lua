@@ -10,7 +10,7 @@ local InvalidOperationException = System.InvalidOperationException
 local EqualityComparer_1 = System.EqualityComparer_1
 
 local setmetatable = setmetatable
-local getmetatable = setmetatable
+local getmetatable = getmetatable
 
 local LinkedListNode = {}
 

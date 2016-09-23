@@ -63,7 +63,7 @@ local function IEnumerator(source, tryGetNext, init)
             end
             return false
         end,
-        GetCurrent = function()
+        getCurrent = function()
             return current
         end
     }, InternalEnumerator)
@@ -79,7 +79,7 @@ function Enumerable.Where(source, predicate)
         local index = -1
         return IEnumerator(source, function(en)
             while en:MoveNext() do
-                local current = en:GetCurrent()
+                local current = en:getCurrent()
                 index = index + 1
                 if predicate(current, index) then
                     return true, current
@@ -98,7 +98,7 @@ function Enumerable.Select(source, selector, T)
         return IEnumerator(source, function(en) 
             if en:MoveNext() then
                 index = index + 1
-                return true, selector(en:GetCurrent(), index)
+                return true, selector(en:getCurrent(), index)
             end
             return false
         end)
@@ -116,13 +116,13 @@ local function selectMany(source, collectionSelector, resultSelector, T)
             while true do
                 if midEn and midEn:MoveNext() then
                     if resultSelector ~= nil then
-                        return true, resultSelector(midEn, midEn:GetCurrent())
+                        return true, resultSelector(midEn, midEn:getCurrent())
                     end
-                    return true, midEn:GetCurrent()
+                    return true, midEn:getCurrent()
                 else
                     if not en:MoveNext() then return false end
                     index = index + 1
-                    midEn = collectionSelector(en:GetCurrent(), index):GetEnumerator()
+                    midEn = collectionSelector(en:getCurrent(), index):GetEnumerator()
                     if midEn == nil then
                         throw(NullReferenceException())
                     end
@@ -153,7 +153,7 @@ function Enumerable.Take(source, count)
             if count > 0 then
                 if en:MoveNext() then
                     count = count - 1
-                    return true, en:GetCurrent()
+                    return true, en:getCurrent()
                 end
             end
             return false
@@ -168,7 +168,7 @@ function Enumerable.TakeWhile(source, predicate)
         local index = -1
         return IEnumerator(source, function(en)
             if en:MoveNext() then
-                local current = en:GetCurrent()
+                local current = en:getCurrent()
                 index = index + 1
                 if not predicate(current, index) then
                     return false
@@ -187,7 +187,7 @@ function Enumerable.Skip(source, count)
             while count > 0 and en:MoveNext() do count = count - 1 end
             if count <= 0 then
                 if en:MoveNext() then
-                    return true, en:GetCurrent() 
+                    return true, en:getCurrent() 
                 end
             end
             return false
@@ -204,7 +204,7 @@ function Enumerable.SkipWhile(source, predicate)
         return IEnumerator(source, function(en)
             while not isSkipEnd do
                 if en:MoveNext() then
-                    local current = en:GetCurrent()
+                    local current = en:getCurrent()
                     index = index + 1
                     if not predicate(current, index) then
                         isSkipEnd = true
@@ -215,7 +215,7 @@ function Enumerable.SkipWhile(source, predicate)
                 end
             end
             if en:MoveNext() then
-                return true, en:GetCurrent()
+                return true, en:getCurrent()
             end
             return false
         end)
@@ -327,7 +327,7 @@ local function groupBySelect(source, keySelector, elementSelector, resultSelecto
         local lookup = createLookup(source, keySelector, elementSelector, comparer, TKey, TElement)
         return IEnumerator(lookup, function(en)
             if en:MoveNext() then
-                local current = en:GetCurrent()
+                local current = en:getCurrent()
                 return resultSelector(current.key, current)
             end
             return false
@@ -359,12 +359,12 @@ function Enumerable.Concat(first, second)
         return IEnumerator(first, function(en)
             if secondEn == nil then
                 if en:MoveNext() then
-                    return true, en:GetCurrent()
+                    return true, en:getCurrent()
                 end
                 secondEn = second:GetEnumerator()
             end
             if secondEn:MoveNext() then
-                return true, secondEn:GetCurrent()
+                return true, secondEn:getCurrent()
             end
             return false
         end)
@@ -379,7 +379,7 @@ function Enumerable.Zip(first, second, resultSelector, TResult)
         local e2
         return IEnumerator(first, function(e1)
             if e1:MoveNext() and e2:MoveNext() then
-                return true, resultSelector(e1:GetCurrent(), e2:GetCurrent())
+                return true, resultSelector(e1:getCurrent(), e2:getCurrent())
             end
         end, 
         function()
@@ -417,7 +417,7 @@ function Enumerable.Distinct(source, comparer)
         local getHashCode = getComparer(source, comparer).GetHashCode
         return IEnumerator(source, function(en)
             while en:MoveNext() do
-                local current = en:GetCurrent()
+                local current = en:getCurrent()
                 if addToSet(set, current, getHashCode) then
                     return true, current  
                 end
@@ -437,7 +437,7 @@ function Enumerable.Union(first, second, comparer)
         return IEnumerator(first, function(en)
             if secondEn == nil then
                 while en:MoveNext() do
-                    local current = en:GetCurrent()
+                    local current = en:getCurrent()
                     if addToSet(set, current, getHashCode) then
                         return true, current  
                     end
@@ -445,7 +445,7 @@ function Enumerable.Union(first, second, comparer)
                 secondEn = second:GetEnumerator()
             end
             while secondEn:MoveNext() do
-                local current = secondEn:GetCurrent()
+                local current = secondEn:getCurrent()
                 if addToSet(set, current, getHashCode) then
                     return true, current  
                 end
@@ -463,7 +463,7 @@ function Enumerable.Intersect(first, second, comparer)
         local getHashCode = getComparer(first, comparer).GetHashCode
         return IEnumerator(first, function(en)
             while en:MoveNext() do
-                 local current = en:GetCurrent()
+                 local current = en:getCurrent()
                  if removeFromSet(set, current, getHashCode) then
                     return true, current
                  end
@@ -486,7 +486,7 @@ function Enumerable.Except(first, second, comparer)
         local getHashCode = getComparer(first, comparer).GetHashCode
         return IEnumerator(first, function(en) 
             while en:MoveNext() do
-                local current = en:GetCurrent()
+                local current = en:getCurrent()
                 if addToSet(set, current, getHashCode) then
                     return true, current  
                 end
@@ -525,11 +525,11 @@ end
 function Enumerable.SequenceEqual(first, second, comparer)
     if first == nil then throw(ArgumentNullException("first")) end
     if second == nil then throw(ArgumentNullException("second")) end
-    local equals = getComparer(first, comparer).equals
+    local equals = getComparer(first, comparer).Equals
     local e1 = first:GetEnumerator()
     local e2 = second:GetEnumerator()
     while e1:MoveNext() do
-        if not(e2:MoveNext() and equals(e1:GetCurrent(), e2:GetCurrent())) then
+        if not(e2:MoveNext() and equals(e1:getCurrent(), e2:getCurrent())) then
             return false
         end
     end
@@ -601,7 +601,7 @@ local function first(source, ...)
     if len == 0 then  
         local en = source:GetEnumerator()
         if en:MoveNext() then 
-            return true, en:GetCurrent()
+            return true, en:getCurrent()
         end
         return false, 0
     else
@@ -638,7 +638,7 @@ local function last(source, ...)
         if en:MoveNext() then 
             local result
             repeat
-                result = en:GetCurrent()
+                result = en:getCurrent()
             until not each.MoveNext()
             return true, result
         end
@@ -678,7 +678,7 @@ local function single(source, ...)
     if len == 0 then
         local en = source:GetEnumerator()
         if not en:MoveNext() then return false, 0 end
-        local result = en:GetCurrent()
+        local result = en:getCurrent()
         if not en:MoveNext() then
             return true, result
         end
@@ -721,7 +721,7 @@ local function elementAt(source, index)
     local en = source:GetEnumerator()
     while true do
         if not en:MoveNext() then return false end
-        if index == 0 then return true, en:GetCurrent() end
+        if index == 0 then return true, en:getCurrent() end
         index = index - 1
     end
 end
@@ -819,7 +819,7 @@ end
 
 function Enumerable.Contains(source, value, comparer)
     if source == nil then throw(ArgumentNullException("source")) end
-    local equals = getComparer(source, comparer).equals
+    local equals = getComparer(source, comparer).Equals
     for _, v in each(source) do
         if equals(v, value) then
             return true
@@ -836,9 +836,9 @@ function Enumerable.Aggregate(source, ...)
         if func == nil then throw(ArgumentNullException("func")) end
         local e = source:GetEnumerator()
         if not e:MoveNext() then throw(InvalidOperationException("NoElements")) end
-        local result = e:GetCurrent()
+        local result = e:getCurrent()
         while e:MoveNext() do
-            result = func(result, e:GetCurrent())
+            result = func(result, e:getCurrent())
         end
         return result
     elseif len == 2 then
