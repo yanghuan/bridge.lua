@@ -170,9 +170,9 @@ System.defStc("System.TimeSpan", TimeSpan)
 TimeSpan.__inherits__ = { System.IComparable, System.IComparable_1(TimeSpan), System.IEquatable_1(TimeSpan) }
 
 local zero = TimeSpan(0)
-TimeSpan.zero = zero
-TimeSpan.maxValue = TimeSpan(864e13)
-TimeSpan.minValue = TimeSpan(-864e13)
+TimeSpan.Zero = zero
+TimeSpan.MaxValue = TimeSpan(864e13)
+TimeSpan.MinValue = TimeSpan(-864e13)
 
 function TimeSpan.__default__()
     return zero

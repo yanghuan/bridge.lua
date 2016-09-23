@@ -35,7 +35,10 @@ namespace Bridge.Contract
             {
                 if (this.Node != null)
                 {
-                    return this.Node.GetParent<SyntaxTree>().FileName;
+                    var parent = this.Node.GetParent<SyntaxTree>();
+                    if(parent != null) {
+                        return parent.FileName;
+                    }
                 }
 
                 return null;

@@ -219,8 +219,20 @@
             <method name="Contains" Template="Linq.Contains({0}, {1}, {2})" />
             <method name="Aggregate" Template="Linq.Aggregate({0}, {1}, {2})" />
             <method name="Sum" Template="Linq.Sum({0}, {1})" />
-            <method name="Min" Template="Linq.Min({0}, {1}, {^1})" />
-            <method name="Max" Template="Linq.Max({0}, {1}, {^1})" />
+            <method name="Min" ArgCount="1"  Template="Linq.Min({0})" />
+            <method name="Min" ArgCount="2" RetType="System.Int32"  Template="Linq.Min({0}, {1}, System.Int)" />
+            <method name="Min" ArgCount="2" RetType="System.Int64"  Template="Linq.Min({0}, {1}, System.Int)" />
+            <method name="Min" ArgCount="2" RetType="System.Single"  Template="Linq.Min({0}, {1}, System.Double)" />
+            <method name="Min" ArgCount="2" RetType="System.Double"  Template="Linq.Min({0}, {1}, System.Double)" />
+            <method name="Min" ArgCount="2" RetType="System.Decimal"  Template="Linq.Min({0}, {1}, System.Decimal)" />
+            <method name="Min" ArgCount="2" GenericArgCount="2"  Template="Linq.Min({0}, {1}, {^1})" />
+            <method name="Max" ArgCount="1"  Template="Linq.Max({0})" />
+            <method name="Max" ArgCount="2" RetType="System.Int32"  Template="Linq.Max({0}, {1}, System.Int)" />
+            <method name="Max" ArgCount="2" RetType="System.Int64"  Template="Linq.Max({0}, {1}, System.Int)" />
+            <method name="Max" ArgCount="2" RetType="System.Single"  Template="Linq.Max({0}, {1}, System.Double)" />
+            <method name="Max" ArgCount="2" RetType="System.Double"  Template="Linq.Max({0}, {1}, System.Double)" />
+            <method name="Max" ArgCount="2" RetType="System.Decimal"  Template="Linq.Max({0}, {1}, System.Decimal)" />
+            <method name="Max" ArgCount="2" GenericArgCount="2"  Template="Linq.Max({0}, {1}, {^1})" />
         </class>
     </namespace>
     <namespace name="System.Diagnostics">

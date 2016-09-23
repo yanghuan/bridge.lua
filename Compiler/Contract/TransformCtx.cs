@@ -101,15 +101,13 @@ namespace Bridge.Contract {
             [XmlAttribute]
             public string Template;
             [XmlAttribute]
-            public int ArgCount;
+            public int ArgCount = -1;
             [XmlElement("arg")]
             public ArgumentModel[] Args;
-
-            public bool IsMatchAll {
-                get {
-                    return Args == null && ArgCount == 0;
-                }
-            }
+            [XmlAttribute]
+            public string RetType;
+            [XmlAttribute]
+            public int GenericArgCount = -1;
         }
 
         public sealed class ClassModel {
@@ -211,22 +209,44 @@ namespace Bridge.Contract {
                 }
             }
 
-            private bool IsMethodMatch(MethodDefinition methodDefinition, XmlMetaModel.MethodModel model) {
-                if(methodDefinition.Name != model.name) {
-                    return false;
-                }
-
-                if(methodDefinition.Parameters.Count != model.Args.Length) {
-                    return false;
-                }
-
-                int index = 0;
-                foreach(var parameter in methodDefinition.Parameters) {
-                    var parameterModel = model.Args[index];
-                    if(!IsMethodParameterSame(parameter.ParameterType, parameterModel)) {
+            private bool IsMethodMatchAll(MethodDefinition methodDefinition, XmlMetaModel.MethodModel model) {
+                if(!string.IsNullOrEmpty(model.name)) {
+                    if(methodDefinition.Name != model.name) {
                         return false;
                     }
-                    ++index;
+                }
+
+                if(model.ArgCount != -1) {
+                    if(methodDefinition.Parameters.Count != model.ArgCount) {
+                        return false;
+                    }
+                }
+
+                if(model.GenericArgCount != -1) {
+                    if(methodDefinition.GenericParameters.Count != model.GenericArgCount) {
+                        return false;
+                    }
+                }
+
+                if(!string.IsNullOrEmpty(model.RetType)) {
+                    if(!IsMethodParameterSame(methodDefinition.ReturnType, new XmlMetaModel.ArgumentModel() { type = model.RetType })) {
+                        return false;
+                    }
+                }
+
+                if(model.Args != null) {
+                    if(methodDefinition.Parameters.Count != model.Args.Length) {
+                        return false;
+                    }
+
+                    int index = 0;
+                    foreach(var parameter in methodDefinition.Parameters) {
+                        var parameterModel = model.Args[index];
+                        if(!IsMethodParameterSame(parameter.ParameterType, parameterModel)) {
+                            return false;
+                        }
+                        ++index;
+                    }
                 }
 
                 return true;
@@ -235,26 +255,8 @@ namespace Bridge.Contract {
             private void Method() {
                 if(model_.Methods != null) {
                     foreach(var methodModel in model_.Methods) {
-                        if(methodModel.IsMatchAll) {
-                            var methods = TypeDefinition.Methods.Where(i => i.Name == methodModel.name);
-                            foreach(MethodDefinition methodDefinition in methods) {
-                                MethodMetaInfo info = new MethodMetaInfo(methodDefinition, methodModel);
-                                XmlMetaMaker.AddMethod(info);
-                            }
-                        }
-                        else if(methodModel.ArgCount != 0) {
-                            MethodDefinition methodDefinition = TypeDefinition.Methods.SingleOrDefault(i => i.Name == methodModel.name && i.Parameters.Count == methodModel.ArgCount);
-                            if(methodDefinition == null) {
-                                throw new ArgumentException(methodModel.name + " is not found match at " + TypeDefinition.FullName);
-                            }
-                            MethodMetaInfo info = new MethodMetaInfo(methodDefinition, methodModel);
-                            XmlMetaMaker.AddMethod(info);
-                        }
-                        else {
-                            MethodDefinition methodDefinition = TypeDefinition.Methods.FirstOrDefault(i => IsMethodMatch(i, methodModel));
-                            if(methodDefinition == null) {
-                                throw new ArgumentException(methodModel.name + " is not found match at " + TypeDefinition.FullName);
-                            }
+                        var methods = TypeDefinition.Methods.Where(i => IsMethodMatchAll(i, methodModel));
+                        foreach(MethodDefinition methodDefinition in methods) {
                             MethodMetaInfo info = new MethodMetaInfo(methodDefinition, methodModel);
                             XmlMetaMaker.AddMethod(info);
                         }
