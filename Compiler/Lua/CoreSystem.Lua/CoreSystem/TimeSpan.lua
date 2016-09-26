@@ -1,7 +1,9 @@
 local System = System
 local throw = System.throw
 local div = System.div
+local trunc = System.trunc
 local ArgumentException = System.ArgumentException
+local OverflowException = System.OverflowException
 
 local getmetatable = getmetatable
 local select = select
@@ -114,11 +116,19 @@ function TimeSpan.Subtract(this, ts)
 end
 
 function TimeSpan.Duration(this) 
-    return TimeSpan(math.abs(this.ticks))
+    local ticks = this.ticks
+    if ticks == -9223372036854775808 then
+        throw(OverflowException("Overflow_Duration"))
+    end
+    return TimeSpan(ticks >= 0 and ticks or - ticks)
 end
 
 function TimeSpan.Negate(this) 
-    return TimeSpan(-this.ticks)
+    local ticks = this.ticks
+    if ticks == -9223372036854775808 then
+        throw(OverflowException("Overflow_NegateTwosCompNum"))
+    end
+    return TimeSpan(-ticks)
 end
 
 function TimeSpan.ToString(this) 
@@ -142,24 +152,36 @@ function TimeSpan.__le(t1, t2)
     return t1.ticks <= t2.ticks
 end
 
+local function interval(value, scale)
+    if value ~= value then 
+        throw(ArgumentException("Arg_CannotBeNaN"))
+    end
+    local tmp = value * scale
+    local millis = tmp + (value >=0 and 0.5 or -0.5)
+    if millis > 922337203685477 or millis < -922337203685477 then
+        throw(OverflowException("Overflow_TimeSpanTooLong"))
+    end
+    return TimeSpan(trunc(millis) * 1e4)
+end
+
 function TimeSpan.FromDays(value) 
-    return TimeSpan(value * 864e9)
+    return interval(value, 864e5)
 end
 
 function TimeSpan.FromHours(value) 
-    return TimeSpan(value * 36e9)
+    return interval(value, 36e5)
 end
 
 function TimeSpan.FromMilliseconds(value) 
-    return TimeSpan(value * 1e4)
+    return interval(value, 1)
 end
 
 function TimeSpan.FromMinutes(value) 
-    return TimeSpan(value * 6e8)
+    return interval(value, 6e4)
 end
 
 function TimeSpan.FromSeconds(value) 
-    return TimeSpan(value * 1e7)
+    return interval(value, 1000)
 end
 
 function TimeSpan.FromTicks(value) 
@@ -171,8 +193,8 @@ TimeSpan.__inherits__ = { System.IComparable, System.IComparable_1(TimeSpan), Sy
 
 local zero = TimeSpan(0)
 TimeSpan.Zero = zero
-TimeSpan.MaxValue = TimeSpan(864e13)
-TimeSpan.MinValue = TimeSpan(-864e13)
+TimeSpan.MaxValue = TimeSpan(9223372036854775807)
+TimeSpan.MinValue = TimeSpan(-9223372036854775808)
 
 function TimeSpan.__default__()
     return zero
