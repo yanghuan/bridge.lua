@@ -48,9 +48,18 @@ local function try(try, catch, finally)
             if type(result) == "string" then
                 result = System.Exception(result)
             end
-            local v = catch(result)
-            if v ~= rethrow then
-                ok = true
+            local fine, value
+            if finally then
+                fine, value = pcall(catch, result)
+            else
+                fine, value = true, catch(result)
+            end
+            if fine then
+                if v ~= rethrow then
+                    ok = true
+                    result = v
+                end
+            else
                 result = v
             end
         end
