@@ -14,6 +14,7 @@ local tremove = table.remove
 local tconcat = table.concat
 local rawget = rawget
 local floor = math.floor
+local ceil = math.ceil
 local error = error
 local select = select
 local pcall = pcall
@@ -254,7 +255,7 @@ System.sr = bit.rshift
 System.srr = bit.arshift
 
 local function trunc(num) 
-    return num > 0 and floor(num) or floor(-num)
+    return num > 0 and floor(num) or ceil(num)
 end
 
 System.trunc = trunc
