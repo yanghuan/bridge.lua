@@ -5,6 +5,14 @@ using System.Linq;
 
 namespace Bridge.Translator.Lua
 {
+    public sealed class ReturnSearchVisitor : DepthFirstAstVisitor {
+        public bool Found { get; private set; }
+
+        public override void VisitReturnStatement(ReturnStatement returnStatement) {
+            Found = true;
+        }
+    }
+
     public class UsingBlock : AbstractEmitterBlock
     {
         public UsingBlock(IEmitter emitter, UsingStatement usingStatement)
@@ -35,16 +43,8 @@ namespace Bridge.Translator.Lua
             this.EmitUsing(res, inner);
         }
 
-        private sealed class YieldSearchVisitor : DepthFirstAstVisitor {
-            public bool Found { get; private set; }
-
-            public override void VisitReturnStatement(ReturnStatement returnStatement) {
-                Found = true;
-            }
-        }
-
         private void EmitUsing(AstNode expression, IEnumerable<AstNode> inner) {
-            var visitor = new YieldSearchVisitor();
+            var visitor = new ReturnSearchVisitor();
             this.UsingStatement.EmbeddedStatement.AcceptVisitor(visitor);
             bool hasRet = visitor.Found;
 

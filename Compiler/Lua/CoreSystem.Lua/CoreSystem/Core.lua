@@ -16,6 +16,7 @@ local rawget = rawget
 local floor = math.floor
 local error = error
 local select = select
+local pcall = pcall
 
 local emptyFn = function() end
 local identityFn = function(x) return x end
@@ -38,30 +39,29 @@ local function throw(e, lv)
     error(e)
 end
 
+local rethrow = {}
+
 local function try(try, catch, finally)
-    local ok, err = pcall(try)
-    local rethrow
+    local ok, result = pcall(try)
     if not ok then
         if catch then
-            if type(err) == "string" then
-                err = System.Exception(err)
+            if type(result) == "string" then
+                result = System.Exception(result)
             end
-            local fine, result = pcall(catch, err)
-            if not fine then
-                err = result
-            else
-                rethrow = result
+            local v = catch(result)
+            if v ~= rethrow then
+                ok = true
+                result = v
             end
-        else 
-            rethrow = true
         end
     end
     if finally then
         finally()
     end
-    if rethrow then
-        throw(err)
+    if not ok then
+        throw(result)
     end
+    return result
 end
 
 local function set(className, cls)
@@ -228,6 +228,7 @@ System = {
     equals = equals,
     try = try,
     throw = throw,
+    rethrow = rethrow,
     define = defCls,
     defInf = defInf,
     defStc = defStc,

@@ -172,6 +172,12 @@ namespace Bridge.Translator.Lua
         }
 
         protected void VisitTryCatchStatement() {
+            var visitor = new ReturnSearchVisitor();
+            this.TryCatchStatement.AcceptVisitor(visitor);
+            bool hasRet = visitor.Found;
+            if(hasRet) {
+                this.WriteReturn(true);
+            }
             this.Write("System.try");
             this.WriteOpenParentheses();
             this.EmitTryBlock();
@@ -240,7 +246,7 @@ namespace Bridge.Translator.Lua
                         this.BeginIfBlock();
 
                         if(clause.VariableName.IsNotEmpty()) {
-                            this.Write(string.Format("local {0} = {1};", clause.VariableName, eName));
+                            this.Write(string.Format("local {0} = {1}", clause.VariableName, eName));
                             this.WriteNewLine();
                         }
 
@@ -251,10 +257,12 @@ namespace Bridge.Translator.Lua
                     }
                     else {
                         isWriteElse = false;
-                        this.BeginFunctionBlock();
+                        if(index != 0) {
+                            this.BeginFunctionBlock();
+                        }
 
                         if(clause.VariableName.IsNotEmpty()) {
-                            this.Write(string.Format("local {0} = {1};", clause.VariableName, eName));
+                            this.Write(string.Format("local {0} = {1}", clause.VariableName, eName));
                             this.WriteNewLine();
                         }
 
@@ -273,7 +281,8 @@ namespace Bridge.Translator.Lua
                     this.Emitter.NoBraceBlock = clause.Body;
                     clause.Body.AcceptVisitor(this.Emitter);
                     this.Emitter.NoBraceBlock = null;
-                    this.Write("return true;");
+                    this.WriteReturn(true);
+                    this.Write(LuaHelper.ReThrow);
                     this.WriteNewLine();
                     if(index != 0) {
                         this.Outdent();
@@ -285,7 +294,8 @@ namespace Bridge.Translator.Lua
 
             if(isWriteElse) {
                 this.BeginElseBlock();
-                this.Write("return true;");
+                this.WriteReturn(true);
+                this.Write(LuaHelper.ReThrow);
                 this.WriteNewLine();
                 this.Outdent();
             }
@@ -301,7 +311,7 @@ namespace Bridge.Translator.Lua
                 this.WriteComma();
             }
             else {
-                this.Write(");");
+                this.Write(")");
             }
             this.WriteNewLine();
         }

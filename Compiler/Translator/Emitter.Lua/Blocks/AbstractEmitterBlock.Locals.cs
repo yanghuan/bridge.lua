@@ -14,6 +14,7 @@ namespace Bridge.Translator.Lua
         public const string MergeVar = "t";
         public const string MutilNew = "new";
         public const string Typeof = Root + ".typeof";
+        public const string ReThrow = Root + ".rethrow";
 
         public static string Ident(this string s) {
             return "__" + s + "__";
