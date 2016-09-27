@@ -18,7 +18,7 @@ local function build(this, collection, comparer)
     if collection == nil then
         throw(ArgumentNullException("collection"))
     end
-    this:unionWith(collection)
+    this:UnionWith(collection)
 end
 
 function HashSet.__ctor__(this, ...)

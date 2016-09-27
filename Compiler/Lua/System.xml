@@ -247,4 +247,7 @@
             <method name="Ensures" Template="assert({0}, {1})" />
         </class>
     </namespace>
+    <namespace name="System.Text">
+        <class name="StringBuilder" Name="System.StringBuilder" />
+    </namespace>
 </assembly>
