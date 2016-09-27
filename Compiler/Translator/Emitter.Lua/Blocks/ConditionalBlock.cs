@@ -57,6 +57,7 @@ namespace Bridge.Translator.Lua
                 string script = this.PopWriter(true);
                 this.WriteToPrevLine(script);
                 this.Write(tempName);
+                this.RemoveTempVar(tempName);
             }
         }
     }
