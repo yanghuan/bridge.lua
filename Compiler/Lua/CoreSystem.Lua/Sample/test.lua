@@ -116,6 +116,7 @@ local function testLinq()
     printList(Linq.Take(list, 4))
     printList(Linq.Select(list, function(i) return i + 2 end, System.Int))
     print(Linq.Min(list), Linq.Max(list))
+    print(Linq.ElementAtOrDefault(Linq.Where(list, function(i) return i <= 4 end), 5))
 end
 
 local function testType()

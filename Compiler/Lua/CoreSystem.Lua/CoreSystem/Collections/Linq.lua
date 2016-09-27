@@ -810,7 +810,7 @@ function Enumerable.Count(source, ...)
         local count = 0
         for _, v in each(source) do
             if predicate(v) then
-                coun = count + 1
+                count = count + 1
             end
         end
         return count
