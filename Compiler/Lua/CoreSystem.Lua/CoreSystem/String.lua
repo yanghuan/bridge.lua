@@ -224,7 +224,7 @@ function String.Format(format, ...)
     local len = select("#", ...)
     if len == 1 then
         local args = ...
-        if System.isArrayLike(v) then
+        if System.isArrayLike(args) then
             return format:gsub("{(%d)}", function(n) 
                 local v = args:get(n + 0)   -- make n to number
                 if v == nil then
