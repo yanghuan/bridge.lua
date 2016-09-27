@@ -15,6 +15,9 @@ local select = select
 local type = type
 local assert = assert
 local coroutine = coroutine
+local ccreate = coroutine.create
+local cstatus = coroutine.status
+local cresume = coroutine.resume
 
 local Collection = {}
 local null = {}
@@ -668,21 +671,17 @@ function Collection.linkedListEnumerator(t)
 end
 
 local YieldEnumerator = {}
-YieldEnumerator.__index = YieldEnumerator
-
-function YieldEnumerator.GetEnumerator(this)
-    return this
-end
+YieldEnumerator.__inherits__ = { System.IEnumerator }
 
 function YieldEnumerator.MoveNext(this)
     local co = this.co
-    if coroutine.status(co) == "dead" then
+    if cstatus(co) == "dead" then
         this.current = nil
         return false
     else
-        local ok, v = coroutine.resume(co)
+        local ok, v = cresume(co)
         if ok then
-            if coroutine.status(co) == "dead" then
+            if cstatus(co) == "dead" then
                 this.current = nil
                 return false
             end
@@ -698,8 +697,23 @@ function YieldEnumerator.getCurrent(this)
     return this.current
 end
 
-function Collection.yieldEnumerator(f, T)
-    return setmetatable({ co = coroutine.create(f), __genericT__ = T }, YieldEnumerator)
+System.define("System.YieldEnumerator", YieldEnumerator)
+
+function Collection.yieldIEnumerator(f, T)
+    return setmetatable({ co = ccreate(f), __genericT__ = T }, YieldEnumerator)
+end
+
+local YieldEnumerable = {}
+YieldEnumerable.__inherits__ = { System.IEnumerable }
+
+function YieldEnumerable.GetEnumerator(this)
+    return setmetatable({ co = ccreate(this.f), __genericT__ = this.__genericT__ }, YieldEnumerator)
+end
+
+System.define("System.YieldEnumerable", YieldEnumerable)
+
+function Collection.yieldIEnumerable(f, T)
+    return setmetatable({ f = f, __genericT__ = T }, YieldEnumerable)
 end
 
 Collection.yieldReturn = coroutine.yield
@@ -710,7 +724,8 @@ System.ipairs = Collection.ipairs
 System.pairs = Collection.pairs
 System.isArrayLike = Collection.isArrayLike
 System.isEnumerableLike = Collection.isEnumerableLike
-System.yieldEnumerator = Collection.yieldEnumerator
+System.yieldIEnumerable = Collection.yieldIEnumerable
+System.yieldIEnumerator = Collection.yieldIEnumerator
 System.yieldReturn = Collection.yieldReturn 
 
 

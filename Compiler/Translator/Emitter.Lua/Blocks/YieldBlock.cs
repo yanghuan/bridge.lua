@@ -77,7 +77,7 @@ namespace Bridge.Translator.Lua
         public static void EmitYield(AbstractEmitterBlock block, IType returnType)
         {
             block.WriteReturn(true);
-            block.Write(LuaHelper.Root + ".yieldEnumerator");
+            block.Write(LuaHelper.Root, ".yield", returnType.Name);
             block.WriteOpenParentheses();
             block.WriteFunction();
             block.WriteOpenCloseParentheses();

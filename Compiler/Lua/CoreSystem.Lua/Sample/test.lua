@@ -73,7 +73,7 @@ local function testYeild()
             System.yieldReturn(i) 
         end
     end
-    printList(System.yieldEnumerator(yieldFn, System.Int))
+    printList(System.yieldIEnumerable(yieldFn, System.Int))
 end
 
 local function testDelegate()
@@ -117,6 +117,11 @@ local function testLinq()
     printList(Linq.Select(list, function(i) return i + 2 end, System.Int))
     print(Linq.Min(list), Linq.Max(list))
     print(Linq.ElementAtOrDefault(Linq.Where(list, function(i) return i <= 4 end), 5))
+    local ll = Linq.Where(list, function(i) return i <= 4 end)
+    print(Linq.Count(ll))
+    Linq.Any(ll)
+    print(Linq.Count(ll))
+    
 end
 
 local function testType()

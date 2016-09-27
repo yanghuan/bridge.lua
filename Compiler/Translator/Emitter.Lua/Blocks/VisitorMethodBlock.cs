@@ -1,5 +1,6 @@
 using Bridge.Contract;
 using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.NRefactory.TypeSystem;
 using System.Linq;
 
 namespace Bridge.Translator.Lua
@@ -112,8 +113,11 @@ namespace Bridge.Translator.Lua
             else {
                 this.BeginFunctionBlock();
                 bool isYieldExists = YieldBlock.HasYield(methodDeclaration.Body);
+                IType yieldReturnType = null;
                 if(isYieldExists) {
-                    YieldBlock.EmitYield(this, null);
+                    var returnResolveResult = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
+                    yieldReturnType = returnResolveResult.Type;
+                    YieldBlock.EmitYield(this, yieldReturnType);
                 }
                 else {
                     this.ConvertParamsToReferences(methodDeclaration.Parameters);
@@ -124,8 +128,7 @@ namespace Bridge.Translator.Lua
                 EmitTempVars();
 
                 if(isYieldExists) {
-                    var returnResolveResult = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
-                    YieldBlock.EmitYieldReturn(this, returnResolveResult.Type);
+                    YieldBlock.EmitYieldReturn(this, yieldReturnType);
                 }
                 else {
                     PrimitiveType returnType = methodDeclaration.ReturnType as PrimitiveType;
