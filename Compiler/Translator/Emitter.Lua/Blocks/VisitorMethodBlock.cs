@@ -103,8 +103,8 @@ namespace Bridge.Translator.Lua
                 }
                 this.EmitTypeParameters(methodDeclaration.TypeParameters, methodDeclaration);
             }
-            this.WriteCloseParentheses();
 
+            this.WriteCloseParentheses();
             this.WriteSpace();
 
             if(methodDeclaration.HasModifier(Modifiers.Async)) {
@@ -117,7 +117,7 @@ namespace Bridge.Translator.Lua
                 if(isYieldExists) {
                     var returnResolveResult = this.Emitter.Resolver.ResolveNode(methodDeclaration.ReturnType, this.Emitter);
                     yieldReturnType = returnResolveResult.Type;
-                    YieldBlock.EmitYield(this, yieldReturnType);
+                    YieldBlock.EmitYield(this, yieldReturnType, methodDeclaration);
                 }
                 else {
                     this.ConvertParamsToReferences(methodDeclaration.Parameters);
@@ -128,7 +128,7 @@ namespace Bridge.Translator.Lua
                 EmitTempVars();
 
                 if(isYieldExists) {
-                    YieldBlock.EmitYieldReturn(this, yieldReturnType);
+                    YieldBlock.EmitYieldReturn(this, yieldReturnType, methodDeclaration);
                 }
                 else {
                     PrimitiveType returnType = methodDeclaration.ReturnType as PrimitiveType;

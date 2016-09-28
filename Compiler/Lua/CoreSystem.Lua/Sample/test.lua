@@ -68,12 +68,17 @@ local function testDictionary()
 end
 
 local function testYeild()
-    local function yieldFn() 
-        for i = 1, 10 do
-            System.yieldReturn(i) 
-        end
+    local enumerable = function (begin, _end) 
+        return System.yieldIEnumerable(function (begin, _end)
+            while begin < _end do
+                System.yieldReturn(begin)
+                begin = begin + 1
+            end
+        end, System.Int, begin, _end)
     end
-    printList(System.yieldIEnumerable(yieldFn, System.Int))
+    local e = enumerable(1, 10)
+    printList(e)
+    printList(e)
 end
 
 local function testDelegate()

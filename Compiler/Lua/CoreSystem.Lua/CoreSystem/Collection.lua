@@ -679,7 +679,14 @@ function YieldEnumerator.MoveNext(this)
         this.current = nil
         return false
     else
-        local ok, v = cresume(co)
+        local args = this.args
+        local ok, v
+        if args then
+            ok, v = cresume(co, unpack(args))
+            this.args = nil
+        else
+            ok, v = cresume(co)
+        end
         if ok then
             if cstatus(co) == "dead" then
                 this.current = nil
@@ -699,21 +706,21 @@ end
 
 System.define("System.YieldEnumerator", YieldEnumerator)
 
-function Collection.yieldIEnumerator(f, T)
-    return setmetatable({ co = ccreate(f), __genericT__ = T }, YieldEnumerator)
+function Collection.yieldIEnumerator(f, T, ...)
+    return setmetatable({ co = ccreate(f), __genericT__ = T, args = { ... } }, YieldEnumerator)
 end
 
 local YieldEnumerable = {}
 YieldEnumerable.__inherits__ = { System.IEnumerable }
 
 function YieldEnumerable.GetEnumerator(this)
-    return setmetatable({ co = ccreate(this.f), __genericT__ = this.__genericT__ }, YieldEnumerator)
+    return setmetatable({ co = ccreate(this.f), __genericT__ = this.__genericT__, args = this.args }, YieldEnumerator)
 end
 
 System.define("System.YieldEnumerable", YieldEnumerable)
 
-function Collection.yieldIEnumerable(f, T)
-    return setmetatable({ f = f, __genericT__ = T }, YieldEnumerable)
+function Collection.yieldIEnumerable(f, T, ...)
+    return setmetatable({ f = f, __genericT__ = T, args = { ... } }, YieldEnumerable)
 end
 
 Collection.yieldReturn = coroutine.yield

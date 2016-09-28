@@ -14,39 +14,40 @@ namespace Bridge.Translator.Lua
         {
         }
 
-        protected virtual void EmitMethodParameters(IEnumerable<ParameterDeclaration> declarations, AstNode context, bool skipCloseParentheses = false)
-        {
-            this.WriteOpenParentheses();
+
+        public static void EmitMethodParameters(AbstractEmitterBlock block, IEnumerable<ParameterDeclaration> declarations, AstNode context) {
             bool needComma = false;
 
             EntityDeclaration entityDeclaration = context as EntityDeclaration;
             if(entityDeclaration != null) {
                 if(!entityDeclaration.HasModifier(Modifiers.Static)) {
-                    this.WriteThis();
+                    block.WriteThis();
                     if(declarations.Any()) {
-                        this.WriteComma();
+                        block.WriteComma();
                     }
                 }
             }
 
-            foreach (ParameterDeclaration p in declarations)
-            {
+            foreach(ParameterDeclaration p in declarations) {
                 string name = p.Name;
                 name = name.Replace(Bridge.Translator.Emitter.FIX_ARGUMENT_NAME, "");
-                if (this.Emitter.LocalsNamesMap != null && this.Emitter.LocalsNamesMap.ContainsKey(name))
-                {
-                    name = this.Emitter.LocalsNamesMap[name];
+                if(block.Emitter.LocalsNamesMap != null && block.Emitter.LocalsNamesMap.ContainsKey(name)) {
+                    name = block.Emitter.LocalsNamesMap[name];
                 }
 
-                if (needComma)
-                {
-                    this.WriteComma();
+                if(needComma) {
+                    block.WriteComma();
                 }
 
                 needComma = true;
-                this.Write(name);
+                block.Write(name);
             }
+        }
 
+        protected virtual void EmitMethodParameters(IEnumerable<ParameterDeclaration> declarations, AstNode context, bool skipCloseParentheses = false)
+        {
+            this.WriteOpenParentheses();
+            EmitMethodParameters(this, declarations, context);
             if (!skipCloseParentheses)
             {
                 this.WriteCloseParentheses();

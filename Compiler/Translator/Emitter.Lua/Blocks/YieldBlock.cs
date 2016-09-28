@@ -74,17 +74,19 @@ namespace Bridge.Translator.Lua
             return visitor.Found;
         }
 
-        public static void EmitYield(AbstractEmitterBlock block, IType returnType)
+        public static void EmitYield(AbstractEmitterBlock block, IType returnType, MethodDeclaration methodDeclaration)
         {
             block.WriteReturn(true);
             block.Write(LuaHelper.Root, ".yield", returnType.Name);
             block.WriteOpenParentheses();
             block.WriteFunction();
-            block.WriteOpenCloseParentheses();
+            block.WriteOpenParentheses();
+            AbstractMethodBlock.EmitMethodParameters(block, methodDeclaration.Parameters, methodDeclaration);
+            block.WriteCloseParentheses();
             block.BeginFunctionBlock();
         }
 
-        public static void EmitYieldReturn(AbstractEmitterBlock block, IType returnType)
+        public static void EmitYieldReturn(AbstractEmitterBlock block, IType returnType, MethodDeclaration methodDeclaration)
         {
             block.EndFunctionBlock();
             block.WriteComma();
@@ -93,6 +95,10 @@ namespace Bridge.Translator.Lua
             }
             else {
                 block.Write("System.Object");
+            }
+            if(methodDeclaration.Parameters.Count > 0) {
+                block.WriteComma();
+                AbstractMethodBlock.EmitMethodParameters(block, methodDeclaration.Parameters, methodDeclaration);
             }
             block.WriteCloseParentheses();
             block.WriteNewLine();
