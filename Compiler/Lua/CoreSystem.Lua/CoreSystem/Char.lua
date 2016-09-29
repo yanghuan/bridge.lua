@@ -208,5 +208,8 @@ function Char.IsSurrogate(c, index)
     return c >= 0xD800 and c <= 0xDFFF
 end
 
+function Char.__inherits__()
+    return { System.IComparable, System.IComparable_1(Char), System.IEquatable_1(Char) }
+end
+
 System.defStc("System.Char", Char)
-Char.__inherits__ = { System.IComparable, System.IComparable_1(Char), System.IEquatable_1(Char) }

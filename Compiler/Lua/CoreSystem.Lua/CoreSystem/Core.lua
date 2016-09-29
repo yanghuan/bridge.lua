@@ -189,7 +189,6 @@ local function def(name, kind, cls, generic)
                 if #extends > 0 then
                     cls.__interfaces__ = extends
                 end
-                cls.__inherits__ = nil
                 if cls.__ctor__ == nil then
                     local baseCtor = base.__ctor__
                     cls.__ctor__ = type(baseCtor) == "table" and baseCtor[1] or baseCtor
@@ -197,8 +196,8 @@ local function def(name, kind, cls, generic)
             else
                 setmetatable(cls, Object)
                 cls.__interfaces__ = extends
-                cls.__inherits__ = nil
             end
+            cls.__inherits__ = nil
         elseif cls ~= Object then
              setmetatable(cls, Object)
         end    
@@ -214,7 +213,7 @@ local function def(name, kind, cls, generic)
     elseif kind == "E" then
         cls.__default__ = defaultValOfZero
     else
-        assert(false)
+        assert(false, kind)
     end
     return cls
 end
@@ -347,10 +346,10 @@ end
 function System.event(t, name, v)
     t[name] = v
     local function add(this, v)
-        this[name] = System.fn.combine(this[name], v)
+        this[name] = System.combine(this[name], v)
     end
     local function remove(this, v)
-        this[name] = System.fn.remove(this[name], v)
+        this[name] = System.remove(this[name], v)
     end
     t["add" .. name] = add
     t["remove" .. name] = remove
@@ -385,9 +384,12 @@ function System.init(namelist)
 end
 
 local namespace = {}
+local curName
 
 local function namespaceDef(kind, name, f)
-    name = namespace.name .. name
+    if #curName > 0 then
+        name = curName .. "." .. name
+    end
     assert(modules[name] == nil, name)
     modules[name] = function()
        local t = f()
@@ -412,11 +414,9 @@ function namespace.enum(name, f)
 end
 
 function System.namespace(name, f)
-    if name ~= "" then
-        name = name .. '.'
-    end
-    namespace.name = name
+    curName = name
     f(namespace)
+    curName = nil
 end
 
 local function multiNew(cls, inx, ...) 

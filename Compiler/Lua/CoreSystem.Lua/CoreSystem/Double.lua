@@ -134,7 +134,10 @@ function Double.TryParseSingle(s)
     return false, 0
 end
 
+function Double.__inherits__()
+    return { System.IComparable, System.IFormattable, System.IComparable_1(Double), System.IEquatable_1(Double) }
+end
+
 System.defStc("System.Double", Double)
-Double.__inherits__ = { System.IComparable, System.IFormattable, System.IComparable_1(Double), System.IEquatable_1(Double) }
 
 

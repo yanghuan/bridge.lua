@@ -416,6 +416,10 @@ function String.Trim(this, chars)
     return (this:gsub(chars, "%1"))
 end
 
+function String.__inherits__()
+    return { System.IComparable, System.IEnumerable, System.IComparable_1(String), System.IEnumerable_1(String), System.IEquatable_1(String) }
+end
+
 System.define("System.String", String)
 setmetatable(String, { __index = System.Object, __call = ctor })
 

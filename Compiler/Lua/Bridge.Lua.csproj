@@ -72,7 +72,6 @@
     <None Include="CoreSystem.Lua\CoreSystem\Collections\Dictionary.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Collections\EqualityComparer.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Collections\HashSet.lua" />
-    <None Include="CoreSystem.Lua\CoreSystem\Collections\Interfaces.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Collections\LinkedList.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Collections\Linq.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Collections\List.lua" />

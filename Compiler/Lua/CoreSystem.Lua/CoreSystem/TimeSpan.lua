@@ -188,8 +188,11 @@ function TimeSpan.FromTicks(value)
     return TimeSpan(value)
 end
 
+function TimeSpan.__inherits__()
+    return { System.IComparable, System.IComparable_1(TimeSpan), System.IEquatable_1(TimeSpan) }
+end
+
 System.defStc("System.TimeSpan", TimeSpan)
-TimeSpan.__inherits__ = { System.IComparable, System.IComparable_1(TimeSpan), System.IEquatable_1(TimeSpan) }
 
 local zero = TimeSpan(0)
 TimeSpan.Zero = zero

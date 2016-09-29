@@ -1,4 +1,5 @@
 require("All")()
+print(collectgarbage("count"))
 
 local function test(f, name) 
     print("-----------------------------", name)
@@ -156,3 +157,7 @@ test(testDelegate, "Delegate")
 test(testLinq, "Linq")
 test(testType, "Type")
 --test(testConsole, "Console")
+
+
+
+

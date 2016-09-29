@@ -78,7 +78,10 @@ function Boolean.__default__()
     return false
 end
 
+function Boolean.__inherits__()
+    return { System.IComparable, System.IComparable_1(Boolean), System.IEquatable_1(Boolean) }
+end
+
 System.defStc("System.Boolean", Boolean)
-Boolean.__inherits__ = { System.IComparable, System.IComparable_1(Boolean), System.IEquatable_1(Boolean) }
 
 
