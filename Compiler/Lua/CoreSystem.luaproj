@@ -37,7 +37,6 @@
     <Compile Include="CoreSystem.Lua\CoreSystem\Collections\Dictionary.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Collections\EqualityComparer.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Collections\HashSet.lua" />
-    <Compile Include="CoreSystem.Lua\CoreSystem\Collections\Interfaces.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Collections\LinkedList.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Collections\Linq.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Collections\List.lua" />

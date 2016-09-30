@@ -347,10 +347,9 @@ namespace Bridge.Translator.Lua
                     {
                         if (paramsArg == null && (parameters.Count > (i + shift)) && parameters[i + shift].IsParams)
                         {
-                            if(resolvedMethod.DeclaringTypeDefinition == null || !this.Emitter.Validator.IsIgnoreType(resolvedMethod.DeclaringTypeDefinition)) {
+                            if(resolvedMethod.DeclaringTypeDefinition == null || this.Emitter.BridgeTypes.Get(resolvedMethod.DeclaringTypeDefinition).IsFromCode) {
                                 paramsArg = arg;
                             }
-
                             paramArgName = parameters[i + shift].Name;
                         }
 
