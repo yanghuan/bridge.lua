@@ -1,8 +1,24 @@
 local System = System
 local traceback = debug.traceback
+local tconcat = table.concat
+local tinsert = table.insert
 
 local function toString(this)
-    return this.message .. this.errorStack
+    local t = {}
+    local message, innerException, stackTrace = this.message, this.innerException, this.errorStack
+    tinsert(t, this.__name__)
+    if message ~= nil and #message > 0 then
+        tinsert(t, ": ")
+        tinsert(t, message)
+    end
+    if innerException then
+        tinsert(t, "---> ")
+        tinsert(t, innerException:ToString())
+    end
+    if stackTrace then
+        tinsert(t, stackTrace)
+    end
+    return tconcat(t)
 end
 
 System.define("System.Exception", {

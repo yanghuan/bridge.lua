@@ -10,7 +10,6 @@ local IOException = System.define("System.IOException", {
     __inherits__ = { System.Exception },
     __ctor__ = function(this, message, innerException) 
         System.Exception.__ctor__(this, message or "Has IO Error", innerException)
-        this.paramName = paramName
     end,
 })
 
