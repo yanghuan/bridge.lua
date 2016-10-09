@@ -29,4 +29,5 @@ return function(dir)
     load("Math")
     load("Text.StringBuilder")
     load("Console")
+    load("IO.File")
 end

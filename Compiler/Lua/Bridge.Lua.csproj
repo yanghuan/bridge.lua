@@ -86,6 +86,7 @@
     <None Include="CoreSystem.Lua\CoreSystem\Exception.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Int.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Interfaces.lua" />
+    <None Include="CoreSystem.Lua\CoreSystem\IO\File.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Math.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\String.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Text\StringBuilder.lua" />

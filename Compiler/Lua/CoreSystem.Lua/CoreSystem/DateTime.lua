@@ -269,7 +269,7 @@ function DateTime.getTicks(this)
 end
 
 local timeZoneTicks = System.getTimeZone() * 1e7
-DateTime.baseUtcOffset = TimeSpan(timeZoneTicks)
+DateTime.BaseUtcOffset = TimeSpan(timeZoneTicks)
 
 function DateTime.getUtcNow()
     local seconds = time()

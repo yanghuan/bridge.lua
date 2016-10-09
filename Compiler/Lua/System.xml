@@ -97,6 +97,11 @@
                 <get Template="debug.traceback()" />
             </property>
         </class>
+        <class name="TimeZoneInfo">
+            <property name="BaseUtcOffset " >
+                <get Template="System.DateTime.BaseUtcOffset" />
+            </property>    
+        </class>
     </namespace>
     <namespace name="System.Collections" Name="System" />
     <namespace name="System.Collections.Generic" Name="System">
@@ -268,5 +273,8 @@
     </namespace>
     <namespace name="System.Text">
         <class name="StringBuilder" Name="System.StringBuilder" />
+    </namespace>
+    <namespace name="System.IO">
+        <class name="File" Name="System.File" />
     </namespace>
 </assembly>

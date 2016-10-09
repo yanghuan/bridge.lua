@@ -25,6 +25,7 @@
     <Folder Include="CoreSystem.Lua\" />
     <Folder Include="CoreSystem.Lua\CoreSystem\" />
     <Folder Include="CoreSystem.Lua\CoreSystem\Collections\" />
+    <Folder Include="CoreSystem.Lua\CoreSystem\IO\" />
     <Folder Include="CoreSystem.Lua\CoreSystem\Text\" />
     <Folder Include="CoreSystem.Lua\Sample\" />
   </ItemGroup>
@@ -51,6 +52,7 @@
     <Compile Include="CoreSystem.Lua\CoreSystem\Exception.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Int.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Interfaces.lua" />
+    <Compile Include="CoreSystem.Lua\CoreSystem\IO\File.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Math.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\String.lua" />
     <Compile Include="CoreSystem.Lua\CoreSystem\Text\StringBuilder.lua" />

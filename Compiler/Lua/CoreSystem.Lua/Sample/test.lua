@@ -1,4 +1,5 @@
 require("All")()
+collectgarbage("collect")
 print(collectgarbage("count"))
 
 local function test(f, name) 
@@ -148,6 +149,15 @@ local function testConsole()
     System.Console.WriteLine("name {0}, age {1}", name, age)
 end
 
+local function testIO()
+    local path = "iotest.txt"
+    local s = "hero, brige.lua\nIO"
+    System.File.WriteAllText(path, s)
+    local text = System.File.ReadAllText(path)
+    assert(text == s)
+    os.remove(path)
+end
+
 test(testDateTimeAndTimeSpan, "DateTime & TimeSpan")
 test(testArray, "Array")
 test(testList, "List")
@@ -157,6 +167,7 @@ test(testDelegate, "Delegate")
 test(testLinq, "Linq")
 test(testType, "Type")
 --test(testConsole, "Console")
+test(testIO, "IO")
 
 
 
