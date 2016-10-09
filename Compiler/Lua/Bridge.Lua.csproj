@@ -91,7 +91,6 @@
     <None Include="CoreSystem.Lua\CoreSystem\Text\StringBuilder.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\TimeSpan.lua" />
     <None Include="CoreSystem.Lua\CoreSystem\Type.lua" />
-    <None Include="CoreSystem.Lua\CoreSystem\Utils.lua" />
     <None Include="CoreSystem.Lua\Sample\test.lua" />
   </ItemGroup>
   <ItemGroup>

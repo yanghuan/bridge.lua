@@ -209,6 +209,11 @@ local function def(name, kind, cls, generic)
         end
         tinsert(class, cls)
     elseif kind == "I" then
+        local extends = cls.__inherits__
+        if extends then
+            cls.__interfaces__ = extends
+            cls.__inherits__ = nil
+        end
         cls.__default__ = emptyFn
     elseif kind == "E" then
         cls.__default__ = defaultValOfZero
