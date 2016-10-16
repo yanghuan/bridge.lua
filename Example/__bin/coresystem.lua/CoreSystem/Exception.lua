@@ -1,7 +1,29 @@
 local System = System
 local traceback = debug.traceback
+local tconcat = table.concat
+local tinsert = table.insert
+
+local function toString(this)
+    local t = {}
+    local message, innerException, stackTrace = this.message, this.innerException, this.errorStack
+    tinsert(t, this.__name__)
+    if message ~= nil and #message > 0 then
+        tinsert(t, ": ")
+        tinsert(t, message)
+    end
+    if innerException then
+        tinsert(t, "---> ")
+        tinsert(t, innerException:ToString())
+    end
+    if stackTrace then
+        tinsert(t, stackTrace)
+    end
+    return tconcat(t)
+end
 
 System.define("System.Exception", {
+    __tostring = toString,
+
     __ctor__ = function(this, message, innerException) 
         this.message = message
         this.innerException = innerException
@@ -19,16 +41,15 @@ System.define("System.Exception", {
         return this.errorStack
     end,
 
-    ToString = function(this) 
-        return this.message .. this.errorStack
-    end,
+    ToString = toString,
 
     traceback = function(this, lv)
         this.errorStack = traceback("", lv and lv + 3 or 3)
-    end,
+    end
 })
 
 System.define("System.ArgumentException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, paramName, innerException) 
@@ -42,6 +63,7 @@ System.define("System.ArgumentException", {
 })
 
 System.define("System.ArgumentNullException", {
+    __tostring = toString,
     __inherits__ = { System.ArgumentException },
 
     __ctor__ = function(this, paramName, message, innerException) 
@@ -56,6 +78,7 @@ System.define("System.ArgumentNullException", {
 })
 
 System.define("System.ArgumentOutOfRangeException", {
+    __tostring = toString,
     __inherits__ = { System.ArgumentException },
 
     __ctor__ = function(this, paramName, message, innerException, actualValue) 
@@ -75,6 +98,7 @@ System.define("System.ArgumentOutOfRangeException", {
 })
 
 System.define("System.CultureNotFoundException", {
+    __tostring = toString,
     __inherits__ = { System.ArgumentException },
 
     __ctor__ = function(this, paramName, invalidCultureName, message, innerException, invalidCultureId) 
@@ -102,6 +126,7 @@ System.define("System.CultureNotFoundException", {
 })
 
 System.define("System.KeyNotFoundException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 
@@ -118,6 +143,7 @@ System.define("System.ArithmeticException", {
 })
 
 System.define("System.DivideByZeroException", {
+    __tostring = toString,
     __inherits__ = { System.ArithmeticException },
 
     __ctor__ = function(this, message, innerException) 
@@ -126,6 +152,7 @@ System.define("System.DivideByZeroException", {
 })
 
 System.define("System.OverflowException", {
+    __tostring = toString,
     __inherits__ = { System.ArithmeticException },
 
     __ctor__ = function(this, message, innerException) 
@@ -134,6 +161,7 @@ System.define("System.OverflowException", {
 })
 
 System.define("System.FormatException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 
@@ -142,6 +170,7 @@ System.define("System.FormatException", {
 })
 
 System.define("System.InvalidCastException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 
@@ -150,6 +179,7 @@ System.define("System.InvalidCastException", {
 })
 
 System.define("System.InvalidOperationException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 
@@ -158,6 +188,7 @@ System.define("System.InvalidOperationException", {
 })
 
 System.define("System.NotImplementedException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 
@@ -166,6 +197,7 @@ System.define("System.NotImplementedException", {
 })
 
 System.define("System.NotSupportedException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 
@@ -174,6 +206,7 @@ System.define("System.NotSupportedException", {
 })
 
 System.define("System.NullReferenceException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 
@@ -182,6 +215,7 @@ System.define("System.NullReferenceException", {
 })
 
 System.define("System.RankException", {
+    __tostring = toString,
     __inherits__ = { System.Exception },
 
     __ctor__ = function(this, message, innerException) 

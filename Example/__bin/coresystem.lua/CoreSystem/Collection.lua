@@ -15,6 +15,9 @@ local select = select
 local type = type
 local assert = assert
 local coroutine = coroutine
+local ccreate = coroutine.create
+local cstatus = coroutine.status
+local cresume = coroutine.resume
 
 local Collection = {}
 local null = {}
@@ -128,8 +131,14 @@ function Collection.buildArray(t, size, ...)
     end
 end
 
+local function checkInsertIndex(t, index)   
+    if index < 0 or index > #t then
+        throw(ArgumentOutOfRangeException("index"))
+    end
+end
+
 function Collection.insertArray(t, index, v)
-    checkIndex(t, index)
+    checkInsertIndex(t, index)
     tinsert(t, index + 1, wrap(v))
     changeVersion(t)
 end
@@ -274,7 +283,7 @@ function Collection.findAllOfArray(t, match)
         throw(ArgumentNullException("match"))
     end
     local list = System.List(t.__genericT__)()
-      for _, i in ipairs(t) do
+    for _, i in ipairs(t) do
         local item = unWrap(i)
         if match(item) then
             list:add(item)
@@ -514,7 +523,7 @@ function ArrayEnumerator.MoveNext(this)
     return false
 end
 
-function ArrayEnumerator.GetCurrent(this)
+function ArrayEnumerator.getCurrent(this)
     return this.current
 end
 
@@ -547,7 +556,7 @@ end
 
 local function eachFn(en)
     if en:MoveNext() then
-        return true, en:GetCurrent()
+        return true, en:getCurrent()
     end
     return nil
 end
@@ -566,6 +575,7 @@ function Collection.insertRangeArray(t, index, collection)
     if collection == nil then
         throw(ArgumentNullException("collection"))
     end
+    checkInsertIndex(t, index)
     for _, v in each(collection) do
         index = index + 1
         tinsert(t, index, wrap(v))
@@ -612,7 +622,7 @@ function DictionaryEnumerator.MoveNext(this)
     return false
 end
 
-function DictionaryEnumerator.GetCurrent(this)
+function DictionaryEnumerator.getCurrent(this)
     return this.current
 end
 
@@ -646,7 +656,7 @@ function LinkedListEnumerator.MoveNext(this)
     return true 
 end
 
-function LinkedListEnumerator.GetCurrent(this)
+function LinkedListEnumerator.getCurrent(this)
     return this.current
 end
 
@@ -661,21 +671,24 @@ function Collection.linkedListEnumerator(t)
 end
 
 local YieldEnumerator = {}
-YieldEnumerator.__index = YieldEnumerator
-
-function YieldEnumerator.GetEnumerator(this)
-    return this
-end
+YieldEnumerator.__inherits__ = { System.IEnumerator }
 
 function YieldEnumerator.MoveNext(this)
     local co = this.co
-    if coroutine.status(co) == "dead" then
+    if cstatus(co) == "dead" then
         this.current = nil
         return false
     else
-        local ok, v = coroutine.resume(co)
+        local args = this.args
+        local ok, v
+        if args then
+            ok, v = cresume(co, unpack(args))
+            this.args = nil
+        else
+            ok, v = cresume(co)
+        end
         if ok then
-            if coroutine.status(co) == "dead" then
+            if cstatus(co) == "dead" then
                 this.current = nil
                 return false
             end
@@ -687,12 +700,27 @@ function YieldEnumerator.MoveNext(this)
     end
 end
 
-function YieldEnumerator.GetCurrent(this)
+function YieldEnumerator.getCurrent(this)
     return this.current
 end
 
-function Collection.yieldEnumerator(f, T)
-    return setmetatable({ co = coroutine.create(f), __genericT__ = T }, YieldEnumerator)
+System.define("System.YieldEnumerator", YieldEnumerator)
+
+function Collection.yieldIEnumerator(f, T, ...)
+    return setmetatable({ co = ccreate(f), __genericT__ = T, args = { ... } }, YieldEnumerator)
+end
+
+local YieldEnumerable = {}
+YieldEnumerable.__inherits__ = { System.IEnumerable }
+
+function YieldEnumerable.GetEnumerator(this)
+    return setmetatable({ co = ccreate(this.f), __genericT__ = this.__genericT__, args = this.args }, YieldEnumerator)
+end
+
+System.define("System.YieldEnumerable", YieldEnumerable)
+
+function Collection.yieldIEnumerable(f, T, ...)
+    return setmetatable({ f = f, __genericT__ = T, args = { ... } }, YieldEnumerable)
 end
 
 Collection.yieldReturn = coroutine.yield
@@ -703,7 +731,8 @@ System.ipairs = Collection.ipairs
 System.pairs = Collection.pairs
 System.isArrayLike = Collection.isArrayLike
 System.isEnumerableLike = Collection.isEnumerableLike
-System.yieldEnumerator = Collection.yieldEnumerator
+System.yieldIEnumerable = Collection.yieldIEnumerable
+System.yieldIEnumerator = Collection.yieldIEnumerator
 System.yieldReturn = Collection.yieldReturn 
 
 

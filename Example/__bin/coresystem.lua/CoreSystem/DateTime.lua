@@ -269,7 +269,7 @@ function DateTime.getTicks(this)
 end
 
 local timeZoneTicks = System.getTimeZone() * 1e7
-DateTime.baseUtcOffset = TimeSpan(timeZoneTicks)
+DateTime.BaseUtcOffset = TimeSpan(timeZoneTicks)
 
 function DateTime.getUtcNow()
     local seconds = time()
@@ -324,12 +324,15 @@ function DateTime.__le(t1, t2)
     return t1.ticks <= t2.ticks
 end
 
+function DateTime.__inherits__()
+    return { System.IComparable, System.IComparable_1(DateTime), System.IEquatable_1(DateTime) }
+end
+
 System.defStc("System.DateTime", DateTime)
-DateTime.__inherits__ = { System.IComparable, System.IComparable_1(DateTime), System.IEquatable_1(DateTime) }
 
 local minValue = DateTime(0)
-DateTime.minValue = minValue
-DateTime.maxValue = DateTime(3155378975999999999)
+DateTime.MinValue = minValue
+DateTime.MaxValue = DateTime(3155378975999999999)
 
 function DateTime.__default__()
     return minValue

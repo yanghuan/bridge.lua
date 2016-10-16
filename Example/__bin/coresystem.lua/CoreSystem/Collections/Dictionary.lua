@@ -183,7 +183,7 @@ end
 
 System.define("System.Dictionary", function(TKey, TValue) 
    local cls = { 
-    __inherits__ = { System.IDictionary_2(TKey, TValue) }, 
+    __inherits__ = { System.IDictionary_2(TKey, TValue), System.IDictionary }, 
     __genericTKey__ = TKey,
     __genericTValue__ = TValue,
     __len = Dictionary.getCount

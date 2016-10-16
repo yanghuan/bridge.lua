@@ -14,8 +14,10 @@ local tremove = table.remove
 local tconcat = table.concat
 local rawget = rawget
 local floor = math.floor
+local ceil = math.ceil
 local error = error
 local select = select
+local pcall = pcall
 
 local emptyFn = function() end
 local identityFn = function(x) return x end
@@ -38,30 +40,38 @@ local function throw(e, lv)
     error(e)
 end
 
+local rethrow = {}
+
 local function try(try, catch, finally)
-    local ok, err = pcall(try)
-    local rethrow
+    local ok, result = pcall(try)
     if not ok then
         if catch then
-            if type(err) == "string" then
-                err = System.Exception(err)
+            if type(result) == "string" then
+                result = System.Exception(result)
             end
-            local fine, result = pcall(catch, err)
-            if not fine then
-                err = result
+            local fine, value
+            if finally then
+                fine, value = pcall(catch, result)
             else
-                rethrow = result
+                fine, value = true, catch(result)
             end
-        else 
-            rethrow = true
+            if fine then
+                if v ~= rethrow then
+                    ok = true
+                    result = v
+                end
+            else
+                result = v
+            end
         end
     end
     if finally then
         finally()
     end
-    if rethrow then
-        throw(err)
+    if not ok then
+        throw(result)
     end
+    return result
 end
 
 local function set(className, cls)
@@ -179,7 +189,6 @@ local function def(name, kind, cls, generic)
                 if #extends > 0 then
                     cls.__interfaces__ = extends
                 end
-                cls.__inherits__ = nil
                 if cls.__ctor__ == nil then
                     local baseCtor = base.__ctor__
                     cls.__ctor__ = type(baseCtor) == "table" and baseCtor[1] or baseCtor
@@ -187,8 +196,8 @@ local function def(name, kind, cls, generic)
             else
                 setmetatable(cls, Object)
                 cls.__interfaces__ = extends
-                cls.__inherits__ = nil
             end
+            cls.__inherits__ = nil
         elseif cls ~= Object then
              setmetatable(cls, Object)
         end    
@@ -200,11 +209,16 @@ local function def(name, kind, cls, generic)
         end
         tinsert(class, cls)
     elseif kind == "I" then
+        local extends = cls.__inherits__
+        if extends then
+            cls.__interfaces__ = extends
+            cls.__inherits__ = nil
+        end
         cls.__default__ = emptyFn
     elseif kind == "E" then
         cls.__default__ = defaultValOfZero
     else
-        assert(false)
+        assert(false, kind)
     end
     return cls
 end
@@ -225,8 +239,10 @@ System = {
     null = null,
     emptyFn = emptyFn,
     identityFn = identityFn,
+    equals = equals,
     try = try,
     throw = throw,
+    rethrow = rethrow,
     define = defCls,
     defInf = defInf,
     defStc = defStc,
@@ -243,7 +259,7 @@ System.sr = bit.rshift
 System.srr = bit.arshift
 
 local function trunc(num) 
-    return num > 0 and floor(num) or floor(-num)
+    return num > 0 and floor(num) or ceil(num)
 end
 
 System.trunc = trunc
@@ -275,7 +291,7 @@ function System.getTimeZone()
 end
 
 function System.using(t, f, ...)
-    local dispose = t.dispose
+    local dispose = t.Dispose
     local ret
     if dispose == nil or dispose == emptyFn then
         ret = f(t, ...)
@@ -300,25 +316,6 @@ function System.CreateInstance(type, ...)
     return type.c(...)
 end
 
-function System.getclass(className)
-    local scope = _G
-    local starInx = 1
-    while true do
-        local pos = className:find("%.", starInx) or 0
-        local name = className:sub(starInx, pos -1)
-        if pos ~= 0 then
-            local t = scope[name]
-            if t == nil then
-                return nil
-            end
-            scope = t
-        else
-            return scope[name]
-        end
-        starInx = pos + 1
-    end
-end
-
 function System.property(t, name, v)
     t[name] = v
     local function get(this)
@@ -335,10 +332,10 @@ end
 function System.event(t, name, v)
     t[name] = v
     local function add(this, v)
-        this[name] = System.fn.combine(this[name], v)
+        this[name] = System.combine(this[name], v)
     end
     local function remove(this, v)
-        this[name] = System.fn.remove(this[name], v)
+        this[name] = System.remove(this[name], v)
     end
     t["add" .. name] = add
     t["remove" .. name] = remove
@@ -373,9 +370,12 @@ function System.init(namelist)
 end
 
 local namespace = {}
+local curName
 
 local function namespaceDef(kind, name, f)
-    name = namespace.name .. name
+    if #curName > 0 then
+        name = curName .. "." .. name
+    end
     assert(modules[name] == nil, name)
     modules[name] = function()
        local t = f()
@@ -400,11 +400,9 @@ function namespace.enum(name, f)
 end
 
 function System.namespace(name, f)
-    if name ~= "" then
-        name = name .. '.'
-    end
-    namespace.name = name
+    curName = name
     f(namespace)
+    curName = nil
 end
 
 local function multiNew(cls, inx, ...) 

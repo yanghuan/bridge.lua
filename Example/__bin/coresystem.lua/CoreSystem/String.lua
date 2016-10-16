@@ -224,7 +224,7 @@ function String.Format(format, ...)
     local len = select("#", ...)
     if len == 1 then
         local args = ...
-        if System.isArrayLike(v) then
+        if System.isArrayLike(args) then
             return format:gsub("{(%d)}", function(n) 
                 local v = args:get(n + 0)   -- make n to number
                 if v == nil then
@@ -414,6 +414,10 @@ function String.Trim(this, chars)
         chars = "^%s*(.-)%s*$"
     end
     return (this:gsub(chars, "%1"))
+end
+
+function String.__inherits__()
+    return { System.IComparable, System.IEnumerable, System.IComparable_1(String), System.IEnumerable_1(String), System.IEquatable_1(String) }
 end
 
 System.define("System.String", String)

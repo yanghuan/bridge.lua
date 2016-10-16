@@ -40,11 +40,11 @@ function Console.WriteLine(v, ...)
     else
         v = v:ToString()      
     end
-    write(stdout, v, '\n')     
+    write(stdout, v, "\n")     
 end
 
 function Console.WriteLineChar(v)
-    write(stdout, char(v), '\n')     
+    write(stdout, char(v), "\n")     
 end
 
 System.define("System.Console", Console)

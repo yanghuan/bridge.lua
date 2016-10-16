@@ -142,8 +142,11 @@ function Int.TryParseUInt64(s)
     return tryParse(s, 0, 18446744073709551615)
 end
 
+function Int.__inherits__()
+    return { System.IComparable, System.IFormattable, System.IComparable_1(Int), System.IEquatable_1(Int) }
+end
+
 System.defStc("System.Int", Int)
-Int.__inherits__ = { System.IComparable, System.IFormattable, System.IComparable_1(Int), System.IEquatable_1(Int) }
 
 
 

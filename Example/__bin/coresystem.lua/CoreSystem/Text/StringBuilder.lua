@@ -6,6 +6,7 @@ local removeArrayAll = Collection.removeArrayAll
 local clearCount = Collection.clearCount
 local ArgumentNullException = System.ArgumentNullException
 
+local table = table
 local tinsert = table.insert
 local tconcat = table.concat
 

@@ -30,7 +30,7 @@ Double.IsNaN = isNaN
 local function compare(this, v)
     if this < v then return -1 end
     if this > v then return 1 end
-    if this == value then return 0 end
+    if this == v then return 0 end
     if isNaN(this) then
         return isNaN(v) and 0 or -1
     else 
@@ -134,7 +134,10 @@ function Double.TryParseSingle(s)
     return false, 0
 end
 
+function Double.__inherits__()
+    return { System.IComparable, System.IFormattable, System.IComparable_1(Double), System.IEquatable_1(Double) }
+end
+
 System.defStc("System.Double", Double)
-Double.__inherits__ = { System.IComparable, System.IFormattable, System.IComparable_1(Double), System.IEquatable_1(Double) }
 
 

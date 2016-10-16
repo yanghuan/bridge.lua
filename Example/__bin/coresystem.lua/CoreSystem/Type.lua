@@ -2,11 +2,14 @@ local System = System
 local throw = System.throw
 local Double = System.Double
 local InvalidCastException = System.InvalidCastException
+local ArgumentNullException = System.ArgumentNullException
 
 local type = type
 local getmetatable = getmetatable
 local tinsert = table.insert
 local ipairs = ipairs
+local select = select
+local unpack = unpack
 
 local Type = {}
 local numberType = setmetatable({ c = Double, name = "Number", fullName = "System.Number" }, Type)
@@ -179,6 +182,32 @@ function Type.ToString(this)
     return this.c.__name__
 end
 
+local function getclass(className)
+    local scope = _G
+    local starInx = 1
+    while true do
+        local pos = className:find("%.", starInx) or 0
+        local name = className:sub(starInx, pos -1)
+        if pos ~= 0 then
+            local t = scope[name]
+            if t == nil then
+                return nil
+            end
+            scope = t
+        else
+            return scope[name]
+        end
+        starInx = pos + 1
+    end
+end
+
+System.getclass = getclass
+
+function Type.GetTypeStatic(typeName, throwOnError, ignoreCase)
+    local cls = getclass(typeName)
+    return cls and typeof(cls)
+end
+
 System.define("System.Type", Type)
 
 function is(obj, cls)
@@ -205,4 +234,25 @@ function System.cast(obj, cls)
         return nil
     end
     throw(InvalidCastException(), 1)
+end
+
+function System.CreateInstance(type, ...)
+    if type == nil then
+        throw(ArgumentNullException("type"))
+    end
+    if getmetatable(type) ~= Type then   -- is T
+        return type()
+    end
+    local len = select("#", ...)
+    if len == 1 then
+        local args = ...
+        if System.isArrayLike(args) then
+            local t = {}
+            for k, v in System.ipairs(args) do
+                t[k] = v
+            end
+            return type.c(unpack(t, 1, #args))
+        end
+    end
+    return type.c(...)
 end

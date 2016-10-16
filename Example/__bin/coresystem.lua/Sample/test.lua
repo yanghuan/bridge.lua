@@ -1,4 +1,6 @@
 require("All")()
+collectgarbage("collect")
+print(collectgarbage("count"))
 
 local function test(f, name) 
     print("-----------------------------", name)
@@ -68,12 +70,17 @@ local function testDictionary()
 end
 
 local function testYeild()
-    local function yieldFn() 
-        for i = 1, 10 do
-            System.yieldReturn(i) 
-        end
+    local enumerable = function (begin, _end) 
+        return System.yieldIEnumerable(function (begin, _end)
+            while begin < _end do
+                System.yieldReturn(begin)
+                begin = begin + 1
+            end
+        end, System.Int, begin, _end)
     end
-    printList(System.yieldEnumerator(yieldFn, System.Int))
+    local e = enumerable(1, 10)
+    printList(e)
+    printList(e)
 end
 
 local function testDelegate()
@@ -116,6 +123,12 @@ local function testLinq()
     printList(Linq.Take(list, 4))
     printList(Linq.Select(list, function(i) return i + 2 end, System.Int))
     print(Linq.Min(list), Linq.Max(list))
+    print(Linq.ElementAtOrDefault(Linq.Where(list, function(i) return i <= 4 end), 5))
+    local ll = Linq.Where(list, function(i) return i <= 4 end)
+    print(Linq.Count(ll))
+    Linq.Any(ll)
+    print(Linq.Count(ll))
+    
 end
 
 local function testType()
@@ -136,6 +149,15 @@ local function testConsole()
     System.Console.WriteLine("name {0}, age {1}", name, age)
 end
 
+local function testIO()
+    local path = "iotest.txt"
+    local s = "hero, brige.lua\nIO"
+    System.File.WriteAllText(path, s)
+    local text = System.File.ReadAllText(path)
+    assert(text == s)
+    os.remove(path)
+end
+
 test(testDateTimeAndTimeSpan, "DateTime & TimeSpan")
 test(testArray, "Array")
 test(testList, "List")
@@ -145,3 +167,8 @@ test(testDelegate, "Delegate")
 test(testLinq, "Linq")
 test(testType, "Type")
 --test(testConsole, "Console")
+test(testIO, "IO")
+
+
+
+
