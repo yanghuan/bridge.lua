@@ -331,7 +331,7 @@ namespace Bridge.Translator.Lua {
                     if(isConstTarget) {
                         this.Write("(");
                     }
-                    isInvokeInCurClass = resolveResult is InvocationResolveResult && member.Member.DeclaringType == TransformCtx.CurClass;
+                    isInvokeInCurClass = resolveResult is InvocationResolveResult && member.Member.IsInternalMember();
                     if(!isInvokeInCurClass) {
                         memberReferenceExpression.Target.AcceptVisitor(this.Emitter);
                     }

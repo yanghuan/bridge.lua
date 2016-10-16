@@ -98,7 +98,7 @@
             </property>
         </class>
         <class name="TimeZoneInfo">
-            <property name="BaseUtcOffset " >
+            <property name="BaseUtcOffset" >
                 <get Template="System.DateTime.BaseUtcOffset" />
             </property>    
         </class>
