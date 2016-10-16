@@ -24,7 +24,6 @@ namespace Bridge.Lua {
         private const string kTempDirName = "__temp__";
         private const string kOutDllName = "__out__.dll";
         private static readonly UTF8Encoding UTF8Encoding = new UTF8Encoding(false);
-        private const string kBaseDll = "mscorlib.dll";
         private static readonly string[] SystemDlls = new string[] {
             "System.dll",
             "System.Core.dll",
@@ -72,7 +71,6 @@ namespace Bridge.Lua {
             }
         
             CompilerParameters cp = new CompilerParameters();
-            cp.CoreAssemblyFileName = kBaseDll;
             cp.GenerateExecutable = false;
             cp.GenerateInMemory = false;
             cp.TreatWarningsAsErrors = false;
