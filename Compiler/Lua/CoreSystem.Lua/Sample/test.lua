@@ -19,6 +19,7 @@ end
 
 local function testDateTimeAndTimeSpan() 
     local date = System.DateTime.getNow()
+    print(date:getTicks())
     print(date:ToString(), date:getYear(), date:getMonth(), date:getDay(), date:getHour(), date:getMinute(), date:getSecond())
     
     local ts = System.TimeSpan.FromSeconds(20)
@@ -49,6 +50,8 @@ local function testList()
     list:Add(6)
     print(list:ToString(), #list)
     printList(list)
+    local subList = list:GetRange(1, 2)
+    printList(subList)
     list:set(1, 8)
     list:Sort()
     printList(list)
@@ -84,32 +87,63 @@ local function testYeild()
 end
 
 local function testDelegate()
-    local d1 = function() print("d1") end
-    local d2 = function() print("d2") end
-    local d3 = function() print("d3") end
+    local prints = ""
+    local function printExt(s)
+        prints = prints .. s
+        print(s)
+    end
+    local function assertExt(s)
+        assert(prints == s, s)
+        prints = ""
+    end
+    local d1 = function() printExt("d1") end
+    local d2 = function() printExt("d2") end
+    local d3 = function() printExt("d3") end
     System.combine(nil, d1)()
+    assertExt("d1")
     print("--")
+    
     System.combine(d1, nil)()
+    assertExt("d1")
     print("--")
+    
     System.combine(d1, d2)()
+    assertExt("d1d2")
     print("--")
+    
     System.combine(d1, System.combine(d2, d3))()
+    assertExt("d1d2d3")
     print("--")
+    
     System.combine(System.combine(d1, d2), System.combine(d2, d3))()
+    assertExt("d1d2d2d3")
     print("--")
+    
     System.remove(System.combine(d1, d2), d1)()
+    assertExt("d2")
     print("--")
+    
     System.remove(System.combine(d1, d2), d2)()
+    assertExt("d1")
     print("--")
+    
     System.remove(System.combine(System.combine(d1, d2), d1), d1)()
+    assertExt("d1d2")
     print("--")
+    
     System.remove(System.combine(System.combine(d1, d2), d3), System.combine(d1, d2))()
+    assertExt("d3")
     print("--")
+    
     System.remove(System.combine(System.combine(d1, d2), d3), System.combine(d2, d1))()
+    assertExt("d1d2d3")
     print("--")
+    
     fn0 = System.combine(System.combine(d1, d2), System.combine(System.combine(d3, d1), d2))
     fn1 = System.combine(d1, d2)
     System.remove(fn0, fn1)()
+    assertExt("d1d2d3")
+    
     print("--")
     local i = System.remove(System.combine(d1, d2), System.combine(d1, d2))
     print(i == nil)

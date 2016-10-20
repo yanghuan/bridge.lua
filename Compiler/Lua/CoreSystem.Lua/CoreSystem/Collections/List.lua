@@ -71,7 +71,7 @@ List.GetEnumerator = Collection.arrayEnumerator
 function List.GetRange(this, index, count)
     checkIndexAndCount(this, index, count)
     local list = System.List(this.__genericT__)()
-    copy(list, index, this, 0, count)
+    copyArray(this, index, list, 0, count, true)
     return list
 end
 
