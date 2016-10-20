@@ -142,6 +142,12 @@ local function genericName(name, ...)
     return tconcat(nameCreator, nil, 1, offset)
 end
 
+local enumMetatable = { __kind__ = "E", __default__ = defaultValOfZero, __index = false }
+enumMetatable.__index = enumMetatable
+
+local interfaceMetatable = { __kind__ = "I", __default__ = emptyFn, __index = false }
+interfaceMetatable.__index = interfaceMetatable
+
 local function def(name, kind, cls, generic)
     if type(cls) == "function" then
         if generic then
@@ -171,7 +177,6 @@ local function def(name, kind, cls, generic)
     else
         cls.__name__ = generic
     end
-    cls.__kind__ = kind
     cls.__id__ = getId()
     if kind == "C" or kind == "S" then
         cls.__index = cls 
@@ -189,9 +194,11 @@ local function def(name, kind, cls, generic)
                 if #extends > 0 then
                     cls.__interfaces__ = extends
                 end
-                if cls.__ctor__ == nil then
+                if cls.__ctor__ == emptyFn then
                     local baseCtor = base.__ctor__
-                    cls.__ctor__ = type(baseCtor) == "table" and baseCtor[1] or baseCtor
+                    if type(baseCtor) == "table" then
+                        cls.__ctor__ = baseCtor[1]
+                    end
                 end 
             else
                 setmetatable(cls, Object)
@@ -200,13 +207,10 @@ local function def(name, kind, cls, generic)
             cls.__inherits__ = nil
         elseif cls ~= Object then
              setmetatable(cls, Object)
-        end    
-        if cls.__default__ == nil then
-            cls.__default__ = emptyFn
-        end
-        if cls.__ctor__ == nil then
-            cls.__ctor__ = emptyFn
-        end
+        end   
+        if kind == "S" then
+            cls.__kind__ = kind
+        end 
         tinsert(class, cls)
     elseif kind == "I" then
         local extends = cls.__inherits__
@@ -214,9 +218,9 @@ local function def(name, kind, cls, generic)
             cls.__interfaces__ = extends
             cls.__inherits__ = nil
         end
-        cls.__default__ = emptyFn
+        setmetatable(cls, interfaceMetatable)
     elseif kind == "E" then
-        cls.__default__ = defaultValOfZero
+        setmetatable(cls, enumMetatable)
     else
         assert(false, kind)
     end
@@ -412,6 +416,9 @@ local function multiNew(cls, inx, ...)
 end
 
 Object.__call = new
+Object.__default__ = emptyFn
+Object.__ctor__ = emptyFn
+Object.__kind__ = "C"
 Object.new = multiNew
 Object.EqualsObj = equals
 Object.ReferenceEquals = equals
