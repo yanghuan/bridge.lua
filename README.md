@@ -4,7 +4,7 @@ Bridge.lua is a C#-to-Lua Compiler,which generates equivalent and consistent lua
 
 ## Sample
 
-The following c# code that implements timer management, reference [folly‘s TimeoutQueue](https://github.com/facebook/folly/blob/master/folly/TimeoutQueue.h)
+The following C# code that implements timer management, reference [folly‘s TimeoutQueue](https://github.com/facebook/folly/blob/master/folly/TimeoutQueue.h)
 
 ```csharp
 using System;
