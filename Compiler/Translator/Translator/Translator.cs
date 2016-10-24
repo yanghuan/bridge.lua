@@ -1,5 +1,4 @@
 using Bridge.Contract;
-using Microsoft.Ajax.Utilities;
 using Mono.Cecil;
 using Object.Net.Utilities;
 using System;
@@ -19,25 +18,6 @@ namespace Bridge.Translator
         public readonly List<string> SearchPaths = new List<string>();
         public readonly List<string> XmlMetaFiles = new List<string>();
         public string Defines;
-
-        private static readonly CodeSettings MinifierCodeSettingsSafe = new CodeSettings
-        {
-            EvalTreatment = Microsoft.Ajax.Utilities.EvalTreatment.MakeAllSafe,
-            LocalRenaming = Microsoft.Ajax.Utilities.LocalRenaming.KeepAll,
-            TermSemicolons = true,
-            StrictMode = true
-        };
-
-        private static readonly CodeSettings MinifierCodeSettingsInternal = new CodeSettings
-        {
-            TermSemicolons = true,
-            StrictMode = true
-        };
-
-        private static readonly CodeSettings MinifierCodeSettingsLocales = new CodeSettings
-        {
-            TermSemicolons = true
-        };
 
         public const string LocalesPrefix = "Bridge.Resources.Locales.";
 
@@ -213,7 +193,6 @@ namespace Bridge.Translator
             var logger = this.Log;
             logger.Trace("Starts SaveTo path = " + path);
 
-            var minifier = new Minifier();
             var files = new Dictionary<string, string>();
             foreach (var item in this.Outputs)
             {
@@ -272,10 +251,6 @@ namespace Bridge.Translator
 
                     var file = CreateFileDirectory(Path.GetDirectoryName(filePath), fileNameMin);
                     logger.Trace("Output non-formatted " + file.FullName);
-
-                    var contentMinified = this.Minify(minifier, code, this.GetMinifierSettings(fileNameMin));
-
-                    this.SaveToFile(file.FullName, contentMinified);
                 }
             }
 
@@ -357,8 +332,6 @@ namespace Bridge.Translator
 
         public void ExtractCore(string outputPath, bool nodebug = false)
         {
-            var minifier = new Minifier();
-
             foreach (var reference in this.References)
             {
                 var listRes = reference.MainModule.Resources.FirstOrDefault(r => r.Name == Translator.BridgeResourcesList);
@@ -400,7 +373,7 @@ namespace Bridge.Translator
                             {
                                 this.ExtractResourceAndWriteToFile(outputPath, reference, resName, fileName.ReplaceLastInstanceOf(".js", ".min.js"), (content) =>
                                 {
-                                    return this.Minify(minifier, content, this.GetMinifierSettings(fileName));
+                                    return content;
                                 });
                             }
                         }
@@ -430,7 +403,9 @@ namespace Bridge.Translator
                     }
                     else if (locale.Contains("*"))
                     {
-                        var name = Translator.LocalesPrefix + locale.SubstringUpToFirst('*');
+                        int index = locale.IndexOf('*');
+                        string part = index < 0 ? locale : locale.Substring(0, index);
+                        var name = Translator.LocalesPrefix + part;
                         this.ExtractLocale(localesRes.Where(r => r.Name.StartsWith(name)), outputPath, nodebug, bufferjs, bufferjsmin);
                     }
                     else
@@ -494,18 +469,12 @@ namespace Bridge.Translator
             var file = CreateFileDirectory(outputPath, fileName);
 
             string resourcesStr = null;
-            string resourcesStrMin = null;
             using (var resourcesStream = ((EmbeddedResource)res).GetResourceStream())
             {
                 using (StreamReader reader = new StreamReader(resourcesStream))
                 {
                     resourcesStr = reader.ReadToEnd();
                 }
-            }
-
-            if (this.AssemblyInfo.OutputFormatting != JavaScriptOutputType.Formatted && !nodebug)
-            {
-                resourcesStrMin = this.Minify(new Minifier(), resourcesStr, Translator.MinifierCodeSettingsLocales);
             }
 
             if (this.AssemblyInfo.CombineLocales)
@@ -516,20 +485,12 @@ namespace Bridge.Translator
                     {
                         this.SaveToFile(file.FullName, resourcesStr);
                     }
-                    if (resourcesStrMin != null)
-                    {
-                        this.SaveToFile(file.FullName.ReplaceLastInstanceOf(".js", ".min.js"), resourcesStrMin);
-                    }
                 }
                 else
                 {
                     if (this.AssemblyInfo.OutputFormatting != JavaScriptOutputType.Minified)
                     {
                         NewLine(bufferjs, resourcesStr);
-                    }
-                    if (resourcesStrMin != null)
-                    {
-                        bufferjsmin.Append(resourcesStrMin);
                     }
                 }
             }
@@ -538,10 +499,6 @@ namespace Bridge.Translator
                 if (this.AssemblyInfo.OutputFormatting != JavaScriptOutputType.Minified)
                 {
                     File.WriteAllText(file.FullName, resourcesStr, OutputEncoding);
-                }
-                if (resourcesStrMin != null)
-                {
-                    File.WriteAllText(file.FullName.ReplaceLastInstanceOf(".js", ".min.js"), resourcesStrMin, OutputEncoding);
                 }
             }
         }
@@ -562,51 +519,6 @@ namespace Bridge.Translator
             }
             var content = preHandler != null ? preHandler(resourcesStr) : resourcesStr;
             this.SaveToFile(file.FullName, content);
-        }
-
-        private string Minify(Minifier minifier, string source, CodeSettings settings)
-        {
-            this.Log.Trace("Minification...");
-
-            if (string.IsNullOrEmpty(source))
-            {
-                this.Log.Trace("Skip minification as input script is empty");
-                return source;
-            }
-
-            this.Log.Trace("Input script length is " + source.Length + " symbols...");
-
-            var contentMinified = minifier.MinifyJavaScript(source, settings);
-
-            this.Log.Trace("Output script length is " + contentMinified.Length + " symbols. Done.");
-
-            return contentMinified;
-
-        }
-
-        private CodeSettings GetMinifierSettings(string fileName)
-        {
-            //Different settings depending on whether a file is an internal Bridge (like bridge.js) or user project's file
-            if (MinifierCodeSettingsInternalFileNames.Contains(fileName.ToLower()))
-            {
-                this.Log.Trace("Will use MinifierCodeSettingsInternal for " + fileName);
-                return MinifierCodeSettingsInternal;
-            }
-
-            var settings = MinifierCodeSettingsSafe;
-            if (this.NoStrictModeAndGlobal)
-            {
-                settings = settings.Clone();
-                settings.StrictMode = false;
-
-                this.Log.Trace("Will use MinifierCodeSettingsSafe with no StrictMode");
-            }
-            else
-            {
-                this.Log.Trace("Will use MinifierCodeSettingsSafe");
-            }
-
-            return settings;
         }
 
         private static FileInfo CreateFileDirectory(string outputPath, string fileName)
