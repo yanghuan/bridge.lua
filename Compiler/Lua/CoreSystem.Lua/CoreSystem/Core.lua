@@ -56,12 +56,12 @@ local function try(try, catch, finally)
                 fine, value = true, catch(result)
             end
             if fine then
-                if v ~= rethrow then
+                if value ~= rethrow then
                     ok = true
-                    result = v
+                    result = value
                 end
             else
-                result = v
+                result = value
             end
         end
     end

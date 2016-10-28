@@ -153,11 +153,15 @@ function Collection.removeArrayAll(t)
     end
 end
 
-local function copyArray(t, index, array, arrayIndex, length)
-    checkIndexAndCount(t, index, length)
-    checkIndexAndCount(array, arrayIndex, length)
+local function copyArray(sourceArray, sourceIndex, destinationArray, destinationIndex, length, reliable)
+    if not reliable then
+        if sourceArray == nil then throw(ArgumentNullException("sourceArray")) end
+        if destinationArray == nil then throw(ArgumentNullException("destinationArray")) end
+        checkIndexAndCount(sourceArray, sourceIndex, length)
+        checkIndexAndCount(destinationArray, destinationIndex, length)
+    end
     for i = 1, length do
-        array[arrayIndex + i] = t[index + 1]
+        destinationArray[destinationIndex + i] = sourceArray[sourceIndex + i]
     end
 end 
 
