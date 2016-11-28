@@ -595,7 +595,10 @@ namespace Bridge.Translator.Lua
                             this.WriteThis();
                         }
                         if(argsExpressions.Length > 0) {
-                            this.WriteComma();
+                            var nextArg = argsExpressions.First();
+                            if(nextArg != paramsArg) {
+                                this.WriteComma();
+                            }
                         }
                     }
 
