@@ -4,6 +4,7 @@ local sr = System.sr
 local ArgumentOutOfRangeException = System.ArgumentOutOfRangeException
 local InvalidOperationException = System.InvalidOperationException
 local ArgumentNullException = System.ArgumentNullException
+local NullReferenceException = System.NullReferenceException
 local EqualityComparer_1 = System.EqualityComparer_1
 local Comparer_1 = System.Comparer_1
 
@@ -566,6 +567,9 @@ local function eachFn(en)
 end
 
 local function each(t)
+    if t == nil then
+        throw(NullReferenceException(), 1)
+    end
     if isArrayLike(t) then
         return ipairsArray(t)
     end
