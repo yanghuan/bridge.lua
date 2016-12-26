@@ -91,7 +91,7 @@ namespace Bridge.Lua {
             if(!string.IsNullOrEmpty(path)) {
                 string[] paths = path.Split(';');
                 foreach(string file in paths) {
-                    list.Add(Utility.GetCurrentDirectory(path));
+                    list.Add(Utility.GetCurrentDirectory(file));
                 }
             }
             return list.ToArray();
