@@ -27,6 +27,7 @@ namespace Bridge.Lua {
         private static readonly string[] SystemDlls = new string[] {
             "System.dll",
             "System.Core.dll",
+            "Microsoft.CSharp.dll",
         };
         private const string kSystemMeta = "~/System.xml";
 
