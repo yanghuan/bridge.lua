@@ -281,6 +281,9 @@ Options
 - Documentation Home [English](https://github.com/sy-yanghuan/bridge.lua/wiki/English-Home-Page) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
 - FAQ [English](https://github.com/sy-yanghuan/bridge.lua/wiki/FAQ) [Chinese](https://github.com/sy-yanghuan/bridge.lua/wiki/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%A7%A3%E7%AD%94)
 
+## Future
+[CSharp.lua](https://github.com/yanghuan/CSharp.lua) will replace Bridge.lua in the future.
+
 ##License
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
 
