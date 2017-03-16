@@ -255,7 +255,7 @@ end)
 ```
 
 ## How to Use
-###Command Line Parameters
+### Command Line Parameters
 ```cmd
 D:\bridge>Bridge.Lua.exe -h
 Usage: Bridge.Lua [-s srcfolder] [-d dstfolder]
@@ -269,7 +269,7 @@ Options
 -h              : show the help message    
 -def            : defines name as a conditional symbol, use ';' to separate     
 ```
-###Download
+### Download
 [bridge.lua.1.0.1.zip](https://raw.githubusercontent.com/sy-yanghuan/bridge.lua/master/download/bridge.lua.1.0.1.zip)
 
 ## CoreSystem.lua
@@ -288,6 +288,6 @@ Options
 ##License
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
 
-##*Thanks*
+## *Thanks*
 [http://bridge.net](http://bridge.net )
 
