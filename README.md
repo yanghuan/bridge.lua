@@ -285,7 +285,8 @@ Options
 
 ## CSharp.lua
 [CSharp.lua](https://github.com/yanghuan/CSharp.lua) is better and more concise. Bridge.lua has been replaced.
-##License
+
+## License
 Bridge.lua is released under the [Apache 2.0 license](LICENSE).
 
 ## *Thanks*
