@@ -1,4 +1,4 @@
-***Note: Bridge.lua is obsolete nad no longer maintained, please use [CSharp.lua](https://github.com/yanghuan/CSharp.lua) instead.***
+***Note: Bridge.lua is obsolete and no longer maintained, please use [CSharp.lua](https://github.com/yanghuan/CSharp.lua) instead.***
 
 # Bridge.lua
 Bridge.lua is a C#-to-Lua Compiler,which generates equivalent and consistent lua code, it will do some optimizations, such as local optimization, constant conversion, etc. Based on modified from [bridge.net](https://github.com/bridgedotnet/Bridge)
